@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/WeaponData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"ember_maw"
+display_name = "Ember Maw"
+pattern = "cone"
+fire_rate_ticks = 8
+damage = 5.0
+cone_range = 130.0
+cone_angle_radians = 1.35
+burn_ticks = 120
+linked_tempering = &"branding_iron"
+evolution_id = &"crucible_breath"

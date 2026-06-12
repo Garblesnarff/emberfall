@@ -14,6 +14,18 @@ var invulnerable_ticks := 0
 var dash_direction := Vector2.RIGHT
 var aim_world := Vector2.RIGHT
 var move_input := Vector2.ZERO
+var damage_mult := 1.0
+var fire_rate_mult := 1.0
+var weapon_shots_bonus := 0
+var pierce_bonus := 0
+var ricochet_bonus := 0
+var lifesteal := 0.0
+var regen := 0.0
+var crit := 0.0
+var burn := false
+var nova := false
+var orbs := 0
+var orb_angle := 0.0
 
 func _ready() -> void:
 	if feel == null:
@@ -26,6 +38,18 @@ func reset(pos: Vector2) -> void:
 	hp = feel.hp
 	max_hp = feel.hp
 	damage = feel.damage
+	damage_mult = 1.0
+	fire_rate_mult = 1.0
+	weapon_shots_bonus = 0
+	pierce_bonus = 0
+	ricochet_bonus = 0
+	lifesteal = 0.0
+	regen = 0.0
+	crit = 0.0
+	burn = false
+	nova = false
+	orbs = 0
+	orb_angle = 0.0
 	fire_ticks = 0
 	dash_cooldown_ticks = 0
 	dashing_ticks = 0
@@ -33,7 +57,7 @@ func reset(pos: Vector2) -> void:
 	dash_direction = Vector2.RIGHT
 	queue_redraw()
 
-func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node, dash_pressed := false) -> void:
+func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node, dash_pressed := false, suppress_auto_fire := false) -> void:
 	move_input = input_vector
 	aim_world = aim_pos
 	if dashing_ticks > 0:
@@ -54,7 +78,7 @@ func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node,
 	if invulnerable_ticks > 0:
 		invulnerable_ticks -= 1
 	fire_ticks -= 1
-	if fire_ticks <= 0:
+	if fire_ticks <= 0 and not suppress_auto_fire:
 		fire_ticks = feel.fire_rate_ticks
 		var dir := (aim_world - position).normalized()
 		if dir.length_squared() <= 0.001:

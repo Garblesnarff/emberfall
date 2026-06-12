@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"slow_burn"
+display_name = "Slow Burn"
+description = "Regenerate 1 HP / 2s."
+max_level = 3
+tags = Array[StringName]([&"regen"])

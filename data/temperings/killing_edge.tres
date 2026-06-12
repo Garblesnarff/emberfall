@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"killing_edge"
+display_name = "Killing Edge"
+description = "+15% crit chance."
+max_level = 4
+tags = Array[StringName]([&"crit"])
+synergy_hints = Array[StringName]([&"detonating_brand"])

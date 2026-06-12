@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/WeaponData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"forgehammer"
+display_name = "Forgehammer"
+pattern = "projectile"
+fire_rate_ticks = 11
+damage = 10.0
+projectile_speed = 9.5
+projectile_life_ticks = 80
+projectile_radius = 4.0
+shots = 1
+spread_radians = 0.13
+pierce = 0
+linked_tempering = &"twin_hammers"
+evolution_id = &"meteor_volley"

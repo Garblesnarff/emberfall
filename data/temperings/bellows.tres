@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"bellows"
+display_name = "Bellows"
+description = "+22% fire rate."
+max_level = 6
+tags = Array[StringName]([&"rate"])
+synergy_hints = Array[StringName]([&"overclocked_bellows"])

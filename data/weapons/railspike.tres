@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/WeaponData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"railspike"
+display_name = "Railspike"
+pattern = "beam"
+fire_rate_ticks = 54
+damage = 72.0
+projectile_life_ticks = 1
+pierce = 99

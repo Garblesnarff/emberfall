@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ObjectiveData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"ember_vein"
+display_name = "Ember Vein"
+objective_type = "ember_vein"
+channel_ticks = 240
+marker_count = 1
+score_reward = 150
+ember_reward = 25
+heart_reward = 25.0

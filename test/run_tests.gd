@@ -5,6 +5,10 @@ const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 const ArenaScene := preload("res://scenes/arena/arena.tscn")
 const HudScene := preload("res://scenes/ui/hud.tscn")
 const FeelParity := preload("res://data/feel_parity.tres")
+const ObjVein := preload("res://data/objectives/ember_vein.tres")
+const ObjBraziers := preload("res://data/objectives/braziers.tres")
+const ObjBounty := preload("res://data/objectives/elite_bounty.tres")
+const ObjAnvil := preload("res://data/objectives/anvil_defense.tres")
 
 var failures := 0
 
@@ -18,12 +22,14 @@ func _run() -> void:
 	_test_bullet_visual_collision_alignment()
 	await _test_phase2_world_systems()
 	await _test_deck_resolution_hud_layout()
+	await _test_phase3_forced_builds()
+	await _test_phase3_objectives_and_rewards()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1/2 tests: PASS")
+		print("EMBERFALL Phase 1/2/3 tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1/2 tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2/3 tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -142,7 +148,67 @@ func _test_determinism() -> void:
 	var b := await _run_scripted_phase2_sample(0x1234, false)
 	_assert_eq(a, b, "same seed scripted survival run is deterministic through wave 6")
 	_assert_true(a.player_hp > 0, "deterministic run survives intentionally")
-	_assert_true(a.wave >= 7 or a.waves_cleared.has(6), "deterministic run reaches wave 6 coverage")
+	_assert_true(a.wave >= 6 or a.waves_cleared.has(6), "deterministic run reaches wave 6 coverage")
+
+func _test_phase3_forced_builds() -> void:
+	for weapon_id in [&"forgehammer", &"slag_lance", &"ember_maw"]:
+		var result := await _run_forced_weapon_sample(weapon_id)
+		_assert_true(result.damage_events > 0, "forced-build weapon %s deals damage over 600 ticks" % weapon_id)
+	for synergy_id in [&"detonating_brand", &"arc_steel", &"bulwark_orbit", &"blast_furnace", &"overclocked_bellows"]:
+		var synergy_result := await _run_forced_synergy_sample(synergy_id)
+		_assert_true(synergy_result.active, "forced-build synergy %s activates" % synergy_id)
+	for evo_id in [&"meteor_volley", &"railspike", &"crucible_breath"]:
+		var evo_result := await _run_forced_evolution_sample(evo_id)
+		_assert_true(evo_result.evolved, "forced-build evolution %s activates from chest" % evo_id)
+
+func _test_phase3_objectives_and_rewards() -> void:
+	var arena = await _fresh_test_arena(0x3303)
+	arena._start_objective(ObjVein)
+	arena.player.position = arena.current_objective.markers[0]
+	for i in range(ObjVein.channel_ticks):
+		arena._tick_objective()
+	_assert_true(arena.debug_stats.objectives_completed.has(&"ember_vein"), "Ember Vein completes and records success")
+	_assert_true(arena.ember_count >= ObjVein.ember_reward, "Ember Vein awards embers")
+	arena._start_objective(ObjBraziers)
+	for marker in arena.current_objective.markers:
+		arena.player.position = marker
+		for i in range(ObjBraziers.channel_ticks):
+			arena._tick_objective()
+	_assert_true(arena.debug_stats.objectives_completed.has(&"braziers"), "Braziers objective completes")
+	arena._start_objective(ObjBounty)
+	arena.current_objective.timer = 1
+	arena._tick_objective()
+	_assert_true(arena.debug_stats.objectives_failed.has(&"elite_bounty"), "Distant Elite Bounty failure path records timeout")
+	arena._start_objective(ObjAnvil)
+	arena.anvil_hp = 0.0
+	arena._tick_objective()
+	_assert_true(arena.debug_stats.objectives_failed.has(&"anvil_defense"), "Anvil Defense failure path records anvil break")
+	arena.drops.append({"type": &"heart", "position": arena.player.position, "value": Config.DROP_HEART_HEAL})
+	arena.drops.append({"type": &"ember", "position": arena.player.position, "value": 1})
+	var score_before: int = GameState.score
+	arena._tick_drops()
+	_assert_true(arena.debug_stats.hearts_collected > 0, "heart drops heal and record pickup")
+	_assert_true(arena.ember_count > ObjVein.ember_reward, "ember drops increment ember accounting")
+	_assert_true(GameState.score > score_before, "ember drops add score")
+	var enemy = arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), arena.player.position + Vector2(80, 0))
+	enemy.hp = 0
+	enemy.dead = true
+	arena._tick_enemies()
+	_assert_true(GameState.combo > 0, "kills increment combo")
+	arena.player.position = Vector2(1600, 1200)
+	arena.select_weapon(&"forgehammer")
+	arena.apply_tempering(&"forgehammer_sharpen")
+	arena.apply_tempering(&"forgehammer_sharpen")
+	arena.apply_tempering(&"forgehammer_sharpen")
+	arena.apply_tempering(&"forgehammer_sharpen")
+	arena.apply_tempering(&"forgehammer_sharpen")
+	arena.apply_tempering(&"twin_hammers")
+	arena.apply_tempering(&"twin_hammers")
+	arena.apply_tempering(&"twin_hammers")
+	arena.force_open_chest()
+	_assert_true(arena.active_evolutions.has(&"meteor_volley"), "chest-to-evolution flow works")
+	arena.queue_free()
+	await get_tree().process_frame
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)
@@ -253,3 +319,96 @@ func _nearest_enemy(arena: Node, pos: Vector2) -> Node:
 
 func _boss_patterns_complete(patterns: Dictionary) -> bool:
 	return patterns.get(&"ring", 0) > 0 and patterns.get(&"fan", 0) > 0 and patterns.get(&"charge", 0) > 0
+
+func _fresh_test_arena(seed_value: int) -> Node:
+	Config.set_run_seed(seed_value)
+	GameState.start_run(seed_value)
+	var arena = ArenaScene.instantiate()
+	get_tree().root.add_child(arena)
+	await get_tree().physics_frame
+	arena.player.max_hp = 5000.0
+	arena.player.hp = 5000.0
+	arena.player.damage = 100.0
+	return arena
+
+func _run_forced_weapon_sample(weapon_id: StringName) -> Dictionary:
+	var arena = await _fresh_test_arena(0x4400 + int(hash(weapon_id) & 0xff))
+	arena.select_weapon(weapon_id)
+	arena.player.damage_mult = 8.0
+	var before_kills := GameState.kills
+	for i in range(600):
+		if i % 18 == 0:
+			arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), arena.player.position + Vector2(90 + i % 60, 0))
+		arena.set_scripted_input(Vector2.ZERO, arena.player.position + Vector2.RIGHT * 200.0)
+		await get_tree().physics_frame
+	var result := {
+		"damage_events": GameState.kills - before_kills + arena.debug_stats.weapons_tested.get(weapon_id, 0),
+	}
+	arena.queue_free()
+	await get_tree().process_frame
+	return result
+
+func _run_forced_synergy_sample(synergy_id: StringName) -> Dictionary:
+	var arena = await _fresh_test_arena(0x5500 + int(hash(synergy_id) & 0xff))
+	match synergy_id:
+		&"detonating_brand":
+			arena.apply_tempering(&"branding_iron")
+			arena.apply_tempering(&"killing_edge")
+			arena.apply_tempering(&"killing_edge")
+		&"arc_steel":
+			arena.apply_tempering(&"chain_spark")
+			arena.apply_tempering(&"chain_spark")
+			arena.apply_tempering(&"piercing_slag")
+			arena.apply_tempering(&"piercing_slag")
+		&"bulwark_orbit":
+			arena.apply_tempering(&"orbiting_anvil")
+			arena.apply_tempering(&"orbiting_anvil")
+			arena.apply_tempering(&"reforged_heart")
+			arena.apply_tempering(&"reforged_heart")
+		&"blast_furnace":
+			arena.apply_tempering(&"nova_dash")
+			arena.apply_tempering(&"branding_iron")
+		&"overclocked_bellows":
+			for i in range(4):
+				arena.apply_tempering(&"bellows")
+			arena.apply_tempering(&"quenched_legs")
+			arena.apply_tempering(&"quenched_legs")
+	for i in range(600):
+		if i % 60 == 0:
+			arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), arena.player.position + Vector2(85, 0))
+		arena.set_scripted_input(Vector2.ZERO, arena.player.position + Vector2.RIGHT * 180.0, synergy_id == &"blast_furnace" and i == 1)
+		await get_tree().physics_frame
+	var result := {"active": arena.active_synergies.has(synergy_id)}
+	arena.queue_free()
+	await get_tree().process_frame
+	return result
+
+func _run_forced_evolution_sample(evolution_id: StringName) -> Dictionary:
+	var arena = await _fresh_test_arena(0x6600 + int(hash(evolution_id) & 0xff))
+	if evolution_id == &"meteor_volley":
+		arena.select_weapon(&"forgehammer")
+		for i in range(5):
+			arena.apply_tempering(&"forgehammer_sharpen")
+		for i in range(3):
+			arena.apply_tempering(&"twin_hammers")
+	elif evolution_id == &"railspike":
+		arena.select_weapon(&"slag_lance")
+		for i in range(5):
+			arena.apply_tempering(&"slag_lance_sharpen")
+		for i in range(4):
+			arena.apply_tempering(&"piercing_slag")
+	elif evolution_id == &"crucible_breath":
+		arena.select_weapon(&"ember_maw")
+		for i in range(5):
+			arena.apply_tempering(&"ember_maw_sharpen")
+		arena.apply_tempering(&"branding_iron")
+	arena.force_open_chest()
+	for i in range(600):
+		if i % 60 == 0:
+			arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), arena.player.position + Vector2(110, 0))
+		arena.set_scripted_input(Vector2.ZERO, arena.player.position + Vector2.RIGHT * 180.0)
+		await get_tree().physics_frame
+	var result := {"evolved": arena.active_evolutions.has(evolution_id)}
+	arena.queue_free()
+	await get_tree().process_frame
+	return result

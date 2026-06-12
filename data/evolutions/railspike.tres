@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EvolutionData" load_steps=3 format=3]
+[ext_resource type="Script" path="res://scripts/resources/EvolutionData.gd" id="1"]
+[ext_resource type="Resource" path="res://data/weapons/railspike.tres" id="2"]
+[resource]
+script = ExtResource("1")
+id = &"railspike"
+display_name = "Railspike"
+base_weapon = &"slag_lance"
+evolved_weapon = ExtResource("2")
+requirements = {&"slag_lance_sharpen": 5, &"piercing_slag": 4}
+requires_chest = true

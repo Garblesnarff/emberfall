@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ObjectiveData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ObjectiveData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"elite_bounty"
+display_name = "Distant Elite Bounty"
+objective_type = "elite_bounty"
+score_reward = 200
+duration_ticks = 2700

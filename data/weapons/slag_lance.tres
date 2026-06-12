@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/WeaponData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"slag_lance"
+display_name = "Slag Lance"
+pattern = "projectile"
+fire_rate_ticks = 36
+damage = 34.0
+projectile_speed = 6.8
+projectile_life_ticks = 120
+projectile_radius = 5.0
+shots = 1
+spread_radians = 0.0
+pierce = 2
+linked_tempering = &"piercing_slag"
+evolution_id = &"railspike"

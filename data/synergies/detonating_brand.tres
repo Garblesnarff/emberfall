@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SynergyData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/SynergyData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"detonating_brand"
+display_name = "Detonating Brand"
+requirements = {&"branding_iron": 1, &"killing_edge": 2}
+description = "Burn deaths explode."

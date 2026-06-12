@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/WeaponData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"crucible_breath"
+display_name = "Crucible Breath"
+pattern = "cone"
+fire_rate_ticks = 6
+damage = 8.5
+cone_range = 230.0
+cone_angle_radians = 1.85
+burn_ticks = 180

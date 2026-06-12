@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"coiled_spring"
+display_name = "Coiled Spring"
+description = "Dash recharges 35% faster."
+max_level = 3
+tags = Array[StringName]([&"dash"])

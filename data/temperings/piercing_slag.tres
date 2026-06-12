@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"piercing_slag"
+display_name = "Piercing Slag"
+description = "Shots pierce +1 enemy."
+max_level = 4
+tags = Array[StringName]([&"pierce"])
+synergy_hints = Array[StringName]([&"arc_steel", &"railspike"])

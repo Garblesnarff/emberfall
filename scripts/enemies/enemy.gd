@@ -25,6 +25,8 @@ var boss_pattern_index := 0
 var telegraph_ticks := 0
 var lava_ticks := 0
 var skipped_separation := false
+var burn_ticks := 0
+var burn_damage := 0.0
 
 func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false, child_enemy := false) -> void:
 	data = enemy_data
@@ -56,6 +58,8 @@ func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite 
 	hound_state = 0
 	hound_ticks = Config.randi_range(50, 90)
 	telegraph_ticks = 0
+	burn_ticks = 0
+	burn_damage = 0.0
 	_apply_sprite_frames()
 	queue_redraw()
 
@@ -64,6 +68,10 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 		return
 	if hit_flash_ticks > 0:
 		hit_flash_ticks -= 1
+	if burn_ticks > 0:
+		burn_ticks -= 1
+		if burn_ticks % Config.BURN_TICK_INTERVAL == 0:
+			apply_damage(burn_damage, Vector2.ZERO)
 	var to_player: Vector2 = player.position - position
 	var dist: float = max(0.001, to_player.length())
 	var dir: Vector2 = to_player / dist
@@ -99,6 +107,10 @@ func apply_damage(amount: float, impulse: Vector2) -> void:
 	if hp <= 0.0:
 		dead = true
 	queue_redraw()
+
+func apply_burn(ticks_count: int, per_tick_damage: float) -> void:
+	burn_ticks = max(burn_ticks, ticks_count)
+	burn_damage = max(burn_damage, per_tick_damage)
 
 func apply_lava_damage() -> void:
 	lava_ticks += 1

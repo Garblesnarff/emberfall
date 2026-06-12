@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"branding_iron"
+display_name = "Branding Iron"
+description = "Hits ignite enemies."
+max_level = 1
+tags = Array[StringName]([&"burn"])
+synergy_hints = Array[StringName]([&"detonating_brand", &"blast_furnace", &"crucible_breath"])

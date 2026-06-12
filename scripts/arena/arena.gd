@@ -8,6 +8,44 @@ const SPLITTER := preload("res://data/enemies/splitter.tres")
 const HOUND := preload("res://data/enemies/hound.tres")
 const KILNMAW := preload("res://data/enemies/kilnmaw.tres")
 const ARENA_LAYOUT := preload("res://data/arena_layout.tres")
+const FORGEHAMMER := preload("res://data/weapons/forgehammer.tres")
+const SLAG_LANCE := preload("res://data/weapons/slag_lance.tres")
+const EMBER_MAW := preload("res://data/weapons/ember_maw.tres")
+const TEMPERINGS := [
+	preload("res://data/temperings/hotter_steel.tres"),
+	preload("res://data/temperings/twin_hammers.tres"),
+	preload("res://data/temperings/bellows.tres"),
+	preload("res://data/temperings/quenched_legs.tres"),
+	preload("res://data/temperings/reforged_heart.tres"),
+	preload("res://data/temperings/piercing_slag.tres"),
+	preload("res://data/temperings/coiled_spring.tres"),
+	preload("res://data/temperings/ember_leech.tres"),
+	preload("res://data/temperings/nova_dash.tres"),
+	preload("res://data/temperings/slow_burn.tres"),
+	preload("res://data/temperings/killing_edge.tres"),
+	preload("res://data/temperings/branding_iron.tres"),
+	preload("res://data/temperings/chain_spark.tres"),
+	preload("res://data/temperings/orbiting_anvil.tres"),
+	preload("res://data/temperings/forgehammer_sharpen.tres"),
+	preload("res://data/temperings/slag_lance_sharpen.tres"),
+	preload("res://data/temperings/ember_maw_sharpen.tres"),
+]
+const SYNERGIES := [
+	preload("res://data/synergies/detonating_brand.tres"),
+	preload("res://data/synergies/arc_steel.tres"),
+	preload("res://data/synergies/bulwark_orbit.tres"),
+	preload("res://data/synergies/blast_furnace.tres"),
+	preload("res://data/synergies/overclocked_bellows.tres"),
+]
+const EVOLUTIONS := [
+	preload("res://data/evolutions/meteor_volley.tres"),
+	preload("res://data/evolutions/railspike.tres"),
+	preload("res://data/evolutions/crucible_breath.tres"),
+]
+const OBJ_EMBER_VEIN := preload("res://data/objectives/ember_vein.tres")
+const OBJ_BRAZIERS := preload("res://data/objectives/braziers.tres")
+const OBJ_ELITE_BOUNTY := preload("res://data/objectives/elite_bounty.tres")
+const OBJ_ANVIL_DEFENSE := preload("res://data/objectives/anvil_defense.tres")
 
 @onready var player: Node = %Player
 @onready var player_bullets: Node = %PlayerBullets
@@ -36,6 +74,22 @@ var scripted_move := Vector2.ZERO
 var scripted_aim := Vector2.ZERO
 var scripted_dash := false
 var objective_markers: Array[Vector2] = []
+var current_weapon: Resource = FORGEHAMMER
+var weapon_fire_ticks := 0
+var tempering_levels: Dictionary = {}
+var active_synergies: Dictionary = {}
+var active_evolutions: Dictionary = {}
+var drops: Array = []
+var chests: Array = []
+var current_objective: Dictionary = {}
+var objective_failure_log: Array[StringName] = []
+var ember_count := 0
+var offered_cards: Array = []
+var upgrade_panel_visible := false
+var standing_still_ticks := 0
+var anvil_hp := 0.0
+var anvil_target: Node2D
+var nova_dash_armed := false
 var debug_stats := {
 	"waves_cleared": [],
 	"spawned": {},
@@ -44,6 +98,14 @@ var debug_stats := {
 	"projectiles_blocked": 0,
 	"lava_ticks": 0,
 	"separation_skips": 0,
+	"objectives_completed": [],
+	"objectives_failed": [],
+	"chests_opened": 0,
+	"evolutions": {},
+	"synergies": {},
+	"weapons_tested": {},
+	"embers": 0,
+	"hearts_collected": 0,
 }
 
 func _ready() -> void:
@@ -53,8 +115,12 @@ func _ready() -> void:
 	EventBus.shake_requested.connect(_on_shake_requested)
 	EventBus.hitstop_requested.connect(_on_hitstop_requested)
 	_build_terrain()
+	anvil_target = Node2D.new()
+	anvil_target.position = ARENA_LAYOUT.central_anvil_position
+	add_child(anvil_target)
 	GameState.start_run(Config.run_seed)
 	player.reset(Config.WORLD_SIZE * 0.5)
+	select_weapon(&"forgehammer")
 	camera.global_position = player.global_position
 	_next_wave()
 
@@ -68,15 +134,30 @@ func _physics_process(_delta: float) -> void:
 		return
 	var input_vector: Vector2 = scripted_move if scripted_input_enabled else input_router.movement_vector()
 	var aim_world: Vector2 = scripted_aim if scripted_input_enabled else input_router.aim_world_position(self, player.global_position, tick)
-	player.physics_tick(input_vector, aim_world, player_bullets, scripted_dash)
+	player.physics_tick(input_vector, aim_world, player_bullets, scripted_dash, true)
 	scripted_dash = false
+	if player.dashing_ticks > 0 and player.nova:
+		nova_dash_armed = true
+	if nova_dash_armed and player.dashing_ticks <= 0:
+		nova_dash_armed = false
+		_explode_enemy(player.position, player.damage * player.damage_mult * Config.BLAST_FURNACE_DAMAGE_FACTOR, Config.BLAST_FURNACE_RADIUS)
+		if active_synergies.has(&"blast_furnace"):
+			for enemy in enemies:
+				if enemy.position.distance_to(player.position) <= Config.BLAST_FURNACE_RADIUS + enemy.radius:
+					enemy.apply_burn(120, player.damage * Config.BURN_DAMAGE_FACTOR)
+	_tick_player_weapon(input_vector, aim_world)
 	grid.rebuild(enemies)
 	_tick_spawning()
 	_tick_boss_telegraph()
 	_tick_bullets()
 	_tick_enemies()
 	_tick_lava()
+	_tick_orbits()
+	_tick_drops()
+	_tick_chests()
+	_tick_objective()
 	_tick_player_touch_damage()
+	_tick_regen()
 	_tick_combo()
 	_check_wave_clear_or_death()
 	_update_camera(aim_world)
@@ -98,13 +179,23 @@ func _draw() -> void:
 		draw_arc(Vector2(pillar.x, pillar.y), pillar.z, 0.0, TAU, 48, Color(1.0, 0.682, 0.259, 0.22), 3.0)
 	draw_circle(ARENA_LAYOUT.central_anvil_position, 48.0, Color(1.0, 0.368, 0.169, 0.22))
 	draw_arc(ARENA_LAYOUT.central_anvil_position, 54.0, 0.0, TAU, 48, Color(1.0, 0.682, 0.259, 0.45), 3.0)
+	if anvil_hp > 0.0:
+		draw_arc(ARENA_LAYOUT.central_anvil_position, 72.0, 0.0, TAU, 48, Color(0.48, 0.88, 0.52, 0.55), 4.0)
 	draw_rect(Rect2(Vector2.ZERO, Config.WORLD_SIZE), Color(1.0, 0.682, 0.259, 0.28), false, 10.0)
 	if boss_telegraph_ticks > 0:
 		draw_arc(pending_boss_pos, 72.0 + sin(tick * 0.16) * 9.0, 0.0, TAU, 64, Color(1.0, 0.91, 0.77, 0.8), 4.0)
+	for marker in objective_markers:
+		draw_arc(marker, Config.OBJECTIVE_MARKER_RADIUS, 0.0, TAU, 48, Color(0.48, 0.88, 0.52, 0.65), 3.0)
+	for drop in drops:
+		var col := Color(0.49, 0.88, 0.52) if drop.type == &"heart" else Color(1.0, 0.682, 0.259)
+		draw_circle(drop.position, 8.0, col)
+	for chest in chests:
+		draw_rect(Rect2(chest.position - Vector2(12, 9), Vector2(24, 18)), Color(1.0, 0.682, 0.259, 0.9))
 
 func _next_wave() -> void:
 	GameState.wave += 1
 	spawn_queue.clear()
+	_start_objective_for_wave(GameState.wave)
 	var count: int = min(Config.WAVE_BASE_COUNT + floori(GameState.wave * Config.WAVE_COUNT_PER_WAVE), Config.WAVE_COUNT_CAP)
 	for i in range(count):
 		var roll := Config.rng.randf()
@@ -124,6 +215,75 @@ func _next_wave() -> void:
 		boss_telegraph_ticks = Config.BOSS_TELEGRAPH_TICKS
 	spawn_ticks = Config.SPAWN_INITIAL_DELAY_TICKS
 	wave_active = true
+
+func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2) -> void:
+	if input_vector.length_squared() < 0.01:
+		standing_still_ticks += 1
+	else:
+		standing_still_ticks = 0
+	weapon_fire_ticks -= 1
+	var effective_rate: int = _effective_weapon_rate()
+	if weapon_fire_ticks > 0:
+		return
+	weapon_fire_ticks = effective_rate
+	var dir: Vector2 = (aim_world - player.position).normalized()
+	if dir.length_squared() <= 0.001:
+		dir = Vector2.RIGHT
+	var weapon_id: StringName = current_weapon.id
+	debug_stats.weapons_tested[weapon_id] = debug_stats.weapons_tested.get(weapon_id, 0) + 1
+	if current_weapon.pattern == "projectile":
+		_fire_projectile_weapon(dir)
+	elif current_weapon.pattern == "cone":
+		_fire_cone_weapon(dir)
+	elif current_weapon.pattern == "beam":
+		_fire_beam_weapon(dir)
+	elif current_weapon.pattern == "meteor":
+		_fire_meteor_weapon(aim_world)
+	EventBus.shake_requested.emit(Config.SHAKE_SHOT)
+
+func _effective_weapon_rate() -> int:
+	var mult: float = player.fire_rate_mult
+	if active_synergies.has(&"overclocked_bellows") and standing_still_ticks >= Config.OVERCLOCK_STILL_TICKS:
+		mult *= Config.OVERCLOCK_FIRE_RATE_MULT
+	var rate := int(round(float(current_weapon.fire_rate_ticks) * mult))
+	return max(3, rate)
+
+func _weapon_damage() -> float:
+	return current_weapon.damage * player.damage_mult
+
+func _fire_projectile_weapon(dir: Vector2) -> void:
+	var shots: int = current_weapon.shots + player.weapon_shots_bonus
+	var spread: float = current_weapon.spread_radians
+	var base_damage: float = _weapon_damage()
+	var total_pierce: int = current_weapon.pierce + player.pierce_bonus + (1 if active_synergies.has(&"arc_steel") else 0)
+	for i in range(max(1, shots)):
+		var off: float = (float(i) - (float(max(1, shots)) - 1.0) * 0.5) * spread
+		var d: Vector2 = dir.rotated(off)
+		player_bullets.spawn(player.position + d * 14.0, d * current_weapon.projectile_speed, base_damage, current_weapon.projectile_life_ticks, current_weapon.projectile_radius, total_pierce)
+
+func _fire_cone_weapon(dir: Vector2) -> void:
+	for enemy in enemies:
+		var to_enemy: Vector2 = enemy.position - player.position
+		if to_enemy.length() > current_weapon.cone_range + enemy.radius:
+			continue
+		if abs(dir.angle_to(to_enemy.normalized())) <= current_weapon.cone_angle_radians * 0.5:
+			enemy.apply_damage(_weapon_damage(), dir * 3.0)
+			if current_weapon.burn_ticks > 0 or player.burn:
+				enemy.apply_burn(max(current_weapon.burn_ticks, 120), _weapon_damage() * Config.BURN_DAMAGE_FACTOR)
+
+func _fire_beam_weapon(dir: Vector2) -> void:
+	for enemy in enemies:
+		var rel: Vector2 = enemy.position - player.position
+		if rel.dot(dir) < 0:
+			continue
+		var side_dist: float = abs(rel.cross(dir))
+		if side_dist <= Config.RAILSPIKE_WIDTH + enemy.radius:
+			enemy.apply_damage(_weapon_damage(), dir * 6.0)
+
+func _fire_meteor_weapon(target_pos: Vector2) -> void:
+	for enemy in enemies:
+		if enemy.position.distance_to(target_pos) <= Config.METEOR_RADIUS + enemy.radius:
+			enemy.apply_damage(_weapon_damage(), Vector2.ZERO)
 
 func _tick_spawning() -> void:
 	if spawn_queue.is_empty() or enemies.size() >= Config.ACTIVE_ENEMY_CAP:
@@ -185,15 +345,54 @@ func _tick_bullets() -> void:
 	for hit in result.enemy_hits:
 		var enemy: Node = hit.enemy
 		if is_instance_valid(enemy):
-			enemy.apply_damage(hit.damage, hit.velocity)
+			var hit_damage: float = hit.damage
+			if Config.rng.randf() < player.crit:
+				hit_damage *= 2.5
+			enemy.apply_damage(hit_damage, hit.velocity)
+			if player.burn:
+				enemy.apply_burn(120, hit_damage * Config.BURN_DAMAGE_FACTOR)
+			if player.ricochet_bonus > 0 or active_synergies.has(&"arc_steel"):
+				_arc_to_nearby_enemy(enemy, hit_damage * 0.65)
 	enemy_bullets.physics_tick(bounds, grid, enemies, player, self)
+	if active_synergies.has(&"bulwark_orbit") and player.orbs > 0:
+		_eat_enemy_projectiles()
 	debug_stats.projectiles_blocked += max(0, before_player - player_bullets.active_count - result.enemy_hits.size())
 	debug_stats.projectiles_blocked += max(0, before_enemy - enemy_bullets.active_count)
+
+func _arc_to_nearby_enemy(source: Node, amount: float) -> void:
+	var best: Node = null
+	var best_dist := 300.0 * 300.0
+	for enemy in enemies:
+		if enemy == source or enemy.dead:
+			continue
+		var dist: float = source.position.distance_squared_to(enemy.position)
+		if dist < best_dist:
+			best_dist = dist
+			best = enemy
+	if best:
+		best.apply_damage(amount, Vector2.ZERO)
+
+func _eat_enemy_projectiles() -> void:
+	var i: int = enemy_bullets.active_count - 1
+	while i >= 0:
+		var eaten := false
+		for k in range(player.orbs):
+			var angle: float = player.orb_angle + TAU * float(k) / float(max(1, player.orbs))
+			var orb_pos: Vector2 = player.position + Vector2(cos(angle), sin(angle)) * 58.0
+			if enemy_bullets.positions[i].distance_to(orb_pos) < 24.0:
+				eaten = true
+				break
+		if eaten:
+			enemy_bullets._remove_at(i)
+		i -= 1
 
 func _tick_enemies() -> void:
 	for enemy in enemies:
 		var before_pattern: int = enemy.boss_pattern_index
-		enemy.physics_tick(player, enemy_bullets)
+		var target: Node2D = player
+		if _objective_type() == "anvil_defense" and enemy.position.distance_to(ARENA_LAYOUT.central_anvil_position) < Config.ANVIL_THREAT_RADIUS:
+			target = anvil_target
+		enemy.physics_tick(target, enemy_bullets)
 		if enemy.data and enemy.data.boss and enemy.boss_pattern_index != before_pattern:
 			var patterns: Dictionary = debug_stats.boss_patterns
 			var pattern_index: int = (enemy.boss_pattern_index - 1) % enemy.data.boss_patterns.size()
@@ -259,14 +458,315 @@ func _kill_enemy(index: int) -> void:
 	GameState.add_score(enemy.points)
 	EventBus.enemy_killed.emit(enemy.data)
 	EventBus.shake_requested.emit(Config.SHAKE_ELITE_KILL if enemy.elite else Config.SHAKE_KILL)
+	if player.lifesteal > 0.0:
+		player.hp = min(player.max_hp, player.hp + player.lifesteal)
+	if active_synergies.has(&"blast_furnace"):
+		player.dash_cooldown_ticks = max(0, player.dash_cooldown_ticks - int(round(float(player.feel.dash_cooldown_ticks) * Config.BLAST_FURNACE_DASH_REFUND)))
+	if active_synergies.has(&"detonating_brand") and enemy.burn_ticks > 0:
+		_explode_enemy(enemy.position, player.damage * Config.DETONATING_BRAND_DAMAGE_FACTOR, Config.DETONATING_BRAND_RADIUS)
+	_roll_drop(enemy)
 	if enemy.data.split_child_count > 0 and not enemy.child:
 		for i in range(enemy.data.split_child_count):
 			var angle := TAU * float(i) / float(enemy.data.split_child_count)
 			_spawn_enemy(CRAWLER, enemy.position + Vector2(cos(angle), sin(angle)) * Config.SPLITTER_CHILD_SPACING, true)
 	if enemy.data.boss:
 		EventBus.hitstop_requested.emit(Config.HITSTOP_BOSS_KILL_TICKS)
+		_spawn_chest(enemy.position, true)
+	if _objective_type() == "elite_bounty" and current_objective.get("target", null) == enemy:
+		GameState.add_score(current_objective.data.score_reward)
+		_spawn_chest(enemy.position, true)
+		_complete_objective()
 	enemies.remove_at(index)
 	enemy.queue_free()
+
+func _roll_drop(enemy: Node) -> void:
+	var heart_chance := Config.HEART_DROP_CHANCE
+	if enemy.elite:
+		heart_chance = Config.ELITE_HEART_DROP_CHANCE
+	if Config.rng.randf() < heart_chance:
+		drops.append({"type": &"heart", "position": enemy.position, "value": Config.DROP_HEART_HEAL})
+	elif Config.rng.randf() < Config.EMBER_DROP_CHANCE:
+		drops.append({"type": &"ember", "position": enemy.position, "value": 1})
+
+func _spawn_chest(pos: Vector2, guaranteed_evolution := false) -> void:
+	chests.append({"position": pos, "guaranteed_evolution": guaranteed_evolution})
+
+func _tick_drops() -> void:
+	var i := drops.size() - 1
+	while i >= 0:
+		var drop: Dictionary = drops[i]
+		var pos: Vector2 = drop.position
+		var dist := pos.distance_to(player.position)
+		if dist < Config.DROP_MAGNET_RADIUS:
+			pos = pos.move_toward(player.position, Config.DROP_MAGNET_PULL)
+			drop.position = pos
+			drops[i] = drop
+		if dist < Config.DROP_PICKUP_RADIUS:
+			if drop.type == &"heart":
+				player.hp = min(player.max_hp, player.hp + float(drop.value))
+				debug_stats.hearts_collected += 1
+			else:
+				ember_count += int(drop.value)
+				debug_stats.embers = ember_count
+				GameState.add_score(Config.DROP_EMBER_SCORE)
+			drops.remove_at(i)
+		i -= 1
+
+func _tick_chests() -> void:
+	var i := chests.size() - 1
+	while i >= 0:
+		var chest: Dictionary = chests[i]
+		if chest.position.distance_to(player.position) <= Config.CHEST_RADIUS + player.radius:
+			_open_chest(chest)
+			chests.remove_at(i)
+		i -= 1
+
+func _open_chest(_chest: Dictionary) -> void:
+	debug_stats.chests_opened += 1
+	var evolved := false
+	for evolution in EVOLUTIONS:
+		if _can_evolve(evolution):
+			current_weapon = evolution.evolved_weapon
+			active_evolutions[evolution.id] = true
+			debug_stats.evolutions[evolution.id] = debug_stats.evolutions.get(evolution.id, 0) + 1
+			EventBus.chest_opened.emit([evolution.id])
+			evolved = true
+			break
+	if not evolved:
+		offer_upgrades(3)
+
+func _can_evolve(evolution: Resource) -> bool:
+	if current_weapon.id != evolution.base_weapon:
+		return false
+	for req_id in evolution.requirements.keys():
+		if get_tempering_level(req_id) < int(evolution.requirements[req_id]):
+			return false
+	return true
+
+func _explode_enemy(pos: Vector2, amount: float, radius_value: float) -> void:
+	for enemy in enemies:
+		if enemy.position.distance_to(pos) <= radius_value + enemy.radius:
+			enemy.apply_damage(amount, Vector2.ZERO)
+
+func _tick_orbits() -> void:
+	if player.orbs <= 0:
+		return
+	player.orb_angle += 0.055
+	for k in range(player.orbs):
+		var angle: float = player.orb_angle + TAU * float(k) / float(player.orbs)
+		var orb_pos: Vector2 = player.position + Vector2(cos(angle), sin(angle)) * 58.0
+		for enemy in enemies:
+			if enemy.position.distance_to(orb_pos) <= enemy.radius + 10.0:
+				enemy.apply_damage(player.damage * player.damage_mult * 0.9, Vector2(cos(angle), sin(angle)) * 6.0)
+
+func _tick_regen() -> void:
+	if player.regen > 0.0 and tick % 120 == 0:
+		player.hp = min(player.max_hp, player.hp + player.regen)
+
+func _start_objective_for_wave(wave: int) -> void:
+	objective_markers.clear()
+	current_objective.clear()
+	anvil_hp = 0.0
+	if wave in [7, 13, 19]:
+		_start_objective(OBJ_ANVIL_DEFENSE)
+	elif wave % 3 == 1:
+		_start_objective(OBJ_EMBER_VEIN)
+	elif wave % 3 == 2:
+		_start_objective(OBJ_BRAZIERS)
+	elif wave % 3 == 0:
+		_start_objective(OBJ_ELITE_BOUNTY)
+
+func _start_objective(data: Resource) -> void:
+	current_objective = {"data": data, "done": false, "failed": false, "progress": 0, "markers": [], "lit": {}, "touched": false, "timer": data.duration_ticks}
+	if data.objective_type == "ember_vein":
+		var marker := _far_objective_position()
+		current_objective.markers = [marker]
+		objective_markers = [marker]
+	elif data.objective_type == "braziers":
+		var markers: Array[Vector2] = []
+		for i in range(data.marker_count):
+			markers.append(ARENA_LAYOUT.central_anvil_position + Vector2(cos(TAU * float(i) / float(data.marker_count)), sin(TAU * float(i) / float(data.marker_count))) * 520.0)
+		current_objective.markers = markers
+		objective_markers = markers
+	elif data.objective_type == "elite_bounty":
+		var target := _spawn_enemy(BRUTE, _far_objective_position())
+		target.elite = true
+		target.hp *= Config.ELITE_HP_MULT
+		target.max_hp = target.hp
+		current_objective.target = target
+		objective_markers = [target.position]
+	elif data.objective_type == "anvil_defense":
+		anvil_hp = Config.ANVIL_DEFENSE_START_HP + Config.ANVIL_DEFENSE_HP_PER_WAVE * GameState.wave
+		objective_markers = [ARENA_LAYOUT.central_anvil_position]
+
+func _tick_objective() -> void:
+	if current_objective.is_empty() or current_objective.get("done", false) or current_objective.get("failed", false):
+		return
+	var data: Resource = current_objective.data
+	if data.objective_type == "ember_vein":
+		_tick_ember_vein_objective(data)
+	elif data.objective_type == "braziers":
+		_tick_braziers_objective(data)
+	elif data.objective_type == "elite_bounty":
+		_tick_bounty_objective(data)
+	elif data.objective_type == "anvil_defense":
+		_tick_anvil_objective()
+
+func _tick_ember_vein_objective(data: Resource) -> void:
+	var marker: Vector2 = current_objective.markers[0]
+	if player.position.distance_to(marker) <= Config.OBJECTIVE_MARKER_RADIUS:
+		if not current_objective.touched:
+			current_objective.touched = true
+			for i in range(Config.OBJECTIVE_VEIN_ERUPT_COUNT):
+				_spawn_enemy(CRAWLER, marker + Vector2(cos(TAU * float(i) / Config.OBJECTIVE_VEIN_ERUPT_COUNT), sin(TAU * float(i) / Config.OBJECTIVE_VEIN_ERUPT_COUNT)) * 50.0)
+		current_objective.progress += 1
+	if int(current_objective.progress) >= data.channel_ticks:
+		player.hp = min(player.max_hp, player.hp + data.heart_reward)
+		ember_count += data.ember_reward
+		debug_stats.embers = ember_count
+		GameState.add_score(data.score_reward)
+		_complete_objective()
+
+func _tick_braziers_objective(data: Resource) -> void:
+	var markers: Array = current_objective.markers
+	for i in range(markers.size()):
+		if current_objective.lit.has(i):
+			continue
+		if player.position.distance_to(markers[i]) <= Config.OBJECTIVE_MARKER_RADIUS:
+			current_objective.progress = int(current_objective.get("progress", 0)) + 1
+			if int(current_objective.progress) >= data.channel_ticks:
+				current_objective.lit[i] = true
+				current_objective.progress = 0
+	if current_objective.lit.size() >= markers.size():
+		current_objective.bonus_tempering = Config.OBJECTIVE_BRAZIER_BONUS_CHOICES
+		_complete_objective()
+
+func _tick_bounty_objective(_data: Resource) -> void:
+	current_objective.timer = int(current_objective.timer) - 1
+	if not is_instance_valid(current_objective.get("target", null)):
+		_complete_objective()
+	elif int(current_objective.timer) <= 0:
+		_fail_objective()
+
+func _tick_anvil_objective() -> void:
+	for enemy in enemies:
+		if enemy.position.distance_to(ARENA_LAYOUT.central_anvil_position) <= enemy.radius + 56.0:
+			anvil_hp -= enemy.damage * 0.025
+	if anvil_hp <= 0.0:
+		_fail_objective()
+
+func _complete_objective() -> void:
+	current_objective.done = true
+	var id: StringName = current_objective.data.id
+	debug_stats.objectives_completed.append(id)
+	EventBus.objective_done.emit(id)
+	objective_markers.clear()
+
+func _fail_objective() -> void:
+	current_objective.failed = true
+	var id: StringName = current_objective.data.id
+	objective_failure_log.append(id)
+	debug_stats.objectives_failed.append(id)
+	objective_markers.clear()
+
+func _objective_type() -> String:
+	return "" if current_objective.is_empty() else String(current_objective.data.objective_type)
+
+func _far_objective_position() -> Vector2:
+	var angle := Config.randf_range(0.0, TAU)
+	var pos := ARENA_LAYOUT.central_anvil_position + Vector2(cos(angle), sin(angle)) * 820.0
+	return pos.clamp(Vector2(120, 120), ARENA_LAYOUT.world_size - Vector2(120, 120))
+
+func get_tempering_level(id: StringName) -> int:
+	return int(tempering_levels.get(id, 0))
+
+func apply_tempering(id: StringName) -> void:
+	var data := _tempering_by_id(id)
+	if data == null:
+		return
+	var next_level := get_tempering_level(id) + 1
+	tempering_levels[id] = min(next_level, data.max_level)
+	_apply_tempering_effect(id)
+	_update_synergies()
+
+func _apply_tempering_effect(id: StringName) -> void:
+	match id:
+		&"hotter_steel":
+			player.damage_mult *= 1.30
+		&"twin_hammers":
+			player.weapon_shots_bonus += 1
+			player.damage_mult *= 0.92
+		&"bellows":
+			player.fire_rate_mult *= 0.78
+		&"quenched_legs":
+			player.feel.speed *= 1.15
+		&"reforged_heart":
+			player.max_hp += 30.0
+			player.hp = player.max_hp
+		&"piercing_slag":
+			player.pierce_bonus += 1
+		&"coiled_spring":
+			player.feel.dash_cooldown_ticks = max(28, int(round(float(player.feel.dash_cooldown_ticks) * 0.65)))
+		&"ember_leech":
+			player.lifesteal += 1.0
+		&"nova_dash":
+			player.nova = true
+		&"slow_burn":
+			player.regen += 1.0
+		&"killing_edge":
+			player.crit += 0.15
+		&"branding_iron":
+			player.burn = true
+		&"chain_spark":
+			player.ricochet_bonus += 1
+		&"orbiting_anvil":
+			player.orbs += 1
+
+func _update_synergies() -> void:
+	for synergy in SYNERGIES:
+		if active_synergies.has(synergy.id):
+			continue
+		var ok := true
+		for req_id in synergy.requirements.keys():
+			if get_tempering_level(req_id) < int(synergy.requirements[req_id]):
+				ok = false
+				break
+		if ok:
+			active_synergies[synergy.id] = true
+			debug_stats.synergies[synergy.id] = debug_stats.synergies.get(synergy.id, 0) + 1
+
+func offer_upgrades(count := 3) -> Array:
+	offered_cards.clear()
+	for tempering in TEMPERINGS:
+		if tempering.unlocked and get_tempering_level(tempering.id) < tempering.max_level:
+			offered_cards.append(tempering)
+	offered_cards.shuffle()
+	offered_cards = offered_cards.slice(0, min(count, offered_cards.size()))
+	upgrade_panel_visible = true
+	return offered_cards
+
+func choose_upgrade(index := 0) -> void:
+	if index >= 0 and index < offered_cards.size():
+		apply_tempering(offered_cards[index].id)
+	upgrade_panel_visible = false
+
+func select_weapon(id: StringName) -> void:
+	if id == &"slag_lance":
+		current_weapon = SLAG_LANCE
+	elif id == &"ember_maw":
+		current_weapon = EMBER_MAW
+	else:
+		current_weapon = FORGEHAMMER
+	weapon_fire_ticks = 0
+
+func force_open_chest() -> void:
+	_open_chest({"position": player.position, "guaranteed_evolution": true})
+
+func _tempering_by_id(id: StringName) -> Resource:
+	for tempering in TEMPERINGS:
+		if tempering.id == id:
+			return tempering
+	return null
 
 func _tick_combo() -> void:
 	if combo_ticks > 0:
@@ -279,6 +779,13 @@ func _check_wave_clear_or_death() -> void:
 		GameState.end_run(false)
 	if wave_active and spawn_queue.is_empty() and enemies.is_empty():
 		wave_active = false
+		if not current_objective.is_empty() and not current_objective.get("done", false) and not current_objective.get("failed", false):
+			if _objective_type() == "anvil_defense":
+				player.max_hp += Config.ANVIL_DEFENSE_BLESSING_HP
+				player.hp = player.max_hp
+				_complete_objective()
+			else:
+				_fail_objective()
 		GameState.add_score(100 + GameState.wave * 20)
 		EventBus.wave_cleared.emit(GameState.wave)
 		debug_stats.waves_cleared.append(GameState.wave)

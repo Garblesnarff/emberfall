@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TemperingData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/TemperingData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"orbiting_anvil"
+display_name = "Orbiting Anvil"
+description = "+1 anvil circles you."
+max_level = 3
+tags = Array[StringName]([&"orbit"])
+synergy_hints = Array[StringName]([&"bulwark_orbit"])

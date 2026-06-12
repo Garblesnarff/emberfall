@@ -117,6 +117,7 @@ var debug_stats := {
 }
 
 func _ready() -> void:
+	Engine.time_scale = 1.0
 	input_router = InputRouterScript.new()
 	grid = SpatialGridScript.new()
 	add_child(input_router)
@@ -131,6 +132,9 @@ func _ready() -> void:
 	select_weapon(&"forgehammer")
 	camera.global_position = player.global_position
 	_next_wave()
+
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
 
 func _physics_process(_delta: float) -> void:
 	tick += 1
@@ -539,6 +543,7 @@ func _open_chest(_chest: Dictionary) -> void:
 	debug_stats.chests_opened += 1
 	var evolved := false
 	chest_reveal_ticks = Config.CHEST_REVEAL_TICKS
+	Engine.time_scale = Config.CHEST_REVEAL_SLOWMO_SCALE
 	chest_reveal_contents.clear()
 	for evolution in EVOLUTIONS:
 		if _can_evolve(evolution):
@@ -558,6 +563,7 @@ func _tick_chest_reveal() -> void:
 	chest_reveal_ticks -= 1
 	if chest_reveal_ticks <= 0:
 		chest_reveal_contents.clear()
+		Engine.time_scale = 1.0
 
 func _can_evolve(evolution: Resource) -> bool:
 	if current_weapon.id != evolution.base_weapon:
@@ -594,14 +600,16 @@ func _start_objective_for_wave(wave: int) -> void:
 	anvil_bonus_choices = 0
 	if wave in [7, 13, 19]:
 		_start_objective(OBJ_ANVIL_DEFENSE)
-	elif wave % Config.OBJECTIVE_NONE_EVERY_N_WAVES == 0:
-		current_objective = {"data": null, "done": true, "failed": false, "progress": 0, "markers": [], "lit": {}, "touched": false, "timer": 0, "none": true}
-	elif wave % 3 == 1:
-		_start_objective(OBJ_EMBER_VEIN)
-	elif wave % 3 == 2:
-		_start_objective(OBJ_BRAZIERS)
-	elif wave % 3 == 0:
-		_start_objective(OBJ_ELITE_BOUNTY)
+	else:
+		var slot: StringName = Config.OBJECTIVE_PATTERN[(wave - 1) % Config.OBJECTIVE_PATTERN.size()]
+		if slot == &"none":
+			current_objective = {"data": null, "done": true, "failed": false, "progress": 0, "markers": [], "lit": {}, "touched": false, "timer": 0, "none": true}
+		elif slot == &"ember_vein":
+			_start_objective(OBJ_EMBER_VEIN)
+		elif slot == &"braziers":
+			_start_objective(OBJ_BRAZIERS)
+		elif slot == &"elite_bounty":
+			_start_objective(OBJ_ELITE_BOUNTY)
 
 func _start_objective(data: Resource) -> void:
 	current_objective = {"data": data, "done": false, "failed": false, "progress": 0, "markers": [], "lit": {}, "touched": false, "timer": data.duration_ticks}

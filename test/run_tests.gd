@@ -211,8 +211,8 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena._check_wave_clear_or_death()
 	_assert_true(arena.debug_stats.objectives_failed.has(&"braziers"), "Braziers failure path records wave-end failure")
 	arena.choose_upgrade(0)
-	GameState.wave = 4
-	arena._start_objective_for_wave(4)
+	GameState.wave = 3
+	arena._start_objective_for_wave(3)
 	_assert_true(arena.current_objective.get("none", false), "objective schedule includes no-objective waves")
 	arena.drops.append({"type": &"heart", "position": arena.player.position, "value": Config.DROP_HEART_HEAL})
 	arena.drops.append({"type": &"ember", "position": arena.player.position, "value": 1})
@@ -239,6 +239,10 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena.force_open_chest()
 	_assert_true(arena.active_evolutions.has(&"meteor_volley"), "chest-to-evolution flow works")
 	_assert_true(arena.chest_reveal_ticks > 0, "chest reveal placeholder starts")
+	_assert_true(Engine.time_scale < 1.0, "chest reveal starts slow-mo")
+	arena.chest_reveal_ticks = 1
+	arena._tick_chest_reveal()
+	_assert_true(is_equal_approx(Engine.time_scale, 1.0), "chest reveal restores normal time")
 	arena.select_weapon(&"forgehammer")
 	arena.tempering_levels.clear()
 	arena.active_evolutions.clear()
@@ -260,13 +264,13 @@ func _test_phase3_objectives_and_rewards() -> void:
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)
-	_assert_true(result.waves_cleared.has(6), "Test 1 clears through wave 6")
+	_assert_true(result.waves_cleared.has(6), "Test 1 clears through wave 6: %s" % str(result))
 	_assert_true(result.spawned.get(&"crawler", 0) > 0, "Test 1 spawns crawlers")
 	_assert_true(result.spawned.get(&"brute", 0) > 0, "Test 1 spawns brutes")
 	_assert_true(result.spawned.get(&"spitter", 0) > 0, "Test 1 spawns spitters")
 	_assert_true(result.spawned.get(&"splitter", 0) > 0, "Test 1 spawns splitters")
 	_assert_true(result.spawned.get(&"hound", 0) > 0, "Test 1 spawns hounds")
-	_assert_true(result.boss_spawned, "Test 1 spawns Kilnmaw")
+	_assert_true(result.boss_spawned, "Test 1 spawns Kilnmaw: %s" % str(result))
 	_assert_true(result.boss_patterns.get(&"ring", 0) > 0, "Kilnmaw uses ring pattern")
 	_assert_true(result.boss_patterns.get(&"fan", 0) > 0, "Kilnmaw uses aimed fan pattern")
 	_assert_true(result.boss_patterns.get(&"charge", 0) > 0, "Kilnmaw uses charge pattern")
@@ -300,16 +304,16 @@ func _run_scripted_phase2_sample(seed_value: int, require_wave6_clear: bool) -> 
 	get_tree().root.add_child(arena)
 	arena.player.max_hp = 2000.0
 	arena.player.hp = 2000.0
-	arena.player.damage = 160.0
-	var max_ticks := 36000 if require_wave6_clear else 22000
+	arena.player.damage_mult = 16.0
+	var max_ticks := 60000 if require_wave6_clear else 22000
 	for i in range(max_ticks):
 		_script_arena_input(arena, i)
 		if GameState.state == GameState.RunState.UPGRADE:
 			arena.choose_upgrade(0)
 		if arena.debug_stats.boss_spawned and not _boss_patterns_complete(arena.debug_stats.boss_patterns):
-			arena.player.damage = 0.0
+			arena.player.damage_mult = 0.0
 		else:
-			arena.player.damage = 220.0
+			arena.player.damage_mult = 52.0 if require_wave6_clear else 22.0
 		arena.player.hp = max(arena.player.hp, 1200.0)
 		await get_tree().physics_frame
 		if GameState.state == GameState.RunState.UPGRADE:
@@ -339,13 +343,18 @@ func _run_scripted_phase2_sample(seed_value: int, require_wave6_clear: bool) -> 
 func _script_arena_input(arena: Node, tick: int) -> void:
 	var player_pos: Vector2 = arena.player.position
 	var target = _nearest_enemy(arena, player_pos)
+	if arena._objective_type() == "elite_bounty" and is_instance_valid(arena.current_objective.get("target", null)):
+		target = arena.current_objective.target
 	var aim := player_pos + Vector2.RIGHT * 100.0
 	var move := Vector2.ZERO
 	if is_instance_valid(target):
 		aim = target.position
 		var away: Vector2 = player_pos - target.position
-		var tangential := away.orthogonal().normalized()
-		move = (away.normalized() * 0.65 + tangential * 0.35).normalized()
+		if away.length() > 520.0:
+			move = (-away).normalized()
+		else:
+			var tangential := away.orthogonal().normalized()
+			move = (away.normalized() * 0.65 + tangential * 0.35).normalized()
 	else:
 		var orbit_angle := float(tick) * 0.025
 		var anchor := Config.WORLD_SIZE * 0.5 + Vector2(cos(orbit_angle), sin(orbit_angle)) * 220.0

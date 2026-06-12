@@ -101,7 +101,7 @@ const CHEST_REVEAL_TICKS := 72
 const UPGRADE_PICK_COUNT := 3
 
 const OBJECTIVE_MARKER_RADIUS := 42.0
-const OBJECTIVE_NONE_EVERY_N_WAVES := 4
+const OBJECTIVE_PATTERN := [&"ember_vein", &"braziers", &"none", &"elite_bounty", &"ember_vein", &"none"]
 const OBJECTIVE_VEIN_ERUPT_COUNT := 6
 const OBJECTIVE_BRAZIER_BONUS_CHOICES := 1
 const OBJECTIVE_BOUNTY_DESPAWN_TICKS := 2700

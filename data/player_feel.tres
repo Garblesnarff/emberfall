@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PlayerFeelData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/PlayerFeelData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+hp = 100.0
+radius = 11.0
+speed = 3.3
+damage = 10.0
+fire_rate_ticks = 11
+projectile_speed = 9.5
+projectile_life_ticks = 80
+dash_cooldown_ticks = 90
+dash_duration_ticks = 9
+dash_speed_per_tick = 13.0
+dash_iframe_ticks = 14
+hurt_iframe_ticks = 40
+bullet_hurt_iframe_ticks = 35

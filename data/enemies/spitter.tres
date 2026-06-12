@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"spitter"
+display_name = "Spitter"
+ai_profile = &"kite"
+radius = 13.0
+hp = 22.0
+speed_min = 1.2
+speed_max = 1.2
+damage = 6.0
+points = 20
+color = Color(0.290196, 0.639216, 0.721569, 1)
+projectile_speed = 4.4
+projectile_radius = 5.0
+projectile_life_ticks = 200
+fire_cooldown_min_ticks = 80
+fire_cooldown_max_ticks = 130
+preferred_range = 270.0
+retreat_range = 210.0
+placeholder_sides = 4

@@ -1,0 +1,17 @@
+# Godot
+.godot/
+*.translation
+
+# Exports and local builds
+builds/
+exports/
+*.pck
+
+# OS/editor noise
+.DS_Store
+*.swp
+*.tmp
+
+# Local runtime saves/logs
+user://
+*.log

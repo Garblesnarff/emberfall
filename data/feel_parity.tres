@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FeelParityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/FeelParityData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+grid_cell_size = 80.0
+shake_decay = 0.85
+dash_duration_ticks = 9
+dash_speed_per_tick = 13.0
+dash_iframe_ticks = 14
+fire_rate_ticks = 11
+projectile_speed = 9.5
+player_hurt_hitstop_ticks = 4
+boss_kill_hitstop_ticks = 8

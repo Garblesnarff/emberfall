@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"brute"
+display_name = "Brute"
+ai_profile = &"chase"
+radius = 22.0
+hp = 62.0
+speed_min = 0.85
+speed_max = 0.85
+damage = 18.0
+points = 25
+color = Color(0.788235, 0.227451, 0.113725, 1)
+placeholder_sides = 7

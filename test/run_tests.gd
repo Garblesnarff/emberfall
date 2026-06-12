@@ -136,10 +136,13 @@ func _test_deck_resolution_hud_layout() -> void:
 	separated = separated and not center.get_global_rect().intersects(right.get_global_rect())
 	separated = separated and not right.get_global_rect().intersects(minimap.get_global_rect())
 	hud.set_world_state(Vector2(1600, 1200), Vector2(1600, 1200), [], Config.WORLD_SIZE, Vector2.INF, [Vector2(3100, 2300)])
+	hud.set_phase3_state("Forgehammer", 12, "Ember Vein", 0.0, [preload("res://data/temperings/hotter_steel.tres")], "")
 	await get_tree().process_frame
 	_assert_true(inside, "HUD elements fit inside 1280x800 Deck viewport")
 	_assert_true(separated, "HUD regions do not overlap at 1280x800")
 	_assert_true(hud.threat_chevrons.last_drawn_count > 0, "objective threat placeholders can draw edge chevrons")
+	_assert_true(hud.phase3_label.text.contains("EMBERS 12"), "HUD exposes Phase 3 ember readout")
+	_assert_true(hud.upgrade_label.visible, "HUD exposes placeholder upgrade choices")
 	hud.queue_free()
 	await get_tree().process_frame
 
@@ -179,10 +182,38 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena.current_objective.timer = 1
 	arena._tick_objective()
 	_assert_true(arena.debug_stats.objectives_failed.has(&"elite_bounty"), "Distant Elite Bounty failure path records timeout")
+	arena._start_objective(ObjBounty)
+	var bounty_target: Node = arena.current_objective.target
+	bounty_target.hp = 0.0
+	bounty_target.dead = true
+	arena._tick_enemies()
+	_assert_true(arena.debug_stats.objectives_completed.has(&"elite_bounty"), "Distant Elite Bounty success path records completion")
+	_assert_true(arena.chests.size() > 0, "Distant Elite Bounty success drops a chest")
 	arena._start_objective(ObjAnvil)
 	arena.anvil_hp = 0.0
 	arena._tick_objective()
 	_assert_true(arena.debug_stats.objectives_failed.has(&"anvil_defense"), "Anvil Defense failure path records anvil break")
+	arena._start_objective(ObjVein)
+	arena.spawn_queue.clear()
+	for enemy_node in arena.enemies:
+		enemy_node.queue_free()
+	arena.enemies.clear()
+	arena.wave_active = true
+	arena._check_wave_clear_or_death()
+	_assert_true(arena.debug_stats.objectives_failed.has(&"ember_vein"), "Ember Vein failure path records wave-end failure")
+	arena.choose_upgrade(0)
+	arena._start_objective(ObjBraziers)
+	arena.spawn_queue.clear()
+	for enemy_node in arena.enemies:
+		enemy_node.queue_free()
+	arena.enemies.clear()
+	arena.wave_active = true
+	arena._check_wave_clear_or_death()
+	_assert_true(arena.debug_stats.objectives_failed.has(&"braziers"), "Braziers failure path records wave-end failure")
+	arena.choose_upgrade(0)
+	GameState.wave = 4
+	arena._start_objective_for_wave(4)
+	_assert_true(arena.current_objective.get("none", false), "objective schedule includes no-objective waves")
 	arena.drops.append({"type": &"heart", "position": arena.player.position, "value": Config.DROP_HEART_HEAL})
 	arena.drops.append({"type": &"ember", "position": arena.player.position, "value": 1})
 	var score_before: int = GameState.score
@@ -207,6 +238,23 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena.apply_tempering(&"twin_hammers")
 	arena.force_open_chest()
 	_assert_true(arena.active_evolutions.has(&"meteor_volley"), "chest-to-evolution flow works")
+	_assert_true(arena.chest_reveal_ticks > 0, "chest reveal placeholder starts")
+	arena.select_weapon(&"forgehammer")
+	arena.tempering_levels.clear()
+	arena.active_evolutions.clear()
+	arena.force_open_chest()
+	_assert_true(arena.upgrade_panel_visible, "non-evolution chest offers upgrade cards")
+	_assert_true(arena.offered_cards.size() > 0, "chest-to-tempering flow has card choices")
+	arena.choose_upgrade(0)
+	arena._start_objective(ObjAnvil)
+	arena._complete_objective()
+	arena.spawn_queue.clear()
+	for enemy_node in arena.enemies:
+		enemy_node.queue_free()
+	arena.enemies.clear()
+	arena.wave_active = true
+	arena._check_wave_clear_or_death()
+	_assert_true(arena.upgrade_panel_visible and arena.offered_cards.size() == 4, "Anvil Defense survival offers a fourth card")
 	arena.queue_free()
 	await get_tree().process_frame
 
@@ -256,12 +304,16 @@ func _run_scripted_phase2_sample(seed_value: int, require_wave6_clear: bool) -> 
 	var max_ticks := 36000 if require_wave6_clear else 22000
 	for i in range(max_ticks):
 		_script_arena_input(arena, i)
+		if GameState.state == GameState.RunState.UPGRADE:
+			arena.choose_upgrade(0)
 		if arena.debug_stats.boss_spawned and not _boss_patterns_complete(arena.debug_stats.boss_patterns):
 			arena.player.damage = 0.0
 		else:
 			arena.player.damage = 220.0
 		arena.player.hp = max(arena.player.hp, 1200.0)
 		await get_tree().physics_frame
+		if GameState.state == GameState.RunState.UPGRADE:
+			arena.choose_upgrade(0)
 		if require_wave6_clear and arena.debug_stats.waves_cleared.has(6):
 			break
 		if not require_wave6_clear and arena.debug_stats.waves_cleared.has(6):

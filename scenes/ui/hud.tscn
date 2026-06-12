@@ -76,7 +76,7 @@ anchors_preset = -1
 anchor_left = 0.78
 anchor_top = 0.02
 anchor_right = 0.98
-anchor_bottom = 0.16
+anchor_bottom = 0.28
 
 [node name="ScoreLabel" type="Label" parent="Right"]
 unique_name_in_owner = true
@@ -89,6 +89,24 @@ unique_name_in_owner = true
 layout_mode = 2
 text = ""
 horizontal_alignment = 2
+
+[node name="Phase3Label" type="Label" parent="Right"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Forgehammer\nEMBERS 0"
+horizontal_alignment = 2
+
+[node name="UpgradeLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.34
+anchor_top = 0.72
+anchor_right = 0.66
+anchor_bottom = 0.94
+horizontal_alignment = 1
+vertical_alignment = 1
+visible = false
 
 [node name="Minimap" type="Control" parent="."]
 unique_name_in_owner = true

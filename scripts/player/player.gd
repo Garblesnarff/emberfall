@@ -26,10 +26,14 @@ var burn := false
 var nova := false
 var orbs := 0
 var orb_angle := 0.0
+var thorns := 0.0
+var magnet_mult := 1.0
+var second_wind_ready := false
 
 func _ready() -> void:
 	if feel == null:
 		feel = load("res://data/player_feel.tres")
+	feel = feel.duplicate(true)
 	reset(Vector2(Config.WORLD_SIZE.x * 0.5, Config.WORLD_SIZE.y * 0.5))
 
 func reset(pos: Vector2) -> void:
@@ -50,6 +54,9 @@ func reset(pos: Vector2) -> void:
 	nova = false
 	orbs = 0
 	orb_angle = 0.0
+	thorns = 0.0
+	magnet_mult = 1.0
+	second_wind_ready = false
 	fire_ticks = 0
 	dash_cooldown_ticks = 0
 	dashing_ticks = 0
@@ -91,6 +98,9 @@ func apply_damage(amount: float, source: Variant, iframe_ticks := Config.PLAYER_
 	if invulnerable_ticks > 0 or dashing_ticks > 0:
 		return
 	hp = max(0.0, hp - amount)
+	if hp <= 0.0 and second_wind_ready:
+		second_wind_ready = false
+		hp = max_hp * 0.45
 	invulnerable_ticks = iframe_ticks
 	GameState.set_combo(0)
 	EventBus.player_hurt.emit(amount, source)

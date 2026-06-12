@@ -29,6 +29,9 @@ const TEMPERINGS := [
 	preload("res://data/temperings/forgehammer_sharpen.tres"),
 	preload("res://data/temperings/slag_lance_sharpen.tres"),
 	preload("res://data/temperings/ember_maw_sharpen.tres"),
+	preload("res://data/temperings/thorns.tres"),
+	preload("res://data/temperings/magnet_coil.tres"),
+	preload("res://data/temperings/second_wind.tres"),
 ]
 const SYNERGIES := [
 	preload("res://data/synergies/detonating_brand.tres"),
@@ -86,8 +89,13 @@ var objective_failure_log: Array[StringName] = []
 var ember_count := 0
 var offered_cards: Array = []
 var upgrade_panel_visible := false
+var pending_next_wave := false
+var pending_upgrade_reason: StringName = &""
+var chest_reveal_ticks := 0
+var chest_reveal_contents: Array = []
 var standing_still_ticks := 0
 var anvil_hp := 0.0
+var anvil_bonus_choices := 0
 var anvil_target: Node2D
 var nova_dash_armed := false
 var debug_stats := {
@@ -131,6 +139,9 @@ func _physics_process(_delta: float) -> void:
 		_update_camera_shake_only()
 		return
 	if GameState.state != GameState.RunState.PLAY:
+		if GameState.state == GameState.RunState.UPGRADE:
+			_tick_chest_reveal()
+			_update_hud()
 		return
 	var input_vector: Vector2 = scripted_move if scripted_input_enabled else input_router.movement_vector()
 	var aim_world: Vector2 = scripted_aim if scripted_input_enabled else input_router.aim_world_position(self, player.global_position, tick)
@@ -155,6 +166,7 @@ func _physics_process(_delta: float) -> void:
 	_tick_orbits()
 	_tick_drops()
 	_tick_chests()
+	_tick_chest_reveal()
 	_tick_objective()
 	_tick_player_touch_damage()
 	_tick_regen()
@@ -429,6 +441,8 @@ func _tick_player_touch_damage() -> void:
 		var rr: float = enemy.radius + player.radius
 		if enemy.position.distance_squared_to(player.position) < rr * rr:
 			player.apply_damage(enemy.damage, enemy, Config.PLAYER_HURT_IFRAME_TICKS)
+			if player.thorns > 0.0:
+				enemy.apply_damage(enemy.damage * player.thorns, Vector2.ZERO)
 			var away: Vector2 = (player.position - enemy.position).normalized()
 			player.position += away * Config.PLAYER_KNOCKBACK
 			return
@@ -497,8 +511,8 @@ func _tick_drops() -> void:
 		var drop: Dictionary = drops[i]
 		var pos: Vector2 = drop.position
 		var dist := pos.distance_to(player.position)
-		if dist < Config.DROP_MAGNET_RADIUS:
-			pos = pos.move_toward(player.position, Config.DROP_MAGNET_PULL)
+		if dist < Config.DROP_MAGNET_RADIUS * player.magnet_mult:
+			pos = pos.move_toward(player.position, Config.DROP_MAGNET_PULL * player.magnet_mult)
 			drop.position = pos
 			drops[i] = drop
 		if dist < Config.DROP_PICKUP_RADIUS:
@@ -524,16 +538,26 @@ func _tick_chests() -> void:
 func _open_chest(_chest: Dictionary) -> void:
 	debug_stats.chests_opened += 1
 	var evolved := false
+	chest_reveal_ticks = Config.CHEST_REVEAL_TICKS
+	chest_reveal_contents.clear()
 	for evolution in EVOLUTIONS:
 		if _can_evolve(evolution):
 			current_weapon = evolution.evolved_weapon
 			active_evolutions[evolution.id] = true
 			debug_stats.evolutions[evolution.id] = debug_stats.evolutions.get(evolution.id, 0) + 1
 			EventBus.chest_opened.emit([evolution.id])
+			chest_reveal_contents = [evolution.display_name]
 			evolved = true
 			break
 	if not evolved:
-		offer_upgrades(3)
+		offer_upgrades(Config.UPGRADE_PICK_COUNT, &"chest")
+
+func _tick_chest_reveal() -> void:
+	if chest_reveal_ticks <= 0:
+		return
+	chest_reveal_ticks -= 1
+	if chest_reveal_ticks <= 0:
+		chest_reveal_contents.clear()
 
 func _can_evolve(evolution: Resource) -> bool:
 	if current_weapon.id != evolution.base_weapon:
@@ -567,8 +591,11 @@ func _start_objective_for_wave(wave: int) -> void:
 	objective_markers.clear()
 	current_objective.clear()
 	anvil_hp = 0.0
+	anvil_bonus_choices = 0
 	if wave in [7, 13, 19]:
 		_start_objective(OBJ_ANVIL_DEFENSE)
+	elif wave % Config.OBJECTIVE_NONE_EVERY_N_WAVES == 0:
+		current_objective = {"data": null, "done": true, "failed": false, "progress": 0, "markers": [], "lit": {}, "touched": false, "timer": 0, "none": true}
 	elif wave % 3 == 1:
 		_start_objective(OBJ_EMBER_VEIN)
 	elif wave % 3 == 2:
@@ -660,6 +687,8 @@ func _complete_objective() -> void:
 	var id: StringName = current_objective.data.id
 	debug_stats.objectives_completed.append(id)
 	EventBus.objective_done.emit(id)
+	if id == &"anvil_defense":
+		anvil_bonus_choices = 1
 	objective_markers.clear()
 
 func _fail_objective() -> void:
@@ -670,7 +699,18 @@ func _fail_objective() -> void:
 	objective_markers.clear()
 
 func _objective_type() -> String:
-	return "" if current_objective.is_empty() else String(current_objective.data.objective_type)
+	if current_objective.is_empty() or current_objective.get("none", false):
+		return ""
+	return String(current_objective.data.objective_type)
+
+func _objective_status_text() -> String:
+	if current_objective.is_empty() or current_objective.get("none", false):
+		return "NO OBJECTIVE"
+	if current_objective.get("done", false):
+		return "OBJECTIVE DONE"
+	if current_objective.get("failed", false):
+		return "OBJECTIVE FAILED"
+	return current_objective.data.display_name
 
 func _far_objective_position() -> Vector2:
 	var angle := Config.randf_range(0.0, TAU)
@@ -721,6 +761,12 @@ func _apply_tempering_effect(id: StringName) -> void:
 			player.ricochet_bonus += 1
 		&"orbiting_anvil":
 			player.orbs += 1
+		&"thorns":
+			player.thorns += 0.2
+		&"magnet_coil":
+			player.magnet_mult *= 1.35
+		&"second_wind":
+			player.second_wind_ready = true
 
 func _update_synergies() -> void:
 	for synergy in SYNERGIES:
@@ -735,20 +781,31 @@ func _update_synergies() -> void:
 			active_synergies[synergy.id] = true
 			debug_stats.synergies[synergy.id] = debug_stats.synergies.get(synergy.id, 0) + 1
 
-func offer_upgrades(count := 3) -> Array:
+func offer_upgrades(count := Config.UPGRADE_PICK_COUNT, reason: StringName = &"wave") -> Array:
 	offered_cards.clear()
 	for tempering in TEMPERINGS:
 		if tempering.unlocked and get_tempering_level(tempering.id) < tempering.max_level:
 			offered_cards.append(tempering)
-	offered_cards.shuffle()
+	for i in range(offered_cards.size() - 1, 0, -1):
+		var j := Config.rng.randi_range(0, i)
+		var temp: Resource = offered_cards[i]
+		offered_cards[i] = offered_cards[j]
+		offered_cards[j] = temp
 	offered_cards = offered_cards.slice(0, min(count, offered_cards.size()))
 	upgrade_panel_visible = true
+	pending_upgrade_reason = reason
+	GameState.state = GameState.RunState.UPGRADE
 	return offered_cards
 
 func choose_upgrade(index := 0) -> void:
 	if index >= 0 and index < offered_cards.size():
 		apply_tempering(offered_cards[index].id)
 	upgrade_panel_visible = false
+	offered_cards.clear()
+	GameState.state = GameState.RunState.PLAY
+	if pending_next_wave:
+		pending_next_wave = false
+		_next_wave()
 
 func select_weapon(id: StringName) -> void:
 	if id == &"slag_lance":
@@ -789,7 +846,10 @@ func _check_wave_clear_or_death() -> void:
 		GameState.add_score(100 + GameState.wave * 20)
 		EventBus.wave_cleared.emit(GameState.wave)
 		debug_stats.waves_cleared.append(GameState.wave)
-		_next_wave()
+		pending_next_wave = true
+		var offer_count := Config.UPGRADE_PICK_COUNT + anvil_bonus_choices
+		if offer_upgrades(offer_count, &"wave").is_empty():
+			choose_upgrade(-1)
 
 func _update_camera(aim_world: Vector2) -> void:
 	if camera.has_method("physics_tick"):
@@ -811,6 +871,25 @@ func _update_hud() -> void:
 		hud.set_values(player.hp, player.max_hp, player.dash_ready_ratio(), GameState.wave, spawn_queue.size() + enemies.size(), GameState.score, GameState.kills, GameState.combo)
 	if hud.has_method("set_world_state"):
 		hud.set_world_state(player.position, camera.global_position, enemies, ARENA_LAYOUT.world_size, pending_boss_pos if boss_telegraph_ticks > 0 else Vector2.INF, objective_markers)
+	if hud.has_method("set_phase3_state"):
+		var cards := offered_cards if upgrade_panel_visible else []
+		var chest_text := ""
+		if chest_reveal_ticks > 0:
+			var content_text := ""
+			for content in chest_reveal_contents:
+				if content_text != "":
+					content_text += ", "
+				content_text += str(content)
+			chest_text = "CHEST: %s" % (content_text if content_text != "" else "TEMPERING")
+		hud.set_phase3_state(current_weapon.display_name, ember_count, _objective_status_text(), anvil_hp, cards, chest_text)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if GameState.state != GameState.RunState.UPGRADE or not event.is_pressed():
+		return
+	if event is InputEventKey:
+		var key := event as InputEventKey
+		if key.keycode >= KEY_1 and key.keycode <= KEY_4:
+			choose_upgrade(key.keycode - KEY_1)
 
 func _on_shake_requested(strength: float) -> void:
 	shake = max(shake, strength * Config.screen_shake_scale)

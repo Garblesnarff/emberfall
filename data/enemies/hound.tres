@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"hound"
+display_name = "Hound"
+ai_profile = &"hound"
+radius = 12.0
+hp = 26.0
+speed_min = 1.7
+speed_max = 1.7
+damage = 14.0
+points = 25
+color = Color(1, 0.823529, 0.247059, 1)
+placeholder_sides = 3

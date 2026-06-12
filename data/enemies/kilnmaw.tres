@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"kilnmaw"
+display_name = "KILNMAW"
+ai_profile = &"boss_kilnmaw"
+radius = 42.0
+hp = 430.0
+speed_min = 0.95
+speed_max = 0.95
+damage = 26.0
+points = 400
+color = Color(1, 0.54902, 0.101961, 1)
+projectile_radius = 6.0
+placeholder_sides = 9
+boss = true
+boss_fixed_spawn = Vector2(1600, 430)
+boss_patterns = Array[StringName]([&"ring", &"fan", &"charge"])
+boss_pattern_cooldown_min_ticks = 50
+boss_pattern_cooldown_max_ticks = 105

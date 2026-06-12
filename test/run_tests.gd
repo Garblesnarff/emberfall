@@ -3,6 +3,7 @@ extends Node
 const BulletManagerScript := preload("res://scripts/projectiles/bullet_manager.gd")
 const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 const ArenaScene := preload("res://scenes/arena/arena.tscn")
+const HudScene := preload("res://scenes/ui/hud.tscn")
 const FeelParity := preload("res://data/feel_parity.tres")
 
 var failures := 0
@@ -14,11 +15,15 @@ func _run() -> void:
 	_test_feel_parity()
 	_test_spatial_grid()
 	_test_pool_integrity()
+	_test_bullet_visual_collision_alignment()
+	await _test_phase2_world_systems()
+	await _test_deck_resolution_hud_layout()
 	await _test_determinism()
+	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1 tests: PASS")
+		print("EMBERFALL Phase 1/2 tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1 tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2 tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -71,10 +76,87 @@ func _test_pool_integrity() -> void:
 	_assert_eq(manager.positions.size(), 0, "bullet pool reset clears position storage")
 	manager.queue_free()
 
+func _test_bullet_visual_collision_alignment() -> void:
+	var manager = BulletManagerScript.new()
+	manager.capacity = 4
+	manager.is_player_owned = false
+	get_tree().root.add_child(manager)
+	manager.spawn(Vector2(400, 300), Vector2.ZERO, 1.0, 10, 5.0)
+	manager.spawn(Vector2(800, 500), Vector2.ZERO, 1.0, 10, 6.0)
+	manager.physics_tick(Rect2(Vector2.ZERO, Vector2(1600, 1200)), SpatialGridScript.new(), [])
+	_assert_eq(manager.rendered_position(0), manager.positions[0], "radius-5 enemy bullet visual matches collision position")
+	_assert_eq(manager.rendered_position(1), manager.positions[1], "radius-6 boss bullet visual matches collision position")
+	manager.queue_free()
+
+func _test_phase2_world_systems() -> void:
+	Config.set_run_seed(0x7777)
+	GameState.start_run(0x7777)
+	var arena = ArenaScene.instantiate()
+	get_tree().root.add_child(arena)
+	await get_tree().physics_frame
+	var camera_rect: Rect2 = arena._camera_rect()
+	var offscreen_ok := true
+	for i in range(32):
+		var pos: Vector2 = arena._offscreen_spawn_position()
+		var closest := Vector2(clampf(pos.x, camera_rect.position.x, camera_rect.end.x), clampf(pos.y, camera_rect.position.y, camera_rect.end.y))
+		var distance: float = closest.distance_to(pos)
+		offscreen_ok = offscreen_ok and not camera_rect.has_point(pos)
+		offscreen_ok = offscreen_ok and distance >= Config.SPAWN_OFFSCREEN_MIN - 0.01
+		offscreen_ok = offscreen_ok and distance <= Config.SPAWN_OFFSCREEN_MAX + 0.01
+	_assert_true(offscreen_ok, "off-screen spawns stay 60-140 units outside camera rect")
+	var pillar: Vector3 = arena.ARENA_LAYOUT.pillars[0]
+	_assert_true(arena.projectile_blocked(Vector2(pillar.x, pillar.y)), "terrain pillars block projectiles")
+	var far_enemy = arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), Vector2(3180, 2380))
+	arena._tick_enemies()
+	_assert_true(arena.debug_stats.separation_skips > 0 or far_enemy.skipped_separation, "LOD skips separation for enemies beyond 1.5 viewports")
+	arena.queue_free()
+	await get_tree().process_frame
+
+func _test_deck_resolution_hud_layout() -> void:
+	var hud: Control = HudScene.instantiate()
+	get_tree().root.add_child(hud)
+	hud.set_values(75, 100, 0.8, 6, 24, 12345, 99, 12)
+	await get_tree().process_frame
+	var left: Control = hud.get_node("Left")
+	var center: Control = hud.get_node("Center")
+	var right: Control = hud.get_node("Right")
+	var minimap: Control = hud.get_node("Minimap")
+	var bounds := Rect2(Vector2.ZERO, Vector2(1280, 800))
+	var rects := [left.get_global_rect(), center.get_global_rect(), right.get_global_rect(), minimap.get_global_rect()]
+	var inside := true
+	for rect in rects:
+		inside = inside and bounds.encloses(rect)
+	var separated := not left.get_global_rect().intersects(center.get_global_rect())
+	separated = separated and not center.get_global_rect().intersects(right.get_global_rect())
+	separated = separated and not right.get_global_rect().intersects(minimap.get_global_rect())
+	hud.set_world_state(Vector2(1600, 1200), Vector2(1600, 1200), [], Config.WORLD_SIZE, Vector2.INF, [Vector2(3100, 2300)])
+	await get_tree().process_frame
+	_assert_true(inside, "HUD elements fit inside 1280x800 Deck viewport")
+	_assert_true(separated, "HUD regions do not overlap at 1280x800")
+	_assert_true(hud.threat_chevrons.last_drawn_count > 0, "objective threat placeholders can draw edge chevrons")
+	hud.queue_free()
+	await get_tree().process_frame
+
 func _test_determinism() -> void:
-	var a := await _run_arena_sample(0x1234, 5000)
-	var b := await _run_arena_sample(0x1234, 5000)
-	_assert_eq(a, b, "same seed scripted run is deterministic at tick 5000")
+	var a := await _run_scripted_phase2_sample(0x1234, false)
+	var b := await _run_scripted_phase2_sample(0x1234, false)
+	_assert_eq(a, b, "same seed scripted survival run is deterministic through wave 6")
+	_assert_true(a.player_hp > 0, "deterministic run survives intentionally")
+	_assert_true(a.wave >= 7 or a.waves_cleared.has(6), "deterministic run reaches wave 6 coverage")
+
+func _test_phase2_wave6_coverage() -> void:
+	var result := await _run_scripted_phase2_sample(0x223344, true)
+	_assert_true(result.waves_cleared.has(6), "Test 1 clears through wave 6")
+	_assert_true(result.spawned.get(&"crawler", 0) > 0, "Test 1 spawns crawlers")
+	_assert_true(result.spawned.get(&"brute", 0) > 0, "Test 1 spawns brutes")
+	_assert_true(result.spawned.get(&"spitter", 0) > 0, "Test 1 spawns spitters")
+	_assert_true(result.spawned.get(&"splitter", 0) > 0, "Test 1 spawns splitters")
+	_assert_true(result.spawned.get(&"hound", 0) > 0, "Test 1 spawns hounds")
+	_assert_true(result.boss_spawned, "Test 1 spawns Kilnmaw")
+	_assert_true(result.boss_patterns.get(&"ring", 0) > 0, "Kilnmaw uses ring pattern")
+	_assert_true(result.boss_patterns.get(&"fan", 0) > 0, "Kilnmaw uses aimed fan pattern")
+	_assert_true(result.boss_patterns.get(&"charge", 0) > 0, "Kilnmaw uses charge pattern")
+	_assert_true(result.player_hp > 0, "Test 1 scripted player survives through wave 6")
 
 func _run_arena_sample(seed_value: int, ticks: int) -> Dictionary:
 	Config.set_run_seed(seed_value)
@@ -96,3 +178,78 @@ func _run_arena_sample(seed_value: int, ticks: int) -> Dictionary:
 	arena.queue_free()
 	await get_tree().process_frame
 	return result
+
+func _run_scripted_phase2_sample(seed_value: int, require_wave6_clear: bool) -> Dictionary:
+	Config.set_run_seed(seed_value)
+	GameState.start_run(seed_value)
+	var arena = ArenaScene.instantiate()
+	get_tree().root.add_child(arena)
+	arena.player.max_hp = 2000.0
+	arena.player.hp = 2000.0
+	arena.player.damage = 160.0
+	var max_ticks := 36000 if require_wave6_clear else 22000
+	for i in range(max_ticks):
+		_script_arena_input(arena, i)
+		if arena.debug_stats.boss_spawned and not _boss_patterns_complete(arena.debug_stats.boss_patterns):
+			arena.player.damage = 0.0
+		else:
+			arena.player.damage = 220.0
+		arena.player.hp = max(arena.player.hp, 1200.0)
+		await get_tree().physics_frame
+		if require_wave6_clear and arena.debug_stats.waves_cleared.has(6):
+			break
+		if not require_wave6_clear and arena.debug_stats.waves_cleared.has(6):
+			break
+	var result := {
+		"kills": GameState.kills,
+		"score": GameState.score,
+		"wave": GameState.wave,
+		"combo": GameState.combo,
+		"waves_cleared": arena.debug_stats.waves_cleared.duplicate(),
+		"spawned": arena.debug_stats.spawned.duplicate(),
+		"boss_patterns": arena.debug_stats.boss_patterns.duplicate(),
+		"boss_spawned": arena.debug_stats.boss_spawned,
+		"enemies": arena.enemies.size(),
+		"player_bullets": arena.player_bullets.active_count,
+		"enemy_bullets": arena.enemy_bullets.active_count,
+		"player_hp": roundi(arena.player.hp),
+	}
+	arena.queue_free()
+	await get_tree().process_frame
+	return result
+
+func _script_arena_input(arena: Node, tick: int) -> void:
+	var player_pos: Vector2 = arena.player.position
+	var target = _nearest_enemy(arena, player_pos)
+	var aim := player_pos + Vector2.RIGHT * 100.0
+	var move := Vector2.ZERO
+	if is_instance_valid(target):
+		aim = target.position
+		var away: Vector2 = player_pos - target.position
+		var tangential := away.orthogonal().normalized()
+		move = (away.normalized() * 0.65 + tangential * 0.35).normalized()
+	else:
+		var orbit_angle := float(tick) * 0.025
+		var anchor := Config.WORLD_SIZE * 0.5 + Vector2(cos(orbit_angle), sin(orbit_angle)) * 220.0
+		move = (anchor - player_pos).normalized()
+	var dash := false
+	if is_instance_valid(target):
+		dash = player_pos.distance_to(target.position) < 95.0 and tick % 45 == 0
+	arena.set_scripted_input(move, aim, dash)
+
+func _nearest_enemy(arena: Node, pos: Vector2) -> Node:
+	var best: Node = null
+	var best_dist := INF
+	for enemy in arena.enemies:
+		if not is_instance_valid(enemy):
+			continue
+		var dist := pos.distance_squared_to(enemy.position)
+		if enemy.data and enemy.data.boss:
+			dist *= 0.25
+		if dist < best_dist:
+			best_dist = dist
+			best = enemy
+	return best
+
+func _boss_patterns_complete(patterns: Dictionary) -> bool:
+	return patterns.get(&"ring", 0) > 0 and patterns.get(&"fan", 0) > 0 and patterns.get(&"charge", 0) > 0

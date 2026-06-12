@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ArenaLayoutData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ArenaLayoutData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+world_size = Vector2(3200, 2400)
+pillars = Array[Vector3]([Vector3(640, 520, 72), Vector3(1250, 790, 58), Vector3(2340, 590, 66), Vector3(840, 1640, 82), Vector3(1740, 1830, 62), Vector3(2590, 1510, 74)])
+lava_strips = Array[Rect2]([Rect2(360, 1100, 720, 72), Rect2(1780, 330, 84, 680), Rect2(2180, 1710, 620, 78)])
+central_anvil_position = Vector2(1600, 1200)
+boundary_thickness = 32.0

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"splitter"
+display_name = "Splitter"
+ai_profile = &"chase"
+radius = 17.0
+hp = 34.0
+speed_min = 1.25
+speed_max = 1.25
+damage = 12.0
+points = 20
+color = Color(0.878431, 0.462745, 0.180392, 1)
+placeholder_sides = 5
+split_child_id = &"crawler"
+split_child_count = 2
+split_child_hp_mult = 0.45
+split_child_radius_mult = 0.8

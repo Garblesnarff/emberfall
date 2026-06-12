@@ -11,6 +11,7 @@ var life_ticks := PackedInt32Array()
 var damage := PackedFloat32Array()
 var radius := PackedFloat32Array()
 var pierce := PackedInt32Array()
+var rendered_origins := PackedVector2Array()
 var active_count := 0
 
 var _multimesh_instance: MultiMeshInstance2D
@@ -26,6 +27,7 @@ func reset() -> void:
 	damage.clear()
 	radius.clear()
 	pierce.clear()
+	rendered_origins.clear()
 	active_count = 0
 	if _multimesh:
 		_multimesh.visible_instance_count = 0
@@ -39,10 +41,11 @@ func spawn(pos: Vector2, vel: Vector2, dmg: float, life: int, p_radius := 4.0, p
 	damage.append(dmg)
 	radius.append(p_radius)
 	pierce.append(p_pierce)
+	rendered_origins.append(pos)
 	active_count += 1
 	return true
 
-func physics_tick(bounds: Rect2, grid: RefCounted, enemies: Array, player: Node = null) -> Dictionary:
+func physics_tick(bounds: Rect2, grid: RefCounted, enemies: Array, player: Node = null, terrain: Node = null) -> Dictionary:
 	var hits := []
 	var player_hits := 0
 	var i := active_count - 1
@@ -50,6 +53,8 @@ func physics_tick(bounds: Rect2, grid: RefCounted, enemies: Array, player: Node 
 		positions[i] += velocities[i]
 		life_ticks[i] -= 1
 		var dead := life_ticks[i] <= 0 or not bounds.grow(32.0).has_point(positions[i])
+		if not dead and is_instance_valid(terrain) and terrain.has_method("projectile_blocked"):
+			dead = terrain.projectile_blocked(positions[i])
 		if not dead:
 			if is_player_owned:
 				var near: Array = grid.nearby(positions[i], 46.0)
@@ -85,12 +90,14 @@ func _remove_at(index: int) -> void:
 		damage[index] = damage[last]
 		radius[index] = radius[last]
 		pierce[index] = pierce[last]
+		rendered_origins[index] = rendered_origins[last]
 	positions.resize(last)
 	velocities.resize(last)
 	life_ticks.resize(last)
 	damage.resize(last)
 	radius.resize(last)
 	pierce.resize(last)
+	rendered_origins.resize(last)
 	active_count -= 1
 
 func _build_multimesh() -> void:
@@ -111,7 +118,13 @@ func _update_multimesh() -> void:
 		return
 	_multimesh.visible_instance_count = active_count
 	for i in range(active_count):
-		var xform := Transform2D(0.0, positions[i])
-		xform = xform.scaled(Vector2.ONE * max(0.75, radius[i] / 4.0))
+		var scale: float = max(0.75, radius[i] / 4.0)
+		var xform := Transform2D(Vector2(scale, 0.0), Vector2(0.0, scale), positions[i])
+		rendered_origins[i] = xform.origin
 		_multimesh.set_instance_transform_2d(i, xform)
 		_multimesh.set_instance_color(i, bullet_color)
+
+func rendered_position(index: int) -> Vector2:
+	if index < 0 or index >= active_count:
+		return Vector2.INF
+	return rendered_origins[index]

@@ -20,3 +20,12 @@ class_name EnemyData
 @export var preferred_range := 0.0
 @export var retreat_range := 0.0
 @export var placeholder_sides := 3
+@export var split_child_id: StringName
+@export var split_child_count := 0
+@export var split_child_hp_mult := 0.45
+@export var split_child_radius_mult := 0.8
+@export var boss := false
+@export var boss_fixed_spawn := Vector2.ZERO
+@export var boss_patterns: Array[StringName] = []
+@export var boss_pattern_cooldown_min_ticks := 50
+@export var boss_pattern_cooldown_max_ticks := 105

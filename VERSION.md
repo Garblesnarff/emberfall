@@ -6,7 +6,7 @@ EMBERFALL uses SemVer-style pre-1.0 numbering:
 - Minor versions mark completed implementation phases.
 - Patch versions mark fixes or small improvements within the current phase.
 
-Current version: `0.1.0`
+Current version: `0.2.0`
 
 ## Phase Mapping
 

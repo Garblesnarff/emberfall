@@ -33,7 +33,7 @@ func reset(pos: Vector2) -> void:
 	dash_direction = Vector2.RIGHT
 	queue_redraw()
 
-func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node) -> void:
+func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node, dash_pressed := false) -> void:
 	move_input = input_vector
 	aim_world = aim_pos
 	if dashing_ticks > 0:
@@ -46,7 +46,7 @@ func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node)
 	position.y = clampf(position.y, radius, Config.WORLD_SIZE.y - radius)
 	if dash_cooldown_ticks > 0:
 		dash_cooldown_ticks -= 1
-	if Input.is_action_pressed("dash") and dash_cooldown_ticks <= 0 and input_vector.length_squared() > 0.0:
+	if (Input.is_action_pressed("dash") or dash_pressed) and dash_cooldown_ticks <= 0 and input_vector.length_squared() > 0.0:
 		dash_direction = input_vector.normalized()
 		dashing_ticks = feel.dash_duration_ticks
 		invulnerable_ticks = feel.dash_iframe_ticks

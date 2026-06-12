@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.1.0` - Phase 1 Core Port.
+Current version: `0.2.0` - Phase 2 World.
 
 ## Play Test
 

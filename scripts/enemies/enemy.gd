@@ -17,8 +17,16 @@ var elite := false
 var dead := false
 var fire_ticks := 0
 var hit_flash_ticks := 0
+var child := false
+var hound_state := 0
+var hound_ticks := 0
+var charge_angle := 0.0
+var boss_pattern_index := 0
+var telegraph_ticks := 0
+var lava_ticks := 0
+var skipped_separation := false
 
-func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false) -> void:
+func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false, child_enemy := false) -> void:
 	data = enemy_data
 	position = spawn_position
 	var scale := Config.enemy_hp_scale(wave)
@@ -29,15 +37,25 @@ func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite 
 	points = enemy_data.points
 	color = enemy_data.color
 	elite = make_elite
+	child = child_enemy
 	if elite:
 		hp *= Config.ELITE_HP_MULT
 		speed *= Config.ELITE_SPEED_MULT
 		damage *= Config.ELITE_DAMAGE_MULT
 		radius *= Config.ELITE_RADIUS_MULT
 		points *= 4
+	if child:
+		hp *= enemy_data.split_child_hp_mult if enemy_data.split_child_hp_mult > 0.0 else 0.45
+		radius *= enemy_data.split_child_radius_mult if enemy_data.split_child_radius_mult > 0.0 else 0.8
+		points = 5
 	max_hp = hp
 	dead = false
 	fire_ticks = Config.randi_range(enemy_data.fire_cooldown_min_ticks, enemy_data.fire_cooldown_max_ticks) if enemy_data.fire_cooldown_max_ticks > 0 else 0
+	if data.boss:
+		fire_ticks = data.boss_pattern_cooldown_max_ticks
+	hound_state = 0
+	hound_ticks = Config.randi_range(50, 90)
+	telegraph_ticks = 0
 	_apply_sprite_frames()
 	queue_redraw()
 
@@ -49,6 +67,9 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 	var to_player: Vector2 = player.position - position
 	var dist: float = max(0.001, to_player.length())
 	var dir: Vector2 = to_player / dist
+	if telegraph_ticks > 0:
+		telegraph_ticks -= 1
+		return
 	if data.ai_profile == &"kite":
 		var want := 0.0
 		if dist > data.preferred_range:
@@ -60,6 +81,10 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 		if fire_ticks <= 0:
 			fire_ticks = Config.randi_range(data.fire_cooldown_min_ticks, data.fire_cooldown_max_ticks)
 			enemy_bullets.spawn(position, dir * data.projectile_speed, damage, data.projectile_life_ticks, data.projectile_radius, 0)
+	elif data.ai_profile == &"hound":
+		_tick_hound(dir, dist)
+	elif data.ai_profile == &"boss_kilnmaw":
+		_tick_kilnmaw(dir, enemy_bullets)
 	else:
 		position += dir * speed
 	position.x = clampf(position.x, 0.0, Config.WORLD_SIZE.x)
@@ -75,12 +100,22 @@ func apply_damage(amount: float, impulse: Vector2) -> void:
 		dead = true
 	queue_redraw()
 
+func apply_lava_damage() -> void:
+	lava_ticks += 1
+	if lava_ticks >= Config.LAVA_DAMAGE_INTERVAL_TICKS:
+		lava_ticks = 0
+		apply_damage(Config.LAVA_DAMAGE, Vector2.ZERO)
+
 func _draw() -> void:
 	if not data:
 		return
 	animated_sprite.modulate = Color.WHITE if hit_flash_ticks > 0 else Color.WHITE
 	if elite:
 		draw_arc(Vector2.ZERO, radius + 5.0, 0, TAU, 32, Color(1.0, 0.91, 0.77), 2.0)
+	if telegraph_ticks > 0:
+		draw_arc(Vector2.ZERO, radius + 12.0, 0, TAU, 48, Color(1.0, 0.682, 0.259, 0.8), 3.0)
+	if hound_state == 1 or (data and data.ai_profile == &"boss_kilnmaw" and hound_state == 1):
+		draw_line(Vector2.ZERO, Vector2(cos(charge_angle), sin(charge_angle)) * (radius + 38.0), Color(1.0, 0.91, 0.77, 0.8), 3.0)
 	if max_hp > 40.0:
 		var width := radius * 2.2
 		draw_rect(Rect2(Vector2(-width * 0.5, -radius - 10.0), Vector2(width, 4)), Color(0, 0, 0, 0.55))
@@ -100,3 +135,66 @@ func _wave_speed_bonus(enemy_data: Resource, wave: int) -> float:
 	if enemy_data.id == &"brute":
 		return min(wave * 0.025, 0.8)
 	return 0.0
+
+func _tick_hound(dir: Vector2, dist: float) -> void:
+	if hound_state == 0:
+		position += dir * speed
+		hound_ticks -= 1
+		if hound_ticks <= 0 and dist < Config.HOUND_TRIGGER_RANGE:
+			hound_state = 1
+			hound_ticks = Config.HOUND_WINDUP_TICKS
+			charge_angle = dir.angle()
+	elif hound_state == 1:
+		hound_ticks -= 1
+		charge_angle = dir.angle()
+		if hound_ticks <= 0:
+			hound_state = 2
+			hound_ticks = Config.HOUND_CHARGE_TICKS
+	else:
+		position += Vector2(cos(charge_angle), sin(charge_angle)) * Config.HOUND_CHARGE_SPEED
+		hound_ticks -= 1
+		if hound_ticks <= 0:
+			hound_state = 0
+			hound_ticks = Config.randi_range(Config.HOUND_RESET_MIN_TICKS, Config.HOUND_RESET_MAX_TICKS)
+
+func _tick_kilnmaw(dir: Vector2, enemy_bullets: Node) -> void:
+	if hound_state == 1:
+		hound_ticks -= 1
+		charge_angle = dir.angle()
+		if hound_ticks <= 0:
+			hound_state = 2
+			hound_ticks = Config.BOSS_CHARGE_TICKS
+	elif hound_state == 2:
+		position += Vector2(cos(charge_angle), sin(charge_angle)) * Config.BOSS_CHARGE_SPEED
+		hound_ticks -= 1
+		if hound_ticks <= 0:
+			hound_state = 0
+	else:
+		position += dir * speed
+		fire_ticks -= 1
+		if fire_ticks <= 0:
+			fire_ticks = clampi(data.boss_pattern_cooldown_max_ticks - GameState.wave * 2, data.boss_pattern_cooldown_min_ticks, data.boss_pattern_cooldown_max_ticks)
+			var pattern: StringName = data.boss_patterns[boss_pattern_index % data.boss_patterns.size()]
+			boss_pattern_index += 1
+			if pattern == &"ring":
+				_fire_ring(enemy_bullets)
+			elif pattern == &"fan":
+				_fire_fan(dir, enemy_bullets)
+			elif pattern == &"charge":
+				hound_state = 1
+				hound_ticks = Config.BOSS_CHARGE_WINDUP_TICKS
+				charge_angle = dir.angle()
+
+func _fire_ring(enemy_bullets: Node) -> void:
+	var count := 10 + floori(GameState.wave / 5.0) * 2
+	var base := Config.randf_range(0.0, TAU)
+	for i in range(count):
+		var angle := base + TAU * float(i) / float(count)
+		enemy_bullets.spawn(position, Vector2(cos(angle), sin(angle)) * Config.BOSS_RING_BULLET_SPEED, Config.BOSS_BULLET_DAMAGE, Config.BOSS_RING_BULLET_LIFE_TICKS, Config.BOSS_BULLET_RADIUS, 0)
+	EventBus.shake_requested.emit(5.0)
+
+func _fire_fan(dir: Vector2, enemy_bullets: Node) -> void:
+	var base := dir.angle()
+	for i in range(-2, 3):
+		var angle := base + float(i) * Config.BOSS_FAN_SPREAD_RADIANS
+		enemy_bullets.spawn(position, Vector2(cos(angle), sin(angle)) * Config.BOSS_FAN_BULLET_SPEED, Config.BOSS_BULLET_DAMAGE, Config.BOSS_FAN_BULLET_LIFE_TICKS, Config.BOSS_BULLET_RADIUS, 0)

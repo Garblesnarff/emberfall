@@ -1,5 +1,6 @@
 # Godot
 .godot/
+reports/
 *.translation
 
 # Exports and local builds
@@ -9,6 +10,7 @@ exports/
 
 # OS/editor noise
 .DS_Store
+._*
 *.swp
 *.tmp
 

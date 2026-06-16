@@ -10,6 +10,8 @@ signal start_run_requested
 @onready var word_mark: TextureRect = %WordMark
 
 func _ready() -> void:
+	_fit_to_viewport()
+	get_viewport().size_changed.connect(_fit_to_viewport)
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	word_mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -17,6 +19,9 @@ func _ready() -> void:
 	start_button.pressed.connect(func() -> void: start_run_requested.emit())
 	purchase_button.pressed.connect(purchase_first_available)
 	refresh()
+
+func _fit_to_viewport() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 func refresh() -> void:
 	MetaProgression.sync_from_save()

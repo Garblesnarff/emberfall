@@ -338,15 +338,20 @@ func _test_phase4_main_flow_integration() -> void:
 	await get_tree().process_frame
 	_assert_true(GameState.state == GameState.RunState.MENU, "main scene starts at Forge menu")
 	_assert_true(is_instance_valid(main.forge_menu) and main.forge_menu.visible, "Forge menu is reachable from main")
+	_assert_true(main.forge_menu.size == get_viewport().get_visible_rect().size, "Forge menu fills the viewport")
+	_assert_true(not main.arena.get_node("CanvasLayer").visible, "Arena HUD is hidden on title screen")
 	main._start_run()
 	await get_tree().process_frame
 	_assert_true(GameState.state == GameState.RunState.PLAY, "Forge menu can start a run")
 	_assert_true(main.arena.visible, "Arena is shown after starting a run")
+	_assert_true(main.arena.get_node("CanvasLayer").visible, "Arena HUD is restored during play")
 	main.arena.player.hp = 0.0
 	main.arena._check_wave_clear_or_death()
 	await get_tree().process_frame
 	_assert_true(GameState.state == GameState.RunState.OVER, "player death reaches run-over state")
 	_assert_true(is_instance_valid(main.recap) and main.recap.visible, "death recap is shown from main")
+	_assert_true(main.recap.size == get_viewport().get_visible_rect().size, "Recap fills the viewport")
+	_assert_true(not main.arena.get_node("CanvasLayer").visible, "Arena HUD is hidden behind recap")
 	main._show_forge()
 	await get_tree().process_frame
 	_assert_true(GameState.state == GameState.RunState.MENU and main.forge_menu.visible, "recap can return to Forge menu")

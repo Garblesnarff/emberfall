@@ -31,3 +31,23 @@ unique_name_in_owner = true
 layout_mode = 2
 text = ""
 horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RUN AGAIN"
+
+[node name="ForgeButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "FORGE"
+
+[node name="EndlessButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ENDLESS"
+
+[node name="EndRunButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "END RUN"

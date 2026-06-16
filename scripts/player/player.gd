@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Player
 
+const BASE_FEEL := preload("res://data/player_feel.tres")
+
 @export var feel: Resource
 
 var radius := Config.PLAYER_RADIUS
@@ -37,6 +39,7 @@ func _ready() -> void:
 	reset(Vector2(Config.WORLD_SIZE.x * 0.5, Config.WORLD_SIZE.y * 0.5))
 
 func reset(pos: Vector2) -> void:
+	feel = BASE_FEEL.duplicate(true)
 	position = pos
 	radius = feel.radius
 	hp = feel.hp

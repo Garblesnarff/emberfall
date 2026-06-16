@@ -1,9 +1,15 @@
 extends Control
 
+signal start_run_requested
+
 @onready var bank_label: Label = %BankLabel
 @onready var unlock_label: Label = %UnlockLabel
+@onready var start_button: Button = %StartButton
+@onready var purchase_button: Button = %PurchaseButton
 
 func _ready() -> void:
+	start_button.pressed.connect(func() -> void: start_run_requested.emit())
+	purchase_button.pressed.connect(purchase_first_available)
 	refresh()
 
 func refresh() -> void:

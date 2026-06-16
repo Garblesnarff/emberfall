@@ -14,6 +14,7 @@ const Aurum := preload("res://data/enemies/aurum.tres")
 const AurumRekindled := preload("res://data/enemies/aurum_rekindled.tres")
 const ForgeMenuScene := preload("res://scenes/ui/forge_menu.tscn")
 const RecapScene := preload("res://scenes/ui/recap.tscn")
+const MainScene := preload("res://scenes/main.tscn")
 
 var failures := 0
 
@@ -30,6 +31,7 @@ func _run() -> void:
 	await _test_phase3_forced_builds()
 	await _test_phase3_objectives_and_rewards()
 	await _test_phase4_save_meta_and_ui()
+	await _test_phase4_main_flow_integration()
 	await _test_phase4_bosses_victory_and_endless()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
@@ -323,6 +325,29 @@ func _test_phase4_bosses_victory_and_endless() -> void:
 	_assert_true(arena.endless_mode and GameState.state == GameState.RunState.PLAY, "Endless can be entered from victory recap")
 	arena.queue_free()
 	await get_tree().process_frame
+
+func _test_phase4_main_flow_integration() -> void:
+	_reset_test_save()
+	var main: Node = MainScene.instantiate()
+	get_tree().root.add_child(main)
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.MENU, "main scene starts at Forge menu")
+	_assert_true(is_instance_valid(main.forge_menu) and main.forge_menu.visible, "Forge menu is reachable from main")
+	main._start_run()
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.PLAY, "Forge menu can start a run")
+	_assert_true(main.arena.visible, "Arena is shown after starting a run")
+	main.arena.player.hp = 0.0
+	main.arena._check_wave_clear_or_death()
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.OVER, "player death reaches run-over state")
+	_assert_true(is_instance_valid(main.recap) and main.recap.visible, "death recap is shown from main")
+	main._show_forge()
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.MENU and main.forge_menu.visible, "recap can return to Forge menu")
+	main.queue_free()
+	await get_tree().process_frame
+	_reset_test_save()
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)

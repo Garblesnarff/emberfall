@@ -62,6 +62,8 @@ const OBJ_ANVIL_DEFENSE := preload("res://data/objectives/anvil_defense.tres")
 const InputRouterScript := preload("res://scripts/systems/input_router.gd")
 const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 
+@export var auto_start_run := true
+
 var input_router: Node
 var grid: RefCounted
 var enemies: Array = []
@@ -137,14 +139,88 @@ func _ready() -> void:
 	anvil_target = Node2D.new()
 	anvil_target.position = ARENA_LAYOUT.central_anvil_position
 	add_child(anvil_target)
-	GameState.start_run(Config.run_seed)
-	player.reset(Config.WORLD_SIZE * 0.5)
-	select_weapon(&"forgehammer")
-	camera.global_position = player.global_position
-	_next_wave()
+	if auto_start_run:
+		begin_run(Config.run_seed)
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
+
+func begin_run(seed_value: int = Config.run_seed, weapon_id: StringName = &"forgehammer") -> void:
+	_reset_run_state()
+	GameState.start_run(seed_value)
+	player.reset(Config.WORLD_SIZE * 0.5)
+	select_weapon(weapon_id)
+	camera.global_position = player.global_position
+	_next_wave()
+
+func _reset_run_state() -> void:
+	Engine.time_scale = 1.0
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			enemy.queue_free()
+	enemies.clear()
+	spawn_queue.clear()
+	drops.clear()
+	chests.clear()
+	offered_cards.clear()
+	objective_markers.clear()
+	current_objective.clear()
+	objective_failure_log.clear()
+	active_synergies.clear()
+	active_evolutions.clear()
+	tempering_levels.clear()
+	chest_reveal_contents.clear()
+	if player_bullets.has_method("reset"):
+		player_bullets.reset()
+	if enemy_bullets.has_method("reset"):
+		enemy_bullets.reset()
+	spawn_ticks = 0
+	boss_telegraph_ticks = 0
+	pending_boss_data = null
+	pending_boss_pos = Vector2.ZERO
+	wave_active = false
+	combo_ticks = 0
+	hitstop_ticks = 0
+	shake = 0.0
+	tick = 0
+	scripted_input_enabled = false
+	scripted_move = Vector2.ZERO
+	scripted_aim = Vector2.ZERO
+	scripted_dash = false
+	current_weapon = FORGEHAMMER
+	weapon_fire_ticks = 0
+	ember_count = 0
+	upgrade_panel_visible = false
+	pending_next_wave = false
+	pending_upgrade_reason = &""
+	chest_reveal_ticks = 0
+	standing_still_ticks = 0
+	anvil_hp = 0.0
+	anvil_bonus_choices = 0
+	nova_dash_armed = false
+	endless_mode = false
+	run_finalized = false
+	debug_stats = {
+		"waves_cleared": [],
+		"spawned": {},
+		"boss_patterns": {},
+		"boss_spawned": false,
+		"projectiles_blocked": 0,
+		"lava_ticks": 0,
+		"separation_skips": 0,
+		"objectives_completed": [],
+		"objectives_failed": [],
+		"chests_opened": 0,
+		"evolutions": {},
+		"synergies": {},
+		"weapons_tested": {},
+		"embers": 0,
+		"hearts_collected": 0,
+		"boss_phases": {},
+		"victory": false,
+		"recap": {},
+		"endless_entered": false,
+	}
 
 func _physics_process(_delta: float) -> void:
 	tick += 1

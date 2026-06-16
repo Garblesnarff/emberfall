@@ -288,7 +288,9 @@ func _test_phase4_save_meta_and_ui() -> void:
 	await get_tree().process_frame
 	_assert_true(forge.bank_label.text.contains("EMBERS"), "Forge menu exposes ember bank")
 	_assert_true(forge.background.texture != null and forge.background.texture.resource_path.ends_with("menu_background.png"), "Forge menu uses concept background art")
-	_assert_true(forge.word_mark.texture != null and forge.word_mark.texture.resource_path.ends_with("word_mark.png"), "Forge menu uses concept word mark")
+	_assert_true(forge.word_mark.texture != null and forge.word_mark.texture.resource_path.ends_with("word_mark_cropped.png"), "Forge menu uses cropped concept word mark")
+	var panel: Control = forge.get_node("Panel")
+	_assert_true(forge.word_mark.global_position.y + forge.word_mark.size.y < panel.global_position.y, "Forge word mark stays above menu controls")
 	forge.queue_free()
 	var recap: Control = RecapScene.instantiate()
 	get_tree().root.add_child(recap)

@@ -6,8 +6,14 @@ signal start_run_requested
 @onready var unlock_label: Label = %UnlockLabel
 @onready var start_button: Button = %StartButton
 @onready var purchase_button: Button = %PurchaseButton
+@onready var background: TextureRect = %Background
+@onready var word_mark: TextureRect = %WordMark
 
 func _ready() -> void:
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	word_mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	word_mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	start_button.pressed.connect(func() -> void: start_run_requested.emit())
 	purchase_button.pressed.connect(purchase_first_available)
 	refresh()

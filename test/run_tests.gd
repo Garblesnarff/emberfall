@@ -287,12 +287,17 @@ func _test_phase4_save_meta_and_ui() -> void:
 	get_tree().root.add_child(forge)
 	await get_tree().process_frame
 	_assert_true(forge.bank_label.text.contains("EMBERS"), "Forge menu exposes ember bank")
+	_assert_true(forge.background.texture != null and forge.background.texture.resource_path.ends_with("menu_background.png"), "Forge menu uses concept background art")
+	_assert_true(forge.word_mark.texture != null and forge.word_mark.texture.resource_path.ends_with("word_mark.png"), "Forge menu uses concept word mark")
 	forge.queue_free()
 	var recap: Control = RecapScene.instantiate()
 	get_tree().root.add_child(recap)
 	recap.set_recap({"victory": true, "wave": 20, "score": 5000, "kills": 300, "best_combo": 42, "embers_banked": 450, "weapon": "Meteor Volley"})
 	await get_tree().process_frame
 	_assert_true(recap.title_label.text == "FORGE SECURED", "Victory recap shows FORGE SECURED")
+	_assert_true(recap.background.texture != null and recap.background.texture.resource_path.ends_with("victory_screen.png"), "Victory recap uses concept victory art")
+	recap.set_recap({"victory": false, "wave": 12, "score": 3000, "kills": 180, "best_combo": 20, "embers_banked": 120, "weapon": "Forgehammer"})
+	_assert_true(recap.background.texture != null and recap.background.texture.resource_path.ends_with("defeat_screen.png"), "Death recap uses concept defeat art")
 	recap.queue_free()
 	var file := FileAccess.open(SaveManager.SAVE_PATH, FileAccess.WRITE)
 	file.store_string("{bad json")

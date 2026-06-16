@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://emberfall_forge_menu"]
+[gd_scene load_steps=4 format=3 uid="uid://emberfall_forge_menu"]
 
 [ext_resource type="Script" path="res://scripts/ui/forge_menu.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/concepts/menu_background.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/concepts/word_mark.png" id="3"]
 
 [node name="ForgeMenu" type="Control"]
 layout_mode = 3
@@ -12,11 +14,53 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
 
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.34)
+
+[node name="WordMark" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.055
+anchor_top = 0.07
+anchor_right = 0.365
+anchor_bottom = 0.195
+mouse_filter = 2
+texture = ExtResource("3")
+
+[node name="PanelBack" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.055
+anchor_top = 0.24
+anchor_right = 0.43
+anchor_bottom = 0.91
+mouse_filter = 2
+color = Color(0.025, 0.02, 0.016, 0.72)
+
 [node name="Panel" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.08
-anchor_top = 0.08
+anchor_top = 0.27
 anchor_right = 0.42
 anchor_bottom = 0.9
 

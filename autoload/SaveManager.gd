@@ -23,16 +23,52 @@ func load_save() -> void:
 		data = default_save()
 		return
 	var text := FileAccess.get_file_as_string(SAVE_PATH)
-	var parsed = JSON.parse_string(text)
-	if typeof(parsed) != TYPE_DICTIONARY or parsed.get("v", 0) != SAVE_VERSION:
-		var backup := SAVE_PATH + ".corrupt"
-		if FileAccess.file_exists(SAVE_PATH):
-			DirAccess.copy_absolute(ProjectSettings.globalize_path(SAVE_PATH), ProjectSettings.globalize_path(backup))
+	var json := JSON.new()
+	if json.parse(text) != OK:
+		_backup_corrupt_save()
 		data = default_save()
 		return
-	data = parsed
+	var parsed = json.data
+	if typeof(parsed) != TYPE_DICTIONARY:
+		_backup_corrupt_save()
+		data = default_save()
+		return
+	data = _migrate(parsed)
+	save()
 
 func save() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
+
+func _migrate(source: Dictionary) -> Dictionary:
+	var migrated := default_save()
+	if int(source.get("v", 0)) > SAVE_VERSION:
+		_backup_corrupt_save()
+		return migrated
+	for key in source.keys():
+		if key == "v":
+			continue
+		if typeof(source[key]) == TYPE_DICTIONARY and typeof(migrated.get(key)) == TYPE_DICTIONARY:
+			for sub_key in source[key].keys():
+				migrated[key][sub_key] = source[key][sub_key]
+		else:
+			migrated[key] = source[key]
+	migrated.v = SAVE_VERSION
+	return migrated
+
+func _backup_corrupt_save() -> void:
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.copy_absolute(ProjectSettings.globalize_path(SAVE_PATH), ProjectSettings.globalize_path(SAVE_PATH + ".corrupt"))
+
+func record_run(victory: bool, wave: int, score: int, combo: int, kills: int, embers: int) -> void:
+	data = _migrate(data)
+	data.best.wave = max(int(data.best.wave), wave)
+	data.best.score = max(int(data.best.score), score)
+	data.best.combo = max(int(data.best.combo), combo)
+	data.bank.embers = int(data.bank.embers) + embers
+	data.stats.runs = int(data.stats.runs) + 1
+	data.stats.kills = int(data.stats.kills) + kills
+	data.stats.deaths = int(data.stats.deaths) + (0 if victory else 1)
+	data.stats.victories = int(data.stats.victories) + (1 if victory else 0)
+	save()

@@ -27,6 +27,9 @@ var lava_ticks := 0
 var skipped_separation := false
 var burn_ticks := 0
 var burn_damage := 0.0
+var boss_phase := 1
+var boss_bodies_alive := 1
+var last_body_threshold := 1.0
 
 func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false, child_enemy := false) -> void:
 	data = enemy_data
@@ -55,6 +58,9 @@ func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite 
 	fire_ticks = Config.randi_range(enemy_data.fire_cooldown_min_ticks, enemy_data.fire_cooldown_max_ticks) if enemy_data.fire_cooldown_max_ticks > 0 else 0
 	if data.boss:
 		fire_ticks = data.boss_pattern_cooldown_max_ticks
+	boss_phase = 1
+	boss_bodies_alive = max(1, data.boss_body_count)
+	last_body_threshold = 1.0
 	hound_state = 0
 	hound_ticks = Config.randi_range(50, 90)
 	telegraph_ticks = 0
@@ -93,6 +99,10 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 		_tick_hound(dir, dist)
 	elif data.ai_profile == &"boss_kilnmaw":
 		_tick_kilnmaw(dir, enemy_bullets)
+	elif data.ai_profile == &"boss_choir":
+		_tick_choir(dir, enemy_bullets)
+	elif data.ai_profile == &"boss_aurum":
+		_tick_aurum(dir, enemy_bullets)
 	else:
 		position += dir * speed
 	position.x = clampf(position.x, 0.0, Config.WORLD_SIZE.x)
@@ -106,7 +116,23 @@ func apply_damage(amount: float, impulse: Vector2) -> void:
 		position += impulse.normalized() * impulse.length() * kb
 	if hp <= 0.0:
 		dead = true
+	_update_boss_phase_state()
 	queue_redraw()
+
+func _update_boss_phase_state() -> void:
+	if not data or not data.boss:
+		return
+	if data.boss_body_count > 1:
+		var third := max_hp / float(data.boss_body_count)
+		var expected_alive := ceili(max(0.0, hp) / third)
+		expected_alive = clampi(expected_alive, 0, data.boss_body_count)
+		if expected_alive < boss_bodies_alive:
+			boss_bodies_alive = expected_alive
+			speed *= 1.12
+			EventBus.boss_phase.emit(self, data.boss_body_count - boss_bodies_alive)
+	if boss_phase == 1 and hp <= max_hp * 0.5 and not data.boss_phase2_patterns.is_empty():
+		boss_phase = 2
+		EventBus.boss_phase.emit(self, 2)
 
 func apply_burn(ticks_count: int, per_tick_damage: float) -> void:
 	burn_ticks = max(burn_ticks, ticks_count)
@@ -132,6 +158,10 @@ func _draw() -> void:
 		var width := radius * 2.2
 		draw_rect(Rect2(Vector2(-width * 0.5, -radius - 10.0), Vector2(width, 4)), Color(0, 0, 0, 0.55))
 		draw_rect(Rect2(Vector2(-width * 0.5, -radius - 10.0), Vector2(width * max(0.0, hp / max_hp), 4)), color.lightened(0.25))
+	if data and data.boss_body_count > 1:
+		for i in range(boss_bodies_alive):
+			var angle := TAU * float(i) / float(max(1, boss_bodies_alive)) + float(Engine.get_physics_frames()) * 0.025
+			draw_circle(Vector2(cos(angle), sin(angle)) * (radius + 16.0), 7.0, color.lightened(0.45))
 
 func _apply_sprite_frames() -> void:
 	if data.sprite_frames:
@@ -197,6 +227,43 @@ func _tick_kilnmaw(dir: Vector2, enemy_bullets: Node) -> void:
 				hound_ticks = Config.BOSS_CHARGE_WINDUP_TICKS
 				charge_angle = dir.angle()
 
+func _tick_choir(dir: Vector2, enemy_bullets: Node) -> void:
+	position += dir * speed * 0.35
+	fire_ticks -= 1
+	if fire_ticks > 0:
+		return
+	fire_ticks = clampi(data.boss_pattern_cooldown_max_ticks - max(0, data.boss_body_count - boss_bodies_alive) * 8, data.boss_pattern_cooldown_min_ticks, data.boss_pattern_cooldown_max_ticks)
+	var pattern: StringName = data.boss_patterns[boss_pattern_index % data.boss_patterns.size()]
+	boss_pattern_index += 1
+	if pattern == &"sync_rotate":
+		_fire_sync_rotate(enemy_bullets)
+	elif pattern == &"fan":
+		_fire_fan(dir, enemy_bullets)
+	elif pattern == &"ring":
+		_fire_ring(enemy_bullets)
+
+func _tick_aurum(dir: Vector2, enemy_bullets: Node) -> void:
+	position += dir * speed * (0.32 if boss_phase == 1 else 0.45)
+	fire_ticks -= 1
+	if fire_ticks > 0:
+		return
+	fire_ticks = clampi(data.boss_pattern_cooldown_max_ticks - GameState.wave * 2, data.boss_pattern_cooldown_min_ticks, data.boss_pattern_cooldown_max_ticks)
+	var patterns: Array[StringName] = data.boss_patterns if boss_phase == 1 or data.boss_phase2_patterns.is_empty() else data.boss_phase2_patterns
+	var pattern: StringName = patterns[boss_pattern_index % patterns.size()]
+	boss_pattern_index += 1
+	if pattern == &"summon":
+		_fire_ring(enemy_bullets)
+	elif pattern == &"sweep_beam":
+		_fire_sweep_beam(dir, enemy_bullets)
+	elif pattern == &"ring":
+		_fire_ring(enemy_bullets)
+	elif pattern == &"fan":
+		_fire_fan(dir, enemy_bullets)
+	elif pattern == &"charge":
+		hound_state = 1
+		hound_ticks = Config.BOSS_CHARGE_WINDUP_TICKS
+		charge_angle = dir.angle()
+
 func _fire_ring(enemy_bullets: Node) -> void:
 	var count := 10 + floori(GameState.wave / 5.0) * 2
 	var base := Config.randf_range(0.0, TAU)
@@ -210,3 +277,18 @@ func _fire_fan(dir: Vector2, enemy_bullets: Node) -> void:
 	for i in range(-2, 3):
 		var angle := base + float(i) * Config.BOSS_FAN_SPREAD_RADIANS
 		enemy_bullets.spawn(position, Vector2(cos(angle), sin(angle)) * Config.BOSS_FAN_BULLET_SPEED, Config.BOSS_BULLET_DAMAGE, Config.BOSS_FAN_BULLET_LIFE_TICKS, Config.BOSS_BULLET_RADIUS, 0)
+
+func _fire_sync_rotate(enemy_bullets: Node) -> void:
+	var bodies: int = max(1, boss_bodies_alive)
+	var base := float(Engine.get_physics_frames()) * 0.035
+	for body in range(bodies):
+		var origin := position + Vector2(cos(TAU * float(body) / bodies), sin(TAU * float(body) / bodies)) * (radius + 14.0)
+		for i in range(4):
+			var angle: float = base + TAU * float(i) / 4.0 + TAU * float(body) / bodies
+			enemy_bullets.spawn(origin, Vector2(cos(angle), sin(angle)) * Config.BOSS_FAN_BULLET_SPEED, Config.BOSS_BULLET_DAMAGE, Config.BOSS_FAN_BULLET_LIFE_TICKS, Config.BOSS_BULLET_RADIUS, 0)
+
+func _fire_sweep_beam(dir: Vector2, enemy_bullets: Node) -> void:
+	var base := dir.angle() - PI * 0.75
+	for i in range(9):
+		var angle := base + PI * 1.5 * float(i) / 8.0
+		enemy_bullets.spawn(position, Vector2(cos(angle), sin(angle)) * (Config.BOSS_FAN_BULLET_SPEED * 1.2), Config.BOSS_BULLET_DAMAGE * 1.25, Config.BOSS_FAN_BULLET_LIFE_TICKS, Config.BOSS_BULLET_RADIUS, 0)

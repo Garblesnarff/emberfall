@@ -8,6 +8,7 @@ var score := 0
 var kills := 0
 var combo := 0
 var best_combo := 0
+var last_recap := {}
 
 func start_run(seed_value: int = 0xE4BEF411) -> void:
 	Config.set_run_seed(seed_value)
@@ -17,6 +18,7 @@ func start_run(seed_value: int = 0xE4BEF411) -> void:
 	kills = 0
 	combo = 0
 	best_combo = 0
+	last_recap = {}
 
 func set_combo(value: int) -> void:
 	combo = value
@@ -30,10 +32,11 @@ func add_score(base_points: int) -> void:
 
 func end_run(victory: bool) -> void:
 	state = RunState.VICTORY if victory else RunState.OVER
-	EventBus.run_ended.emit(victory, {
+	last_recap = {
 		"wave": wave,
 		"score": score,
 		"kills": kills,
 		"best_combo": best_combo,
 		"seed": Config.run_seed,
-	})
+	}
+	EventBus.run_ended.emit(victory, last_recap)

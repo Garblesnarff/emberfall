@@ -27,5 +27,9 @@ class_name EnemyData
 @export var boss := false
 @export var boss_fixed_spawn := Vector2.ZERO
 @export var boss_patterns: Array[StringName] = []
+@export var boss_phase2_patterns: Array[StringName] = []
+@export var boss_body_count := 1
+@export var boss_reward_embers := 0
+@export var victory_boss := false
 @export var boss_pattern_cooldown_min_ticks := 50
 @export var boss_pattern_cooldown_max_ticks := 105

@@ -7,6 +7,9 @@ const SPITTER := preload("res://data/enemies/spitter.tres")
 const SPLITTER := preload("res://data/enemies/splitter.tres")
 const HOUND := preload("res://data/enemies/hound.tres")
 const KILNMAW := preload("res://data/enemies/kilnmaw.tres")
+const CHOIR := preload("res://data/enemies/choir.tres")
+const AURUM := preload("res://data/enemies/aurum.tres")
+const AURUM_REKINDLED := preload("res://data/enemies/aurum_rekindled.tres")
 const ARENA_LAYOUT := preload("res://data/arena_layout.tres")
 const FORGEHAMMER := preload("res://data/weapons/forgehammer.tres")
 const SLAG_LANCE := preload("res://data/weapons/slag_lance.tres")
@@ -98,6 +101,8 @@ var anvil_hp := 0.0
 var anvil_bonus_choices := 0
 var anvil_target: Node2D
 var nova_dash_armed := false
+var endless_mode := false
+var run_finalized := false
 var debug_stats := {
 	"waves_cleared": [],
 	"spawned": {},
@@ -114,6 +119,10 @@ var debug_stats := {
 	"weapons_tested": {},
 	"embers": 0,
 	"hearts_collected": 0,
+	"boss_phases": {},
+	"victory": false,
+	"recap": {},
+	"endless_entered": false,
 }
 
 func _ready() -> void:
@@ -123,6 +132,7 @@ func _ready() -> void:
 	add_child(input_router)
 	EventBus.shake_requested.connect(_on_shake_requested)
 	EventBus.hitstop_requested.connect(_on_hitstop_requested)
+	EventBus.boss_phase.connect(_on_boss_phase)
 	_build_terrain()
 	anvil_target = Node2D.new()
 	anvil_target.position = ARENA_LAYOUT.central_anvil_position
@@ -225,12 +235,27 @@ func _next_wave() -> void:
 			spawn_queue.append(HOUND)
 		else:
 			spawn_queue.append(CRAWLER)
-	if GameState.wave == 5:
-		pending_boss_data = KILNMAW
-		pending_boss_pos = KILNMAW.boss_fixed_spawn
+	var boss_data := _boss_for_wave(GameState.wave)
+	if boss_data:
+		pending_boss_data = boss_data
+		pending_boss_pos = boss_data.boss_fixed_spawn
 		boss_telegraph_ticks = Config.BOSS_TELEGRAPH_TICKS
 	spawn_ticks = Config.SPAWN_INITIAL_DELAY_TICKS
 	wave_active = true
+
+func _boss_for_wave(wave: int) -> Resource:
+	if wave == 5:
+		return KILNMAW
+	if wave == 10:
+		return CHOIR
+	if wave == 15:
+		return AURUM
+	if wave == 20:
+		return AURUM_REKINDLED
+	if endless_mode and wave > 20 and wave % 5 == 0:
+		var cycle := [KILNMAW, CHOIR, AURUM, AURUM_REKINDLED]
+		return cycle[(wave / 5) % cycle.size()]
+	return null
 
 func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2) -> void:
 	if input_vector.length_squared() < 0.01:
@@ -490,6 +515,13 @@ func _kill_enemy(index: int) -> void:
 	if enemy.data.boss:
 		EventBus.hitstop_requested.emit(Config.HITSTOP_BOSS_KILL_TICKS)
 		_spawn_chest(enemy.position, true)
+		if enemy.data.boss_reward_embers > 0:
+			ember_count += int(enemy.data.boss_reward_embers)
+			debug_stats.embers = ember_count
+		if enemy.data.victory_boss and not endless_mode:
+			_finalize_run(true)
+		elif enemy.data.victory_boss and endless_mode:
+			debug_stats.endless_entered = true
 	if _objective_type() == "elite_bounty" and current_objective.get("target", null) == enemy:
 		GameState.add_score(current_objective.data.score_reward)
 		_spawn_chest(enemy.position, true)
@@ -840,9 +872,11 @@ func _tick_combo() -> void:
 			GameState.set_combo(0)
 
 func _check_wave_clear_or_death() -> void:
-	if player.hp <= 0.0:
-		GameState.end_run(false)
+	if player.hp <= 0.0 and not run_finalized:
+		_finalize_run(false)
 	if wave_active and spawn_queue.is_empty() and enemies.is_empty():
+		if GameState.state == GameState.RunState.VICTORY or GameState.state == GameState.RunState.OVER:
+			return
 		wave_active = false
 		if not current_objective.is_empty() and not current_objective.get("done", false) and not current_objective.get("failed", false):
 			if _objective_type() == "anvil_defense":
@@ -858,6 +892,43 @@ func _check_wave_clear_or_death() -> void:
 		var offer_count := Config.UPGRADE_PICK_COUNT + anvil_bonus_choices
 		if offer_upgrades(offer_count, &"wave").is_empty():
 			choose_upgrade(-1)
+
+func _finalize_run(victory: bool) -> void:
+	if run_finalized:
+		return
+	run_finalized = true
+	if victory:
+		ember_count = int(round(float(ember_count) * Config.VICTORY_EMBER_MULT))
+	debug_stats.embers = ember_count
+	debug_stats.victory = victory
+	var recap := {
+		"victory": victory,
+		"wave": GameState.wave,
+		"score": GameState.score,
+		"kills": GameState.kills,
+		"best_combo": GameState.best_combo,
+		"embers_banked": ember_count,
+		"weapon": current_weapon.display_name,
+		"evolutions": active_evolutions.keys(),
+		"synergies": active_synergies.keys(),
+	}
+	debug_stats.recap = recap
+	GameState.end_run(victory)
+	GameState.last_recap = recap
+	SaveManager.record_run(victory, GameState.wave, GameState.score, GameState.best_combo, GameState.kills, ember_count)
+
+func enter_endless() -> void:
+	if GameState.state != GameState.RunState.VICTORY:
+		return
+	endless_mode = true
+	run_finalized = false
+	debug_stats.endless_entered = true
+	GameState.state = GameState.RunState.PLAY
+	_next_wave()
+
+func end_after_victory() -> void:
+	if GameState.state == GameState.RunState.VICTORY:
+		GameState.state = GameState.RunState.OVER
 
 func _update_camera(aim_world: Vector2) -> void:
 	if camera.has_method("physics_tick"):
@@ -904,6 +975,15 @@ func _on_shake_requested(strength: float) -> void:
 
 func _on_hitstop_requested(ticks_count: int) -> void:
 	hitstop_ticks = max(hitstop_ticks, ticks_count)
+
+func _on_boss_phase(boss: Node, phase: int) -> void:
+	if not boss or not boss.data:
+		return
+	var phases: Dictionary = debug_stats.boss_phases
+	var key: StringName = boss.data.id
+	var list: Array = phases.get(key, [])
+	list.append(phase)
+	phases[key] = list
 
 func set_scripted_input(move_vector: Vector2, aim_position: Vector2, dash_pressed := false) -> void:
 	scripted_input_enabled = true

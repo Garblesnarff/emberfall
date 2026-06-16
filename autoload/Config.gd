@@ -121,6 +121,7 @@ const OVERCLOCK_STILL_TICKS := 60
 const OVERCLOCK_FIRE_RATE_MULT := 0.60
 const METEOR_RADIUS := 115.0
 const RAILSPIKE_WIDTH := 34.0
+const VICTORY_EMBER_MULT := 1.5
 
 var rng := RandomNumberGenerator.new()
 var run_seed := 0

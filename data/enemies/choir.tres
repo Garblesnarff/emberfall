@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/EnemyData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"choir"
+display_name = "THE SHATTERED CHOIR"
+ai_profile = &"boss_choir"
+radius = 38.0
+hp = 620.0
+speed_min = 0.72
+speed_max = 0.72
+damage = 18.0
+points = 700
+color = Color(0.88, 0.32, 0.72, 1)
+projectile_radius = 6.0
+placeholder_sides = 6
+boss = true
+boss_fixed_spawn = Vector2(1600, 430)
+boss_patterns = Array[StringName]([&"sync_rotate", &"fan", &"ring"])
+boss_body_count = 3
+boss_reward_embers = 100
+boss_pattern_cooldown_min_ticks = 42
+boss_pattern_cooldown_max_ticks = 92

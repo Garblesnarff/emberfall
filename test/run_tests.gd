@@ -9,6 +9,11 @@ const ObjVein := preload("res://data/objectives/ember_vein.tres")
 const ObjBraziers := preload("res://data/objectives/braziers.tres")
 const ObjBounty := preload("res://data/objectives/elite_bounty.tres")
 const ObjAnvil := preload("res://data/objectives/anvil_defense.tres")
+const Choir := preload("res://data/enemies/choir.tres")
+const Aurum := preload("res://data/enemies/aurum.tres")
+const AurumRekindled := preload("res://data/enemies/aurum_rekindled.tres")
+const ForgeMenuScene := preload("res://scenes/ui/forge_menu.tscn")
+const RecapScene := preload("res://scenes/ui/recap.tscn")
 
 var failures := 0
 
@@ -24,12 +29,14 @@ func _run() -> void:
 	await _test_deck_resolution_hud_layout()
 	await _test_phase3_forced_builds()
 	await _test_phase3_objectives_and_rewards()
+	await _test_phase4_save_meta_and_ui()
+	await _test_phase4_bosses_victory_and_endless()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1/2/3 tests: PASS")
+		print("EMBERFALL Phase 1/2/3/4 tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1/2/3 tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2/3/4 tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -262,6 +269,61 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena.queue_free()
 	await get_tree().process_frame
 
+func _test_phase4_save_meta_and_ui() -> void:
+	_reset_test_save()
+	SaveManager.load_save()
+	_assert_eq(int(SaveManager.data.v), SaveManager.SAVE_VERSION, "fresh save migrates to current schema")
+	_assert_true(SaveManager.data.unlocks.weapons.has("forgehammer"), "fresh save starts with Forgehammer")
+	SaveManager.record_run(false, 6, 1200, 9, 80, 175)
+	_assert_eq(int(SaveManager.data.bank.embers), 175, "run recap banks embers into save")
+	_assert_eq(int(SaveManager.data.stats.runs), 1, "run recap increments run count")
+	_assert_true(MetaProgression.first_unlock_reachable_in_two_runs(175), "first unlock reachable within two median runs")
+	MetaProgression.add_embers(200)
+	_assert_true(MetaProgression.purchase(&"weapon_slag_lance"), "Forge purchase unlocks Slag Lance")
+	_assert_true(SaveManager.data.unlocks.weapons.has("slag_lance"), "purchased weapon persists in save data")
+	var forge: Control = ForgeMenuScene.instantiate()
+	get_tree().root.add_child(forge)
+	await get_tree().process_frame
+	_assert_true(forge.bank_label.text.contains("EMBERS"), "Forge menu exposes ember bank")
+	forge.queue_free()
+	var recap: Control = RecapScene.instantiate()
+	get_tree().root.add_child(recap)
+	recap.set_recap({"victory": true, "wave": 20, "score": 5000, "kills": 300, "best_combo": 42, "embers_banked": 450, "weapon": "Meteor Volley"})
+	await get_tree().process_frame
+	_assert_true(recap.title_label.text == "FORGE SECURED", "Victory recap shows FORGE SECURED")
+	recap.queue_free()
+	var file := FileAccess.open(SaveManager.SAVE_PATH, FileAccess.WRITE)
+	file.store_string("{bad json")
+	file.close()
+	SaveManager.load_save()
+	_assert_eq(int(SaveManager.data.v), SaveManager.SAVE_VERSION, "corrupt save falls back to fresh schema")
+	_assert_true(FileAccess.file_exists(SaveManager.SAVE_PATH + ".corrupt"), "corrupt save is backed up")
+	_reset_test_save()
+
+func _test_phase4_bosses_victory_and_endless() -> void:
+	var arena = await _fresh_test_arena(0x4404)
+	GameState.wave = 10
+	var choir = arena._spawn_enemy(Choir, Vector2(1600, 520))
+	choir.apply_damage(choir.max_hp * 0.34, Vector2.ZERO)
+	_assert_true(choir.boss_bodies_alive < Choir.boss_body_count, "Choir loses bodies at shared HP thresholds")
+	_assert_true(arena.debug_stats.boss_phases.has(&"choir"), "Choir body loss emits boss phase")
+	var aurum = arena._spawn_enemy(Aurum, Vector2(1600, 520))
+	aurum.apply_damage(aurum.max_hp * 0.55, Vector2.ZERO)
+	_assert_eq(aurum.boss_phase, 2, "Aurum enters phase 2 below half HP")
+	_assert_true(arena.debug_stats.boss_phases.has(&"aurum"), "Aurum phase transition emits boss phase")
+	GameState.wave = 20
+	arena.ember_count = 200
+	var rekindled = arena._spawn_enemy(AurumRekindled, Vector2(1600, 520))
+	rekindled.dead = true
+	arena._kill_enemy(arena.enemies.find(rekindled))
+	_assert_true(GameState.state == GameState.RunState.VICTORY, "Aurum Rekindled kill ends run in victory")
+	_assert_true(arena.debug_stats.victory, "Victory flag is recorded")
+	_assert_eq(int(arena.debug_stats.recap.get("embers_banked", 0)), 450, "Victory recap applies ember multiplier and boss reward")
+	arena.enter_endless()
+	_assert_true(arena.endless_mode and GameState.state == GameState.RunState.PLAY, "Endless can be entered from victory recap")
+	arena.queue_free()
+	await get_tree().process_frame
+
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)
 	_assert_true(result.waves_cleared.has(6), "Test 1 clears through wave 6: %s" % str(result))
@@ -296,6 +358,15 @@ func _run_arena_sample(seed_value: int, ticks: int) -> Dictionary:
 	arena.queue_free()
 	await get_tree().process_frame
 	return result
+
+func _reset_test_save() -> void:
+	if FileAccess.file_exists(SaveManager.SAVE_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveManager.SAVE_PATH))
+	if FileAccess.file_exists(SaveManager.SAVE_PATH + ".corrupt"):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveManager.SAVE_PATH + ".corrupt"))
+	SaveManager.data = SaveManager.default_save()
+	SaveManager.save()
+	MetaProgression.sync_from_save()
 
 func _run_scripted_phase2_sample(seed_value: int, require_wave6_clear: bool) -> Dictionary:
 	Config.set_run_seed(seed_value)

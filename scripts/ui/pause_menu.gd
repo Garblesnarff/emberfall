@@ -13,4 +13,4 @@ func _ready() -> void:
 	resume_button.pressed.connect(func() -> void: resume_requested.emit())
 	settings_button.pressed.connect(func() -> void: settings_requested.emit())
 	forge_button.pressed.connect(func() -> void: forge_requested.emit())
-
+	resume_button.grab_focus()

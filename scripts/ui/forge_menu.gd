@@ -22,6 +22,7 @@ func _ready() -> void:
 	purchase_button.pressed.connect(purchase_first_available)
 	settings_button.pressed.connect(func() -> void: settings_requested.emit())
 	refresh()
+	start_button.grab_focus()
 
 func _fit_to_viewport() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

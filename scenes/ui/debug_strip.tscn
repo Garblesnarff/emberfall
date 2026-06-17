@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://emberfall_debug_strip"]
+
+[ext_resource type="Script" path="res://scripts/ui/debug_strip.gd" id="1"]
+
+[node name="DebugStrip" type="Label"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 34.0
+offset_right = -16.0
+offset_bottom = 57.0
+grow_horizontal = 2
+text = "FPS 0"
+horizontal_alignment = 2
+script = ExtResource("1")

@@ -4,6 +4,7 @@ const ForgeMenuScene := preload("res://scenes/ui/forge_menu.tscn")
 const RecapScene := preload("res://scenes/ui/recap.tscn")
 const PauseMenuScene := preload("res://scenes/ui/pause_menu.tscn")
 const SettingsMenuScene := preload("res://scenes/ui/settings_menu.tscn")
+const DebugStripScene := preload("res://scenes/ui/debug_strip.tscn")
 
 @onready var arena: Node = %Arena
 
@@ -11,6 +12,7 @@ var forge_menu: Control
 var recap: Control
 var pause_menu: Control
 var settings_menu: Control
+var debug_strip: Control
 var ui_layer: CanvasLayer
 var state_before_settings := GameState.RunState.MENU
 
@@ -21,6 +23,8 @@ func _ready() -> void:
 	ui_layer.layer = 50
 	ui_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(ui_layer)
+	debug_strip = DebugStripScene.instantiate()
+	ui_layer.add_child(debug_strip)
 	EventBus.run_ended.connect(_on_run_ended)
 	_set_arena_visible(false)
 	_show_forge()

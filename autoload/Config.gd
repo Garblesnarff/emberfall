@@ -132,6 +132,7 @@ var fps_overlay_enabled := false
 
 func _ready() -> void:
 	Engine.physics_ticks_per_second = PHYSICS_TICKS_PER_SECOND
+	_ensure_controller_defaults()
 	set_run_seed(0xE4BEF411)
 
 func apply_settings(settings: Dictionary) -> void:
@@ -160,3 +161,33 @@ func elite_chance(wave: int) -> float:
 
 func spawn_interval(wave: int) -> int:
 	return max(SPAWN_INTERVAL_MIN_TICKS, SPAWN_INTERVAL_BASE_TICKS - wave * SPAWN_INTERVAL_WAVE_REDUCTION)
+
+func _ensure_controller_defaults() -> void:
+	_add_axis_event("move_left", JOY_AXIS_LEFT_X, -1.0)
+	_add_axis_event("move_right", JOY_AXIS_LEFT_X, 1.0)
+	_add_axis_event("move_up", JOY_AXIS_LEFT_Y, -1.0)
+	_add_axis_event("move_down", JOY_AXIS_LEFT_Y, 1.0)
+	_add_button_event("dash", JOY_BUTTON_A)
+	_add_button_event("dash", JOY_BUTTON_RIGHT_SHOULDER)
+	_add_button_event("pause", JOY_BUTTON_START)
+
+func _add_axis_event(action: StringName, axis: JoyAxis, axis_value: float) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	for event in InputMap.action_get_events(action):
+		if event is InputEventJoypadMotion and event.axis == axis and is_equal_approx(event.axis_value, axis_value):
+			return
+	var joy_event := InputEventJoypadMotion.new()
+	joy_event.axis = axis
+	joy_event.axis_value = axis_value
+	InputMap.action_add_event(action, joy_event)
+
+func _add_button_event(action: StringName, button: JoyButton) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	for event in InputMap.action_get_events(action):
+		if event is InputEventJoypadButton and event.button_index == button:
+			return
+	var joy_event := InputEventJoypadButton.new()
+	joy_event.button_index = button
+	InputMap.action_add_event(action, joy_event)

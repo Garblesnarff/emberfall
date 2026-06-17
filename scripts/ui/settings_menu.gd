@@ -17,6 +17,7 @@ func _ready() -> void:
 	close_button.pressed.connect(func() -> void: closed.emit())
 	_load_values()
 	_connect_controls()
+	close_button.grab_focus()
 
 func _load_values() -> void:
 	var settings: Dictionary = SaveManager.data.get("settings", {})
@@ -38,4 +39,3 @@ func _connect_controls() -> void:
 	fps_check.toggled.connect(func(value: bool) -> void: SaveManager.update_setting("fps", value))
 	fullscreen_check.toggled.connect(func(value: bool) -> void: SaveManager.update_setting("fullscreen", value))
 	vsync_check.toggled.connect(func(value: bool) -> void: SaveManager.update_setting("vsync", value))
-

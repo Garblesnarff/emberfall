@@ -400,6 +400,9 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	_assert_approx(AudioDirector.music_volume, 0.25, 0.001, "Music volume setting applies to AudioDirector")
 	_assert_approx(Config.screen_shake_scale, 0.2, 0.001, "Shake setting applies to Config")
 	_assert_true(Config.fps_overlay_enabled, "FPS overlay setting applies to Config")
+	_assert_true(_action_has_joy_motion("move_left", JOY_AXIS_LEFT_X, -1.0), "Controller left stick maps to movement")
+	_assert_true(_action_has_joy_button("dash", JOY_BUTTON_A), "Controller face button maps to dash")
+	_assert_true(_action_has_joy_button("pause", JOY_BUTTON_START), "Controller start button maps to pause")
 	var settings: Control = SettingsMenuScene.instantiate()
 	get_tree().root.add_child(settings)
 	await get_tree().process_frame
@@ -408,6 +411,7 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	var main: Node = MainScene.instantiate()
 	get_tree().root.add_child(main)
 	await get_tree().process_frame
+	_assert_true(main.debug_strip.visible and main.debug_strip.text.contains("STEAM OFF"), "Debug strip shows local Steam status when FPS overlay is enabled")
 	main._start_run()
 	await get_tree().process_frame
 	main._pause_run()
@@ -428,6 +432,18 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	main.queue_free()
 	await get_tree().process_frame
 	_reset_test_save()
+
+func _action_has_joy_motion(action: StringName, axis: JoyAxis, axis_value: float) -> bool:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventJoypadMotion and event.axis == axis and is_equal_approx(event.axis_value, axis_value):
+			return true
+	return false
+
+func _action_has_joy_button(action: StringName, button: JoyButton) -> bool:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventJoypadButton and event.button_index == button:
+			return true
+	return false
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)

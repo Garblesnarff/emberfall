@@ -1,0 +1,34 @@
+# EMBERFALL Phase 5 Release Readiness
+
+This project is set up to keep Steam integration optional until a Steamworks app ID and GodotSteam binaries exist.
+
+## Local Export Presets
+
+`export_presets.cfg` defines three Steam-target export presets:
+
+- `Windows Steam` -> `exports/windows/EMBERFALL.exe`
+- `Linux Steam` -> `exports/linux/EMBERFALL.x86_64`
+- `macOS Steam` -> `exports/macos/EMBERFALL.zip`
+
+The `exports/` directory is ignored so local binaries do not enter source control. The presets use the `steam` custom feature tag so future Steam-only code paths can be feature-gated cleanly while normal editor/headless runs remain DRM-free.
+
+## Local Validation
+
+Run these before pushing Phase 5 changes:
+
+```bash
+godot --headless --path . --quit
+godot --headless --fixed-fps 60 --path . --scene res://test/run_tests.tscn
+bash tools/run_gdunit.sh
+```
+
+Actual binary exports also require Godot export templates installed locally. Steam-enabled exports additionally require the future GodotSteam GDExtension binaries.
+
+## Still Requires Steam Setup
+
+- Steam app ID and `steam_appid.txt` for local Steam testing.
+- GodotSteam GDExtension binaries for Godot 4.6.3 and each target platform.
+- Steamworks achievements matching `SteamManager.ACHIEVEMENTS`.
+- Steam Cloud mapping for `user://emberfall.save`.
+- Steam Input configuration and glyph verification.
+- Steam Deck hardware pass for stable performance and no keyboard-required flows.

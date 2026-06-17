@@ -10,11 +10,13 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 - Pause and settings menus work during a paused tree.
 - Focus loss auto-pauses active runs.
 - `AudioDirector` owns SFX/Music buses, a small pooled SFX surface, volume settings, intensity state, and pause/resume state.
+- Steam-target export presets exist for Windows, Linux, and macOS; see `docs/PHASE_5_RELEASE_READINESS.md`.
 
 ## Future Steamworks Inputs
 
 - Steam app ID.
 - GodotSteam GDExtension binaries matching Godot 4.6.3 and target exports.
+- Installed Godot export templates on any machine producing binaries.
 - Achievement definitions using these API IDs:
   - `ACH_FIRST_LIGHT`
   - `ACH_SLAGBREAKER`

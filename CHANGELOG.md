@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.5 - Phase 5 Export Readiness
+
+- Added Steam-target Godot export presets for Windows, Linux, and macOS.
+- Added release-readiness documentation for local validation, export templates, and future Steam requirements.
+- Added automated checks that export presets load, use the `steam` feature tag, and write to ignored local export directories.
+
 ## 0.5.4 - Phase 5 Deck Navigation Hardening
 
 - Added controller UI defaults for accept, cancel, and d-pad navigation.

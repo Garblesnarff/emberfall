@@ -35,6 +35,7 @@ func _run() -> void:
 	await _test_phase4_main_flow_integration()
 	await _test_phase4_bosses_victory_and_endless()
 	await _test_phase5_steam_achievements_settings_and_pause()
+	_test_phase5_export_preset_readiness()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
@@ -462,6 +463,22 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	main.queue_free()
 	await get_tree().process_frame
 	_reset_test_save()
+
+func _test_phase5_export_preset_readiness() -> void:
+	var cfg := ConfigFile.new()
+	_assert_eq(cfg.load("res://export_presets.cfg"), OK, "export presets load for Phase 5 release readiness")
+	var expected := {
+		"Windows Steam": "exports/windows/EMBERFALL.exe",
+		"Linux Steam": "exports/linux/EMBERFALL.x86_64",
+		"macOS Steam": "exports/macos/EMBERFALL.zip",
+	}
+	for index in range(3):
+		var section := "preset.%d" % index
+		var name := String(cfg.get_value(section, "name", ""))
+		_assert_true(expected.has(name), "export preset %d has a Steam target name" % index)
+		_assert_eq(String(cfg.get_value(section, "custom_features", "")), "steam", "%s export uses the steam feature tag" % name)
+		_assert_eq(String(cfg.get_value(section, "export_path", "")), String(expected.get(name, "")), "%s export path is in ignored local exports directory" % name)
+		_assert_true(bool(cfg.get_value(section, "runnable", false)), "%s export is runnable" % name)
 
 func _action_has_joy_motion(action: StringName, axis: JoyAxis, axis_value: float) -> bool:
 	for event in InputMap.action_get_events(action):

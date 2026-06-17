@@ -26,7 +26,7 @@ func set_world_state(player_pos: Vector2, camera_pos: Vector2, enemies: Array, w
 	minimap.set_world_state(player_pos, enemies, world_size, boss_telegraph_pos, objective_markers)
 	threat_chevrons.set_world_state(player_pos, camera_pos, enemies, boss_telegraph_pos, objective_markers)
 
-func set_phase3_state(weapon_name: String, embers: int, objective_text: String, anvil_hp: float, cards: Array, chest_text: String) -> void:
+func set_phase3_state(weapon_name: String, embers: int, objective_text: String, anvil_hp: float, cards: Array, chest_text: String, selected_card := -1) -> void:
 	var objective_line := objective_text
 	if anvil_hp > 0.0:
 		objective_line = "%s %.0f HP" % [objective_text, anvil_hp]
@@ -40,6 +40,7 @@ func set_phase3_state(weapon_name: String, embers: int, objective_text: String, 
 	else:
 		var lines: Array[String] = ["CHOOSE TEMPERING"]
 		for i in range(cards.size()):
-			lines.append("%d  %s" % [i + 1, cards[i].display_name])
+			var marker := ">" if i == selected_card else " "
+			lines.append("%s %d  %s" % [marker, i + 1, cards[i].display_name])
 		upgrade_label.text = "\n".join(lines)
 		upgrade_label.visible = true

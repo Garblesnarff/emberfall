@@ -94,6 +94,7 @@ var objective_failure_log: Array[StringName] = []
 var ember_count := 0
 var offered_cards: Array = []
 var upgrade_panel_visible := false
+var selected_upgrade_index := 0
 var pending_next_wave := false
 var pending_upgrade_reason: StringName = &""
 var chest_reveal_ticks := 0
@@ -909,6 +910,7 @@ func offer_upgrades(count := Config.UPGRADE_PICK_COUNT, reason: StringName = &"w
 		offered_cards[j] = temp
 	offered_cards = offered_cards.slice(0, min(count, offered_cards.size()))
 	upgrade_panel_visible = true
+	selected_upgrade_index = 0
 	pending_upgrade_reason = reason
 	GameState.state = GameState.RunState.UPGRADE
 	return offered_cards
@@ -917,6 +919,7 @@ func choose_upgrade(index := 0) -> void:
 	if index >= 0 and index < offered_cards.size():
 		apply_tempering(offered_cards[index].id)
 	upgrade_panel_visible = false
+	selected_upgrade_index = 0
 	offered_cards.clear()
 	GameState.state = GameState.RunState.PLAY
 	if pending_next_wave:
@@ -1036,15 +1039,38 @@ func _update_hud() -> void:
 					content_text += ", "
 				content_text += str(content)
 			chest_text = "CHEST: %s" % (content_text if content_text != "" else "TEMPERING")
-		hud.set_phase3_state(current_weapon.display_name, ember_count, _objective_status_text(), anvil_hp, cards, chest_text)
+		hud.set_phase3_state(current_weapon.display_name, ember_count, _objective_status_text(), anvil_hp, cards, chest_text, selected_upgrade_index if upgrade_panel_visible else -1)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if GameState.state != GameState.RunState.UPGRADE or not event.is_pressed():
+		return
+	if event.is_action_pressed("ui_right") or event.is_action_pressed("ui_down") or event.is_action_pressed("move_right") or event.is_action_pressed("move_down"):
+		_select_next_upgrade()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("ui_left") or event.is_action_pressed("ui_up") or event.is_action_pressed("move_left") or event.is_action_pressed("move_up"):
+		_select_previous_upgrade()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("ui_accept") or event.is_action_pressed("dash"):
+		choose_upgrade(selected_upgrade_index)
+		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey:
 		var key := event as InputEventKey
 		if key.keycode >= KEY_1 and key.keycode <= KEY_4:
 			choose_upgrade(key.keycode - KEY_1)
+			get_viewport().set_input_as_handled()
+
+func _select_next_upgrade() -> void:
+	if offered_cards.is_empty():
+		return
+	selected_upgrade_index = (selected_upgrade_index + 1) % offered_cards.size()
+
+func _select_previous_upgrade() -> void:
+	if offered_cards.is_empty():
+		return
+	selected_upgrade_index = (selected_upgrade_index - 1 + offered_cards.size()) % offered_cards.size()
 
 func _on_shake_requested(strength: float) -> void:
 	shake = max(shake, strength * Config.screen_shake_scale)

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.4 - Phase 5 Deck Navigation Hardening
+
+- Added controller UI defaults for accept, cancel, and d-pad navigation.
+- Added controller/keyboard action navigation for in-run upgrade choices.
+- Added selected-card HUD marking for upgrade choices.
+- Expanded tests for upgrade selection, UI accept/navigation mappings, and 1280x800 selected-choice readability.
+
 ## 0.5.3 - Phase 5 Audio Event Polish
 
 - Connected AudioDirector to gameplay events for kills, hurt, boss phases, chest opens, wave clears, combo changes, and run endings.

@@ -192,6 +192,12 @@ func _ensure_controller_defaults() -> void:
 	_add_button_event("dash", JOY_BUTTON_A)
 	_add_button_event("dash", JOY_BUTTON_RIGHT_SHOULDER)
 	_add_button_event("pause", JOY_BUTTON_START)
+	_add_button_event("ui_accept", JOY_BUTTON_A)
+	_add_button_event("ui_cancel", JOY_BUTTON_B)
+	_add_button_event("ui_left", JOY_BUTTON_DPAD_LEFT)
+	_add_button_event("ui_right", JOY_BUTTON_DPAD_RIGHT)
+	_add_button_event("ui_up", JOY_BUTTON_DPAD_UP)
+	_add_button_event("ui_down", JOY_BUTTON_DPAD_DOWN)
 
 func apply_keyboard_bindings(bindings: Dictionary) -> void:
 	for action in REBINDABLE_ACTIONS:

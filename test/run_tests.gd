@@ -147,13 +147,14 @@ func _test_deck_resolution_hud_layout() -> void:
 	separated = separated and not center.get_global_rect().intersects(right.get_global_rect())
 	separated = separated and not right.get_global_rect().intersects(minimap.get_global_rect())
 	hud.set_world_state(Vector2(1600, 1200), Vector2(1600, 1200), [], Config.WORLD_SIZE, Vector2.INF, [Vector2(3100, 2300)])
-	hud.set_phase3_state("Forgehammer", 12, "Ember Vein", 0.0, [preload("res://data/temperings/hotter_steel.tres")], "")
+	hud.set_phase3_state("Forgehammer", 12, "Ember Vein", 0.0, [preload("res://data/temperings/hotter_steel.tres")], "", 0)
 	await get_tree().process_frame
 	_assert_true(inside, "HUD elements fit inside 1280x800 Deck viewport")
 	_assert_true(separated, "HUD regions do not overlap at 1280x800")
 	_assert_true(hud.threat_chevrons.last_drawn_count > 0, "objective threat placeholders can draw edge chevrons")
 	_assert_true(hud.phase3_label.text.contains("EMBERS 12"), "HUD exposes Phase 3 ember readout")
 	_assert_true(hud.upgrade_label.visible, "HUD exposes placeholder upgrade choices")
+	_assert_true(hud.upgrade_label.text.contains("> 1"), "HUD marks the selected upgrade choice")
 	hud.queue_free()
 	await get_tree().process_frame
 
@@ -260,7 +261,19 @@ func _test_phase3_objectives_and_rewards() -> void:
 	arena.force_open_chest()
 	_assert_true(arena.upgrade_panel_visible, "non-evolution chest offers upgrade cards")
 	_assert_true(arena.offered_cards.size() > 0, "chest-to-tempering flow has card choices")
-	arena.choose_upgrade(0)
+	var starting_choice: StringName = arena.offered_cards[0].id
+	var second_choice: StringName = arena.offered_cards[1].id if arena.offered_cards.size() > 1 else starting_choice
+	arena._unhandled_input(_action_event("ui_right"))
+	_assert_eq(arena.selected_upgrade_index, 1 if arena.offered_cards.size() > 1 else 0, "upgrade panel supports controller next selection")
+	arena._unhandled_input(_action_event("ui_left"))
+	_assert_eq(arena.selected_upgrade_index, 0, "upgrade panel supports controller previous selection")
+	if arena.offered_cards.size() > 1:
+		arena._unhandled_input(_action_event("ui_right"))
+		arena._unhandled_input(_action_event("ui_accept"))
+		_assert_true(arena.get_tempering_level(second_choice) > 0, "upgrade panel accepts selected controller choice")
+	else:
+		arena._unhandled_input(_action_event("ui_accept"))
+		_assert_true(arena.get_tempering_level(starting_choice) > 0, "upgrade panel accepts selected controller choice")
 	arena._start_objective(ObjAnvil)
 	arena._complete_objective()
 	arena.spawn_queue.clear()
@@ -409,6 +422,8 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	_assert_true(_action_has_joy_motion("aim_right", JOY_AXIS_RIGHT_X, 1.0), "Controller right stick maps to aim")
 	_assert_true(_action_has_joy_button("dash", JOY_BUTTON_A), "Controller face button maps to dash")
 	_assert_true(_action_has_joy_button("pause", JOY_BUTTON_START), "Controller start button maps to pause")
+	_assert_true(_action_has_joy_button("ui_accept", JOY_BUTTON_A), "Controller face button maps to UI accept")
+	_assert_true(_action_has_joy_button("ui_right", JOY_BUTTON_DPAD_RIGHT), "Controller d-pad maps to UI navigation")
 	SaveManager.update_key_binding(&"dash", KEY_K)
 	_assert_true(_action_has_key("dash", KEY_K), "Keyboard rebinding applies to InputMap")
 	_assert_eq(int(SaveManager.data.settings.bindings.dash), KEY_K, "Keyboard rebinding persists in save settings")
@@ -465,6 +480,12 @@ func _action_has_key(action: StringName, keycode: Key) -> bool:
 		if event is InputEventKey and event.keycode == keycode:
 			return true
 	return false
+
+func _action_event(action: StringName) -> InputEventAction:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	return event
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)

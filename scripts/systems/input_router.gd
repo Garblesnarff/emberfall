@@ -12,7 +12,7 @@ func movement_vector() -> Vector2:
 	return v.normalized() if v.length_squared() > 1.0 else v
 
 func aim_world_position(owner_node: CanvasItem, player_pos: Vector2, tick: int) -> Vector2:
-	var stick := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
 	if stick.length() >= STICK_DEADZONE:
 		last_aim_vector = stick.normalized()
 		last_controller_aim_tick = tick

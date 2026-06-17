@@ -15,7 +15,7 @@ func default_save() -> Dictionary:
 		"best": {"wave": 0, "score": 0, "combo": 0},
 		"bank": {"embers": 0},
 		"unlocks": {"weapons": ["forgehammer"], "perks": [], "cards": []},
-		"settings": {"sfx": 1.0, "music": 1.0, "shake": 1.0, "dnums": true, "minimap": true, "fps": false, "fullscreen": false, "vsync": true},
+		"settings": {"sfx": 1.0, "music": 1.0, "shake": 1.0, "dnums": true, "minimap": true, "fps": false, "fullscreen": false, "vsync": true, "bindings": Config.default_keyboard_bindings()},
 		"stats": {"runs": 0, "kills": 0, "deaths": 0, "playMs": 0, "victories": 0},
 	}
 
@@ -49,6 +49,17 @@ func update_setting(key: String, value: Variant) -> void:
 	Config.apply_settings(data.settings)
 	AudioDirector.apply_settings()
 
+func update_key_binding(action: StringName, keycode: int) -> void:
+	data = _migrate(data)
+	data.settings.bindings[String(action)] = keycode
+	save()
+	Config.set_keyboard_binding(action, keycode)
+
+func reset_key_bindings() -> void:
+	data = _migrate(data)
+	data.settings.bindings = Config.reset_keyboard_bindings()
+	save()
+
 func _migrate(source: Dictionary) -> Dictionary:
 	var migrated := default_save()
 	if int(source.get("v", 0)) > SAVE_VERSION:
@@ -59,7 +70,11 @@ func _migrate(source: Dictionary) -> Dictionary:
 			continue
 		if typeof(source[key]) == TYPE_DICTIONARY and typeof(migrated.get(key)) == TYPE_DICTIONARY:
 			for sub_key in source[key].keys():
-				migrated[key][sub_key] = source[key][sub_key]
+				if typeof(source[key][sub_key]) == TYPE_DICTIONARY and typeof(migrated[key].get(sub_key)) == TYPE_DICTIONARY:
+					for nested_key in source[key][sub_key].keys():
+						migrated[key][sub_key][nested_key] = source[key][sub_key][nested_key]
+				else:
+					migrated[key][sub_key] = source[key][sub_key]
 		else:
 			migrated[key] = source[key]
 	migrated.v = SAVE_VERSION

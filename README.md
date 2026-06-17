@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.2.0` - Phase 2 World.
+Current version: `0.5.2` - Phase 5 Steam & Polish foundations.
 
 ## Play Test
 
@@ -13,8 +13,10 @@ godot --path .
 Controls:
 
 - `WASD` or arrow keys: move
+- Right stick: aim on controller
 - Mouse: aim
 - `Space`: dash
+- `P` or Start: pause
 - Auto-fire is always active
 
 ## Validate

@@ -401,12 +401,22 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	_assert_approx(Config.screen_shake_scale, 0.2, 0.001, "Shake setting applies to Config")
 	_assert_true(Config.fps_overlay_enabled, "FPS overlay setting applies to Config")
 	_assert_true(_action_has_joy_motion("move_left", JOY_AXIS_LEFT_X, -1.0), "Controller left stick maps to movement")
+	_assert_true(_action_has_joy_motion("aim_right", JOY_AXIS_RIGHT_X, 1.0), "Controller right stick maps to aim")
 	_assert_true(_action_has_joy_button("dash", JOY_BUTTON_A), "Controller face button maps to dash")
 	_assert_true(_action_has_joy_button("pause", JOY_BUTTON_START), "Controller start button maps to pause")
+	SaveManager.update_key_binding(&"dash", KEY_K)
+	_assert_true(_action_has_key("dash", KEY_K), "Keyboard rebinding applies to InputMap")
+	_assert_eq(int(SaveManager.data.settings.bindings.dash), KEY_K, "Keyboard rebinding persists in save settings")
 	var settings: Control = SettingsMenuScene.instantiate()
 	get_tree().root.add_child(settings)
 	await get_tree().process_frame
 	_assert_approx(settings.sfx_slider.value, 0.35, 0.001, "Settings menu loads saved SFX volume")
+	_assert_true(settings.binding_buttons.has(&"dash") and settings.binding_buttons[&"dash"].text == "K", "Settings menu displays saved key binding")
+	settings._begin_capture(&"move_up")
+	_assert_true(settings.binding_buttons[&"move_up"].text == "PRESS KEY", "Settings menu exposes key capture state")
+	SaveManager.reset_key_bindings()
+	settings._update_binding_buttons()
+	_assert_true(_action_has_key("dash", KEY_SPACE), "Control reset restores default dash key")
 	settings.queue_free()
 	var main: Node = MainScene.instantiate()
 	get_tree().root.add_child(main)
@@ -442,6 +452,12 @@ func _action_has_joy_motion(action: StringName, axis: JoyAxis, axis_value: float
 func _action_has_joy_button(action: StringName, button: JoyButton) -> bool:
 	for event in InputMap.action_get_events(action):
 		if event is InputEventJoypadButton and event.button_index == button:
+			return true
+	return false
+
+func _action_has_key(action: StringName, keycode: Key) -> bool:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey and event.keycode == keycode:
 			return true
 	return false
 

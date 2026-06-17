@@ -122,6 +122,23 @@ const OVERCLOCK_FIRE_RATE_MULT := 0.60
 const METEOR_RADIUS := 115.0
 const RAILSPIKE_WIDTH := 34.0
 const VICTORY_EMBER_MULT := 1.5
+const REBINDABLE_ACTIONS := [&"move_up", &"move_down", &"move_left", &"move_right", &"dash", &"pause"]
+const ACTION_LABELS := {
+	&"move_up": "Move Up",
+	&"move_down": "Move Down",
+	&"move_left": "Move Left",
+	&"move_right": "Move Right",
+	&"dash": "Dash",
+	&"pause": "Pause",
+}
+const DEFAULT_KEY_BINDINGS := {
+	&"move_up": KEY_W,
+	&"move_down": KEY_S,
+	&"move_left": KEY_A,
+	&"move_right": KEY_D,
+	&"dash": KEY_SPACE,
+	&"pause": KEY_P,
+}
 
 var rng := RandomNumberGenerator.new()
 var run_seed := 0
@@ -142,6 +159,7 @@ func apply_settings(settings: Dictionary) -> void:
 	fps_overlay_enabled = bool(settings.get("fps", false))
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if bool(settings.get("vsync", true)) else DisplayServer.VSYNC_DISABLED)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if bool(settings.get("fullscreen", false)) else DisplayServer.WINDOW_MODE_WINDOWED)
+	apply_keyboard_bindings(settings.get("bindings", {}))
 
 func set_run_seed(seed_value: int) -> void:
 	run_seed = seed_value
@@ -167,9 +185,48 @@ func _ensure_controller_defaults() -> void:
 	_add_axis_event("move_right", JOY_AXIS_LEFT_X, 1.0)
 	_add_axis_event("move_up", JOY_AXIS_LEFT_Y, -1.0)
 	_add_axis_event("move_down", JOY_AXIS_LEFT_Y, 1.0)
+	_add_axis_event("aim_left", JOY_AXIS_RIGHT_X, -1.0)
+	_add_axis_event("aim_right", JOY_AXIS_RIGHT_X, 1.0)
+	_add_axis_event("aim_up", JOY_AXIS_RIGHT_Y, -1.0)
+	_add_axis_event("aim_down", JOY_AXIS_RIGHT_Y, 1.0)
 	_add_button_event("dash", JOY_BUTTON_A)
 	_add_button_event("dash", JOY_BUTTON_RIGHT_SHOULDER)
 	_add_button_event("pause", JOY_BUTTON_START)
+
+func apply_keyboard_bindings(bindings: Dictionary) -> void:
+	for action in REBINDABLE_ACTIONS:
+		var keycode := int(bindings.get(String(action), DEFAULT_KEY_BINDINGS[action]))
+		set_keyboard_binding(action, keycode)
+
+func set_keyboard_binding(action: StringName, keycode: int) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey:
+			InputMap.action_erase_event(action, event)
+	var key_event := InputEventKey.new()
+	key_event.keycode = keycode
+	InputMap.action_add_event(action, key_event)
+
+func reset_keyboard_bindings() -> Dictionary:
+	var bindings := default_keyboard_bindings()
+	apply_keyboard_bindings(bindings)
+	return bindings
+
+func default_keyboard_bindings() -> Dictionary:
+	var bindings := {}
+	for action in REBINDABLE_ACTIONS:
+		bindings[String(action)] = DEFAULT_KEY_BINDINGS[action]
+	return bindings
+
+func action_label(action: StringName) -> String:
+	return String(ACTION_LABELS.get(action, String(action)))
+
+func keyboard_binding_text(action: StringName) -> String:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey:
+			return event.as_text_keycode()
+	return "UNBOUND"
 
 func _add_axis_event(action: StringName, axis: JoyAxis, axis_value: float) -> void:
 	if not InputMap.has_action(action):

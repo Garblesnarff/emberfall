@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.3 - Phase 5 Audio Event Polish
+
+- Connected AudioDirector to gameplay events for kills, hurt, boss phases, chest opens, wave clears, combo changes, and run endings.
+- Added procedural placeholder WAV SFX generation and caching for Steam-free polish testing.
+- Added audio intensity updates from combat pressure events.
+- Expanded Phase 5 tests for event-driven audio reactions and generated SFX data.
+
 ## 0.5.2 - Phase 5 Control Hardening
 
 - Added dedicated right-stick aim InputMap actions for Steam Input readiness.

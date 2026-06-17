@@ -126,10 +126,21 @@ const VICTORY_EMBER_MULT := 1.5
 var rng := RandomNumberGenerator.new()
 var run_seed := 0
 var screen_shake_scale := 1.0
+var damage_numbers_enabled := true
+var minimap_enabled := true
+var fps_overlay_enabled := false
 
 func _ready() -> void:
 	Engine.physics_ticks_per_second = PHYSICS_TICKS_PER_SECOND
 	set_run_seed(0xE4BEF411)
+
+func apply_settings(settings: Dictionary) -> void:
+	screen_shake_scale = clampf(float(settings.get("shake", 1.0)), 0.0, 1.0)
+	damage_numbers_enabled = bool(settings.get("dnums", true))
+	minimap_enabled = bool(settings.get("minimap", true))
+	fps_overlay_enabled = bool(settings.get("fps", false))
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if bool(settings.get("vsync", true)) else DisplayServer.VSYNC_DISABLED)
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if bool(settings.get("fullscreen", false)) else DisplayServer.WINDOW_MODE_WINDOWED)
 
 func set_run_seed(seed_value: int) -> void:
 	run_seed = seed_value

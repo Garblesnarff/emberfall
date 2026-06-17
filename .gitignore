@@ -17,3 +17,6 @@ exports/
 # Local runtime saves/logs
 user://
 *.log
+
+# Steam local dev files
+steam_appid.txt

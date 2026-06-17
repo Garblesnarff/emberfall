@@ -15,6 +15,7 @@ const AurumRekindled := preload("res://data/enemies/aurum_rekindled.tres")
 const ForgeMenuScene := preload("res://scenes/ui/forge_menu.tscn")
 const RecapScene := preload("res://scenes/ui/recap.tscn")
 const MainScene := preload("res://scenes/main.tscn")
+const SettingsMenuScene := preload("res://scenes/ui/settings_menu.tscn")
 
 var failures := 0
 
@@ -33,12 +34,13 @@ func _run() -> void:
 	await _test_phase4_save_meta_and_ui()
 	await _test_phase4_main_flow_integration()
 	await _test_phase4_bosses_victory_and_endless()
+	await _test_phase5_steam_achievements_settings_and_pause()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1/2/3/4 tests: PASS")
+		print("EMBERFALL Phase 1/2/3/4/5 tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1/2/3/4 tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2/3/4/5 tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -357,6 +359,72 @@ func _test_phase4_main_flow_integration() -> void:
 	main._show_forge()
 	await get_tree().process_frame
 	_assert_true(GameState.state == GameState.RunState.MENU and main.forge_menu.visible, "recap can return to Forge menu")
+	main.queue_free()
+	await get_tree().process_frame
+	_reset_test_save()
+
+func _test_phase5_steam_achievements_settings_and_pause() -> void:
+	_reset_test_save()
+	SteamManager.unlocked_achievements.clear()
+	SteamManager.rich_presence.clear()
+	SteamManager.stats_store_requests = 0
+	AchievementManager.reset_for_tests()
+	_assert_true(not SteamManager.is_available(), "SteamManager no-ops cleanly without Steam")
+	SteamManager.unlock_achievement(&"first_light")
+	SteamManager.set_rich_presence("status", "Wave 12 - Forging")
+	_assert_true(SteamManager.unlocked_achievements.has(&"first_light"), "SteamManager records local achievement unlocks")
+	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "Wave 12 - Forging", "SteamManager stores rich presence locally")
+	EventBus.enemy_killed.emit(preload("res://data/enemies/kilnmaw.tres"))
+	EventBus.enemy_killed.emit(Choir)
+	EventBus.enemy_killed.emit(Aurum)
+	EventBus.wave_cleared.emit(1)
+	EventBus.combo_changed.emit(100)
+	EventBus.chest_opened.emit([&"meteor_volley"])
+	SaveManager.data.bank.embers = 1000
+	SaveManager.data.stats.runs = 25
+	EventBus.run_ended.emit(true, {})
+	_assert_true(AchievementManager.unlocked.has(&"slagbreaker"), "Kilnmaw kill unlocks Slagbreaker")
+	_assert_true(AchievementManager.unlocked.has(&"choir_silencer"), "Choir kill unlocks Choir Silencer")
+	_assert_true(AchievementManager.unlocked.has(&"tyrants_end"), "Aurum kill unlocks Tyrant's End")
+	_assert_true(AchievementManager.unlocked.has(&"first_light"), "Wave 1 clear unlocks First Light")
+	_assert_true(AchievementManager.unlocked.has(&"centurion"), "100 combo unlocks Centurion")
+	_assert_true(AchievementManager.unlocked.has(&"evolved"), "Evolution chest unlocks Evolved")
+	_assert_true(AchievementManager.unlocked.has(&"forge_secured"), "Victory unlocks FORGE SECURED")
+	_assert_true(AchievementManager.unlocked.has(&"full_bank"), "1000 banked embers unlocks Full Bank")
+	_assert_true(AchievementManager.unlocked.has(&"old_hand"), "25 runs unlocks Old Hand")
+	SaveManager.update_setting("sfx", 0.35)
+	SaveManager.update_setting("music", 0.25)
+	SaveManager.update_setting("shake", 0.2)
+	SaveManager.update_setting("fps", true)
+	_assert_approx(AudioDirector.sfx_volume, 0.35, 0.001, "SFX volume setting applies to AudioDirector")
+	_assert_approx(AudioDirector.music_volume, 0.25, 0.001, "Music volume setting applies to AudioDirector")
+	_assert_approx(Config.screen_shake_scale, 0.2, 0.001, "Shake setting applies to Config")
+	_assert_true(Config.fps_overlay_enabled, "FPS overlay setting applies to Config")
+	var settings: Control = SettingsMenuScene.instantiate()
+	get_tree().root.add_child(settings)
+	await get_tree().process_frame
+	_assert_approx(settings.sfx_slider.value, 0.35, 0.001, "Settings menu loads saved SFX volume")
+	settings.queue_free()
+	var main: Node = MainScene.instantiate()
+	get_tree().root.add_child(main)
+	await get_tree().process_frame
+	main._start_run()
+	await get_tree().process_frame
+	main._pause_run()
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.PAUSE and get_tree().paused, "Pause menu pauses active run")
+	_assert_true(AudioDirector.audio_paused, "Pause menu pauses audio")
+	_assert_true(is_instance_valid(main.pause_menu) and main.pause_menu.visible, "Pause menu is visible")
+	main._show_settings()
+	await get_tree().process_frame
+	_assert_true(is_instance_valid(main.settings_menu) and main.settings_menu.visible, "Settings menu opens from pause")
+	main._close_settings()
+	await get_tree().process_frame
+	_assert_true(main.pause_menu.visible, "Closing settings returns to pause menu")
+	main._resume_run()
+	await get_tree().process_frame
+	_assert_true(GameState.state == GameState.RunState.PLAY and not get_tree().paused, "Resume returns to active play")
+	_assert_true(not AudioDirector.audio_paused, "Resume unpauses audio")
 	main.queue_free()
 	await get_tree().process_frame
 	_reset_test_save()

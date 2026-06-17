@@ -7,6 +7,7 @@ var data := {}
 
 func _ready() -> void:
 	load_save()
+	Config.apply_settings(data.get("settings", {}))
 
 func default_save() -> Dictionary:
 	return {
@@ -14,7 +15,7 @@ func default_save() -> Dictionary:
 		"best": {"wave": 0, "score": 0, "combo": 0},
 		"bank": {"embers": 0},
 		"unlocks": {"weapons": ["forgehammer"], "perks": [], "cards": []},
-		"settings": {"sfx": 1.0, "music": 1.0, "shake": 1.0, "dnums": true, "minimap": true, "fps": false},
+		"settings": {"sfx": 1.0, "music": 1.0, "shake": 1.0, "dnums": true, "minimap": true, "fps": false, "fullscreen": false, "vsync": true},
 		"stats": {"runs": 0, "kills": 0, "deaths": 0, "playMs": 0, "victories": 0},
 	}
 
@@ -40,6 +41,13 @@ func save() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
+
+func update_setting(key: String, value: Variant) -> void:
+	data = _migrate(data)
+	data.settings[key] = value
+	save()
+	Config.apply_settings(data.settings)
+	AudioDirector.apply_settings()
 
 func _migrate(source: Dictionary) -> Dictionary:
 	var migrated := default_save()

@@ -6,7 +6,7 @@ config_version=5
 [application]
 
 config/name="EMBERFALL"
-config/version="0.4.4"
+config/version="0.5.0"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://assets/icon.svg"
@@ -20,6 +20,7 @@ SaveManager="*res://autoload/SaveManager.gd"
 MetaProgression="*res://autoload/MetaProgression.gd"
 AudioDirector="*res://autoload/AudioDirector.gd"
 SteamManager="*res://autoload/SteamManager.gd"
+AchievementManager="*res://autoload/AchievementManager.gd"
 
 [display]
 

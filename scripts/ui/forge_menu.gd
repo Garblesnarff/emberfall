@@ -1,11 +1,13 @@
 extends Control
 
 signal start_run_requested
+signal settings_requested
 
 @onready var bank_label: Label = %BankLabel
 @onready var unlock_label: Label = %UnlockLabel
 @onready var start_button: Button = %StartButton
 @onready var purchase_button: Button = %PurchaseButton
+@onready var settings_button: Button = %SettingsButton
 @onready var background: TextureRect = %Background
 @onready var word_mark: TextureRect = %WordMark
 
@@ -18,6 +20,7 @@ func _ready() -> void:
 	word_mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	start_button.pressed.connect(func() -> void: start_run_requested.emit())
 	purchase_button.pressed.connect(purchase_first_available)
+	settings_button.pressed.connect(func() -> void: settings_requested.emit())
 	refresh()
 
 func _fit_to_viewport() -> void:

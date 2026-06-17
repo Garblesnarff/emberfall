@@ -87,6 +87,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "BUY NEXT UNLOCK"
 
+[node name="SettingsButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SETTINGS"
+
 [node name="UnlockScroll" type="ScrollContainer" parent="Panel"]
 layout_mode = 2
 size_flags_vertical = 3

@@ -297,6 +297,7 @@ func _draw() -> void:
 
 func _next_wave() -> void:
 	GameState.wave += 1
+	EventBus.wave_started.emit(GameState.wave)
 	spawn_queue.clear()
 	_start_objective_for_wave(GameState.wave)
 	var count: int = min(Config.WAVE_BASE_COUNT + floori(GameState.wave * Config.WAVE_COUNT_PER_WAVE), Config.WAVE_COUNT_CAP)

@@ -6,6 +6,7 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 
 - `SteamManager` detects GodotSteam dynamically and safely no-ops when Steam is absent.
 - `AchievementManager` listens to `EventBus` and unlocks the PRD achievement set through `SteamManager`.
+- `SteamManager` listens to run/wave/end events and updates rich presence locally or through Steam when available.
 - Settings persist through `SaveManager` and apply to audio, shake/flash, damage numbers, minimap, FPS, fullscreen, and vsync.
 - Pause and settings menus work during a paused tree.
 - Focus loss auto-pauses active runs.

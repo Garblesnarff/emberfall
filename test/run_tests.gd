@@ -379,12 +379,15 @@ func _test_phase4_main_flow_integration() -> void:
 
 func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	_reset_test_save()
-	SteamManager.unlocked_achievements.clear()
-	SteamManager.rich_presence.clear()
-	SteamManager.stats_store_requests = 0
+	SteamManager.reset_for_tests()
 	AchievementManager.reset_for_tests()
 	AudioDirector.reset_for_tests()
 	_assert_true(not SteamManager.is_available(), "SteamManager no-ops cleanly without Steam")
+	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "In the Forge", "SteamManager stores Forge menu presence locally")
+	EventBus.run_started.emit(0x505)
+	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "Wave 1 - Forging", "SteamManager updates rich presence on run start")
+	EventBus.wave_started.emit(7)
+	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "Wave 7 - Forging", "SteamManager updates rich presence on wave start")
 	SteamManager.unlock_achievement(&"first_light")
 	SteamManager.set_rich_presence("status", "Wave 12 - Forging")
 	_assert_true(SteamManager.unlocked_achievements.has(&"first_light"), "SteamManager records local achievement unlocks")
@@ -400,6 +403,7 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	SaveManager.data.bank.embers = 1000
 	SaveManager.data.stats.runs = 25
 	EventBus.run_ended.emit(true, {})
+	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "Forge Secured", "SteamManager updates rich presence on victory")
 	_assert_true(AchievementManager.unlocked.has(&"slagbreaker"), "Kilnmaw kill unlocks Slagbreaker")
 	_assert_true(AchievementManager.unlocked.has(&"choir_silencer"), "Choir kill unlocks Choir Silencer")
 	_assert_true(AchievementManager.unlocked.has(&"tyrants_end"), "Aurum kill unlocks Tyrant's End")

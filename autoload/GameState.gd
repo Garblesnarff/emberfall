@@ -19,6 +19,7 @@ func start_run(seed_value: int = 0xE4BEF411) -> void:
 	combo = 0
 	best_combo = 0
 	last_recap = {}
+	EventBus.run_started.emit(seed_value)
 
 func set_combo(value: int) -> void:
 	combo = value

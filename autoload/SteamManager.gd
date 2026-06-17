@@ -20,9 +20,12 @@ var unlocked_achievements: Dictionary = {}
 var rich_presence: Dictionary = {}
 var cloud_enabled := false
 var stats_store_requests := 0
+var event_bus_connected := false
 
 func _ready() -> void:
 	initialize()
+	_connect_event_bus()
+	set_rich_presence("status", "In the Forge")
 
 func initialize() -> bool:
 	if initialized:
@@ -64,6 +67,12 @@ func set_cloud_enabled(enabled: bool) -> void:
 	if available and steam and steam.has_method("setSyncPlatforms"):
 		steam.call("setSyncPlatforms", 0xffffffff if cloud_enabled else 0)
 
+func reset_for_tests() -> void:
+	unlocked_achievements.clear()
+	rich_presence.clear()
+	stats_store_requests = 0
+	set_rich_presence("status", "In the Forge")
+
 func _try_steam_init() -> bool:
 	if not steam:
 		return false
@@ -80,3 +89,24 @@ func _try_steam_init() -> bool:
 			return result
 		return int(result) == 0
 	return false
+
+func _connect_event_bus() -> void:
+	if event_bus_connected:
+		return
+	event_bus_connected = true
+	EventBus.run_started.connect(_on_run_started)
+	EventBus.wave_started.connect(_on_wave_started)
+	EventBus.run_ended.connect(_on_run_ended)
+
+func _on_run_started(_seed: int) -> void:
+	set_rich_presence("status", "Wave 1 - Forging")
+
+func _on_wave_started(wave: int) -> void:
+	set_rich_presence("status", "Wave %d - Forging" % wave)
+
+func _on_run_ended(victory: bool, stats: Dictionary) -> void:
+	var wave := int(stats.get("wave", GameState.wave))
+	if victory:
+		set_rich_presence("status", "Forge Secured")
+	else:
+		set_rich_presence("status", "Forge Cold at Wave %d" % wave)

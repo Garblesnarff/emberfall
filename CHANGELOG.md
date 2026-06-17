@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.6 - Phase 5 Rich Presence Lifecycle
+
+- Added run-started and wave-started EventBus signals for Steam-facing state updates.
+- Wired SteamManager rich presence to Forge, run start, wave start, victory, and defeat states.
+- Added no-Steam tests for automatic rich presence transitions.
+
 ## 0.5.5 - Phase 5 Export Readiness
 
 - Added Steam-target Godot export presets for Windows, Linux, and macOS.

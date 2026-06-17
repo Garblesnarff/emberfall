@@ -1,6 +1,8 @@
 extends Node
 
 signal enemy_killed(data: Resource)
+signal run_started(seed: int)
+signal wave_started(wave: int)
 signal player_hurt(amount: float, source: Variant)
 signal boss_phase(boss: Node, phase: int)
 signal chest_opened(contents: Array)

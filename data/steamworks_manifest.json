@@ -1,0 +1,51 @@
+{
+  "app_id": "TBD",
+  "cloud": {
+    "save_path": "user://emberfall.save",
+    "steam_remote_path": "emberfall.save"
+  },
+  "achievements": [
+    {"id": "first_light", "api_name": "ACH_FIRST_LIGHT", "display_name": "First Light", "trigger": "Clear wave 1"},
+    {"id": "slagbreaker", "api_name": "ACH_SLAGBREAKER", "display_name": "Slagbreaker", "trigger": "Kill Kilnmaw"},
+    {"id": "choir_silencer", "api_name": "ACH_CHOIR_SILENCER", "display_name": "Choir Silencer", "trigger": "Kill the Shattered Choir"},
+    {"id": "tyrants_end", "api_name": "ACH_TYRANTS_END", "display_name": "Tyrant's End", "trigger": "Kill Aurum"},
+    {"id": "forge_secured", "api_name": "ACH_FORGE_SECURED", "display_name": "FORGE SECURED", "trigger": "Win a run"},
+    {"id": "untouchable", "api_name": "ACH_UNTOUCHABLE", "display_name": "Untouchable", "trigger": "Clear wave 10 or later without damage"},
+    {"id": "centurion", "api_name": "ACH_CENTURION", "display_name": "Centurion", "trigger": "Reach a 100-kill combo"},
+    {"id": "evolved", "api_name": "ACH_EVOLVED", "display_name": "Evolved", "trigger": "Claim the first weapon evolution"},
+    {"id": "full_bank", "api_name": "ACH_FULL_BANK", "display_name": "Full Bank", "trigger": "Bank 1000 embers"},
+    {"id": "old_hand", "api_name": "ACH_OLD_HAND", "display_name": "Old Hand", "trigger": "Complete 25 runs"}
+  ],
+  "stats": [
+    {"id": "runs", "api_name": "STAT_RUNS", "type": "int"},
+    {"id": "kills", "api_name": "STAT_KILLS", "type": "int"},
+    {"id": "deaths", "api_name": "STAT_DEATHS", "type": "int"},
+    {"id": "play_ms", "api_name": "STAT_PLAY_MS", "type": "int"},
+    {"id": "victories", "api_name": "STAT_VICTORIES", "type": "int"},
+    {"id": "best_wave", "api_name": "STAT_BEST_WAVE", "type": "int"},
+    {"id": "best_score", "api_name": "STAT_BEST_SCORE", "type": "int"},
+    {"id": "best_combo", "api_name": "STAT_BEST_COMBO", "type": "int"},
+    {"id": "embers", "api_name": "STAT_EMBERS", "type": "int"}
+  ],
+  "input_actions": [
+    {"id": "move", "action_name": "Move", "binding": "Left stick"},
+    {"id": "aim", "action_name": "Aim", "binding": "Right stick"},
+    {"id": "dash", "action_name": "Dash", "binding": "A / RB"},
+    {"id": "pause", "action_name": "Pause", "binding": "Start"},
+    {"id": "ui_accept", "action_name": "MenuAccept", "binding": "A"},
+    {"id": "ui_cancel", "action_name": "MenuBack", "binding": "B"},
+    {"id": "ui_navigate", "action_name": "MenuNavigate", "binding": "D-pad"}
+  ],
+  "rich_presence": {
+    "default": "In the Forge",
+    "run_start": "Wave 1 - Forging",
+    "wave": "Wave %d - Forging",
+    "victory": "Forge Secured",
+    "defeat": "Forge Cold at Wave %d"
+  },
+  "export_targets": [
+    {"name": "Windows Steam", "path": "exports/windows/EMBERFALL.exe"},
+    {"name": "Linux Steam", "path": "exports/linux/EMBERFALL.x86_64"},
+    {"name": "macOS Steam", "path": "exports/macos/EMBERFALL.zip"}
+  ]
+}

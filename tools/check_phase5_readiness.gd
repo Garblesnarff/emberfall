@@ -47,6 +47,7 @@ var warnings := 0
 func _initialize() -> void:
 	print("EMBERFALL Phase 5 readiness check")
 	_check_project_version()
+	_check_steamworks_manifest()
 	_check_export_presets()
 	_check_steam_api_maps()
 	_check_local_file_hygiene()
@@ -82,6 +83,21 @@ func _check_project_version() -> void:
 	_assert_true(version != "", "project has an application version")
 	_assert_true(version.split(".").size() == 3, "project version uses three-part numbering")
 
+func _check_steamworks_manifest() -> void:
+	_assert_true(FileAccess.file_exists("res://data/steamworks_manifest.json"), "Steamworks setup manifest exists")
+	var text := FileAccess.get_file_as_string("res://data/steamworks_manifest.json")
+	var json := JSON.new()
+	_assert_eq(json.parse(text), OK, "Steamworks setup manifest parses as JSON")
+	if json.get_data() is Dictionary:
+		var manifest: Dictionary = json.get_data()
+		_assert_eq(String(manifest.get("app_id", "")), "TBD", "Steamworks manifest keeps app ID unset until external setup")
+		var cloud: Dictionary = manifest.get("cloud", {})
+		_assert_eq(String(cloud.get("save_path", "")), "user://emberfall.save", "Steamworks manifest declares the cloud save path")
+		_assert_manifest_entries(manifest.get("achievements", []), "id", "api_name", EXPECTED_ACHIEVEMENTS, "achievement")
+		_assert_manifest_entries(manifest.get("stats", []), "id", "api_name", EXPECTED_STATS, "stat")
+		_assert_manifest_entries(manifest.get("input_actions", []), "id", "action_name", EXPECTED_INPUT_ACTIONS, "Steam Input action")
+		_assert_manifest_exports(manifest.get("export_targets", []))
+
 func _check_export_presets() -> void:
 	var cfg := ConfigFile.new()
 	_assert_eq(cfg.load("res://export_presets.cfg"), OK, "export presets config loads")
@@ -109,6 +125,28 @@ func _check_export_presets() -> void:
 	for expected_name in EXPECTED_EXPORTS.keys():
 		_assert_true(found.has(expected_name), "export presets include %s" % expected_name)
 
+func _assert_manifest_entries(entries: Variant, id_key: String, value_key: String, expected: Dictionary, label: String) -> void:
+	if not entries is Array:
+		_fail("Steamworks manifest %s list is an array" % label)
+		return
+	var found := {}
+	for entry in entries:
+		if entry is Dictionary:
+			found[StringName(String(entry.get(id_key, "")))] = String(entry.get(value_key, ""))
+	for id in expected.keys():
+		_assert_eq(String(found.get(id, "")), String(expected[id]), "Steamworks manifest %s %s matches code contract" % [label, String(id)])
+
+func _assert_manifest_exports(entries: Variant) -> void:
+	if not entries is Array:
+		_fail("Steamworks manifest export target list is an array")
+		return
+	var found := {}
+	for entry in entries:
+		if entry is Dictionary:
+			found[String(entry.get("name", ""))] = String(entry.get("path", ""))
+	for name in EXPECTED_EXPORTS.keys():
+		_assert_eq(String(found.get(name, "")), String(EXPECTED_EXPORTS[name]), "Steamworks manifest export target %s matches preset path" % name)
+
 func _check_steam_api_maps() -> void:
 	var steam_manager := FileAccess.get_file_as_string("res://autoload/SteamManager.gd")
 	for id in EXPECTED_ACHIEVEMENTS.keys():
@@ -133,6 +171,7 @@ func _check_handoff_docs() -> void:
 	_assert_true(FileAccess.file_exists("res://docs/PHASE_5_STEAM_HANDOFF.md"), "Steam handoff doc exists")
 	_assert_true(FileAccess.file_exists("res://docs/PHASE_5_RELEASE_READINESS.md"), "release readiness doc exists")
 	var handoff := FileAccess.get_file_as_string("res://docs/PHASE_5_STEAM_HANDOFF.md")
+	_assert_true(handoff.contains("data/steamworks_manifest.json"), "handoff doc points to the Steamworks setup manifest")
 	_assert_true(handoff.contains("ACH_FIRST_LIGHT"), "handoff doc lists achievement API IDs")
 	_assert_true(handoff.contains("STAT_RUNS"), "handoff doc lists stat API IDs")
 	_assert_true(handoff.contains("MenuAccept"), "handoff doc lists Steam Input action names")

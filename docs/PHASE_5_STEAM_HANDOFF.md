@@ -19,6 +19,7 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 - Steam app ID.
 - GodotSteam GDExtension binaries matching Godot 4.6.3 and target exports.
 - Installed Godot export templates on any machine producing binaries.
+- `data/steamworks_manifest.json` is the machine-readable dashboard setup contract. Use it as the source list for achievements, stats, Steam Input actions, cloud save path, rich presence strings, and export targets.
 - Achievement definitions using these API IDs:
   - `ACH_FIRST_LIGHT`
   - `ACH_SLAGBREAKER`

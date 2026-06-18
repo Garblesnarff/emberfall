@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.11 - Phase 5 Steamworks Manifest
+
+- Added `data/steamworks_manifest.json` as the machine-readable future Steamworks dashboard contract.
+- Validated manifest achievements, stats, input actions, cloud save path, and export targets in the Phase 5 readiness checker.
+- Documented the manifest as the handoff source for future Steamworks setup.
+
 ## 0.5.10 - Phase 5 Export Hygiene
 
 - Excluded local Steam/test/export artifacts from all Steam export presets.

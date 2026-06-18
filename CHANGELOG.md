@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.8 - Phase 5 Readiness Check
+
+- Added a headless Phase 5 readiness checker for export presets, Steam API maps, gitignored local files, and handoff docs.
+- Documented the readiness checker alongside the existing Godot validation commands.
+- Synced project and export preset versions for the new local readiness pass.
+
 ## 0.5.7 - Phase 5 Stats and Export Sync
 
 - Synced Steam export preset versions with the project version.

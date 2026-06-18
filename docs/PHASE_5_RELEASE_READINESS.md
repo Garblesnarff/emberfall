@@ -19,6 +19,7 @@ Run these before pushing Phase 5 changes:
 ```bash
 godot --headless --path . --quit
 godot --headless --fixed-fps 60 --path . --scene res://test/run_tests.tscn
+godot --headless --path . --script tools/check_phase5_readiness.gd
 bash tools/run_gdunit.sh
 ```
 

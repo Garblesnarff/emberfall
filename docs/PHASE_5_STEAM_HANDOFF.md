@@ -46,3 +46,11 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 ## Local Files
 
 Use `steam_appid.txt` only for local Steam testing. It is intentionally gitignored.
+
+## Local Readiness Check
+
+Run this before creating Steam-target exports:
+
+```bash
+godot --headless --path . --script tools/check_phase5_readiness.gd
+```

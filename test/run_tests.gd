@@ -389,6 +389,8 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	AudioDirector.reset_for_tests()
 	_assert_true(not SteamManager.is_available(), "SteamManager no-ops cleanly without Steam")
 	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "In the Forge", "SteamManager stores Forge menu presence locally")
+	_assert_eq(SteamManager.steam_input_action_name(&"dash"), "Dash", "SteamManager exposes stable Steam Input action names")
+	_assert_eq(SteamManager.input_glyph_text(&"dash"), "A / RB", "SteamManager exposes local controller glyph fallback text")
 	EventBus.run_started.emit(0x505)
 	_assert_eq(String(SteamManager.rich_presence.get("status", "")), "Wave 1 - Forging", "SteamManager updates rich presence on run start")
 	EventBus.wave_started.emit(7)

@@ -41,7 +41,15 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
   - `STAT_BEST_COMBO`
   - `STAT_EMBERS`
 - Steam Cloud mapping for `user://emberfall.save`.
-- Steam Input official controller config and Deck verification pass.
+- Steam Input official controller config using these action names:
+  - `Move`
+  - `Aim`
+  - `Dash`
+  - `Pause`
+  - `MenuAccept`
+  - `MenuBack`
+  - `MenuNavigate`
+- Deck verification pass.
 
 ## Local Files
 

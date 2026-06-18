@@ -32,5 +32,5 @@ Actual binary exports also require Godot export templates installed locally. Ste
 - Steamworks achievements matching `SteamManager.ACHIEVEMENTS`.
 - Steamworks stats matching `SteamManager.STATS`.
 - Steam Cloud mapping for `user://emberfall.save`.
-- Steam Input configuration and glyph verification.
+- Steam Input configuration matching `SteamManager.INPUT_ACTIONS` and glyph verification.
 - Steam Deck hardware pass for stable performance and no keyboard-required flows.

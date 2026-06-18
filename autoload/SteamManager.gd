@@ -25,6 +25,26 @@ const STATS := {
 	&"embers": "STAT_EMBERS",
 }
 
+const INPUT_ACTIONS := {
+	&"move": "Move",
+	&"aim": "Aim",
+	&"dash": "Dash",
+	&"pause": "Pause",
+	&"ui_accept": "MenuAccept",
+	&"ui_cancel": "MenuBack",
+	&"ui_navigate": "MenuNavigate",
+}
+
+const INPUT_GLYPH_FALLBACKS := {
+	&"move": "LEFT STICK",
+	&"aim": "RIGHT STICK",
+	&"dash": "A / RB",
+	&"pause": "START",
+	&"ui_accept": "A",
+	&"ui_cancel": "B",
+	&"ui_navigate": "D-PAD",
+}
+
 var available := false
 var initialized := false
 var steam: Object
@@ -67,6 +87,12 @@ func achievement_api_name(id: StringName) -> String:
 
 func stat_api_name(id: StringName) -> String:
 	return String(STATS.get(id, ""))
+
+func steam_input_action_name(id: StringName) -> String:
+	return String(INPUT_ACTIONS.get(id, ""))
+
+func input_glyph_text(id: StringName) -> String:
+	return String(INPUT_GLYPH_FALLBACKS.get(id, ""))
 
 func set_stat(id: StringName, value: Variant, flush := true) -> void:
 	var api_name := stat_api_name(id)

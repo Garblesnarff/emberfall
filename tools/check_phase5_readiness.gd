@@ -31,6 +31,16 @@ const EXPECTED_STATS := {
 	&"embers": "STAT_EMBERS",
 }
 
+const EXPECTED_INPUT_ACTIONS := {
+	&"move": "Move",
+	&"aim": "Aim",
+	&"dash": "Dash",
+	&"pause": "Pause",
+	&"ui_accept": "MenuAccept",
+	&"ui_cancel": "MenuBack",
+	&"ui_navigate": "MenuNavigate",
+}
+
 var failures := 0
 var warnings := 0
 
@@ -103,6 +113,9 @@ func _check_steam_api_maps() -> void:
 	for id in EXPECTED_STATS.keys():
 		_assert_true(steam_manager.contains("&\"%s\"" % String(id)), "Steam stat map includes %s" % String(id))
 		_assert_true(steam_manager.contains(String(EXPECTED_STATS[id])), "Steam stat API map includes %s" % String(EXPECTED_STATS[id]))
+	for id in EXPECTED_INPUT_ACTIONS.keys():
+		_assert_true(steam_manager.contains("&\"%s\"" % String(id)), "Steam Input map includes %s" % String(id))
+		_assert_true(steam_manager.contains(String(EXPECTED_INPUT_ACTIONS[id])), "Steam Input action map includes %s" % String(EXPECTED_INPUT_ACTIONS[id]))
 
 func _check_local_file_hygiene() -> void:
 	var ignore_text := FileAccess.get_file_as_string("res://.gitignore")
@@ -118,3 +131,4 @@ func _check_handoff_docs() -> void:
 	var handoff := FileAccess.get_file_as_string("res://docs/PHASE_5_STEAM_HANDOFF.md")
 	_assert_true(handoff.contains("ACH_FIRST_LIGHT"), "handoff doc lists achievement API IDs")
 	_assert_true(handoff.contains("STAT_RUNS"), "handoff doc lists stat API IDs")
+	_assert_true(handoff.contains("MenuAccept"), "handoff doc lists Steam Input action names")

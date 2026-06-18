@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.9 - Phase 5 Steam Input Contract
+
+- Added stable Steam Input action names and local controller glyph fallback text.
+- Documented the future Steam Input config names for the Steamworks handoff.
+- Expanded readiness checks and tests to catch Steam Input action drift.
+
 ## 0.5.8 - Phase 5 Readiness Check
 
 - Added a headless Phase 5 readiness checker for export presets, Steam API maps, gitignored local files, and handoff docs.

@@ -2,7 +2,7 @@
 
 This project is set up to keep Steam integration optional until a Steamworks app ID and GodotSteam binaries exist.
 
-`data/steamworks_manifest.json` is the local, non-secret manifest for the future Steamworks dashboard setup. The readiness check validates it against the code contracts in `SteamManager`.
+`data/steamworks_manifest.json` is the local, non-secret manifest for the future Steamworks dashboard setup. The readiness check validates it against the code contracts in `SteamManager`. `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` turns that manifest into the dashboard setup checklist for the future external pass.
 
 ## Local Export Presets
 
@@ -31,7 +31,7 @@ Actual binary exports also require Godot export templates installed locally. Ste
 
 - Steam app ID and `steam_appid.txt` for local Steam testing. Keep `steam_appid.txt` local only; the Steam export presets explicitly exclude it.
 - GodotSteam GDExtension binaries for Godot 4.6.3 and each target platform.
-- Steamworks dashboard entries generated from `data/steamworks_manifest.json`.
+- Steamworks dashboard entries generated from `data/steamworks_manifest.json` and checked against `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md`.
 - Steamworks achievements matching `SteamManager.ACHIEVEMENTS`.
 - Steamworks stats matching `SteamManager.STATS`.
 - Steam Cloud mapping for `user://emberfall.save`.

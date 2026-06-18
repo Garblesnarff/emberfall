@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.12 - Phase 5 Dashboard Checklist
+
+- Added `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` for the future Steamworks dashboard setup pass.
+- Linked the checklist to the machine-readable Steamworks manifest and readiness docs.
+- Expanded readiness checks to ensure the dashboard checklist stays present and aligned with key API names.
+
 ## 0.5.11 - Phase 5 Steamworks Manifest
 
 - Added `data/steamworks_manifest.json` as the machine-readable future Steamworks dashboard contract.

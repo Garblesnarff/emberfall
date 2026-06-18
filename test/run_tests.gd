@@ -292,9 +292,14 @@ func _test_phase4_save_meta_and_ui() -> void:
 	SaveManager.load_save()
 	_assert_eq(int(SaveManager.data.v), SaveManager.SAVE_VERSION, "fresh save migrates to current schema")
 	_assert_true(SaveManager.data.unlocks.weapons.has("forgehammer"), "fresh save starts with Forgehammer")
-	SaveManager.record_run(false, 6, 1200, 9, 80, 175)
+	SteamManager.reset_for_tests()
+	SaveManager.record_run(false, 6, 1200, 9, 80, 175, 42000)
 	_assert_eq(int(SaveManager.data.bank.embers), 175, "run recap banks embers into save")
 	_assert_eq(int(SaveManager.data.stats.runs), 1, "run recap increments run count")
+	_assert_eq(int(SaveManager.data.stats.playMs), 42000, "run recap records play time in milliseconds")
+	_assert_eq(int(SteamManager.stats.get(&"runs", 0)), 1, "SteamManager mirrors save run total locally")
+	_assert_eq(int(SteamManager.stats.get(&"play_ms", 0)), 42000, "SteamManager mirrors save play time locally")
+	_assert_eq(int(SteamManager.stats.get(&"embers", 0)), 175, "SteamManager mirrors banked ember total locally")
 	_assert_true(MetaProgression.first_unlock_reachable_in_two_runs(175), "first unlock reachable within two median runs")
 	MetaProgression.add_embers(200)
 	_assert_true(MetaProgression.purchase(&"weapon_slag_lance"), "Forge purchase unlocks Slag Lance")
@@ -415,6 +420,19 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 	_assert_true(AchievementManager.unlocked.has(&"old_hand"), "25 runs unlocks Old Hand")
 	_assert_true(AudioDirector.last_sfx == &"victory", "AudioDirector reacts to run-ended victory events")
 	_assert_true(AudioDirector.sfx_stream_cache.has(&"victory") and AudioDirector.sfx_stream_cache[&"victory"].data.size() > 0, "AudioDirector generates procedural placeholder SFX data")
+	var arena = await _fresh_test_arena(0x5057)
+	arena.run_play_ticks = 120
+	arena.ember_count = 25
+	GameState.wave = 3
+	GameState.score = 900
+	GameState.kills = 22
+	GameState.best_combo = 11
+	arena._finalize_run(false)
+	_assert_eq(int(arena.debug_stats.recap.get("play_ms", 0)), 2000, "Arena recap converts fixed ticks into play milliseconds")
+	_assert_eq(int(SaveManager.data.stats.playMs), 2000, "Arena finalization records play milliseconds")
+	_assert_eq(int(SteamManager.stats.get(&"best_score", 0)), 900, "SteamManager syncs best score after save recording")
+	arena.queue_free()
+	await get_tree().process_frame
 	SaveManager.update_setting("sfx", 0.35)
 	SaveManager.update_setting("music", 0.25)
 	SaveManager.update_setting("shake", 0.2)
@@ -471,6 +489,7 @@ func _test_phase5_steam_achievements_settings_and_pause() -> void:
 func _test_phase5_export_preset_readiness() -> void:
 	var cfg := ConfigFile.new()
 	_assert_eq(cfg.load("res://export_presets.cfg"), OK, "export presets load for Phase 5 release readiness")
+	var project_version := String(ProjectSettings.get_setting("application/config/version"))
 	var expected := {
 		"Windows Steam": "exports/windows/EMBERFALL.exe",
 		"Linux Steam": "exports/linux/EMBERFALL.x86_64",
@@ -483,6 +502,12 @@ func _test_phase5_export_preset_readiness() -> void:
 		_assert_eq(String(cfg.get_value(section, "custom_features", "")), "steam", "%s export uses the steam feature tag" % name)
 		_assert_eq(String(cfg.get_value(section, "export_path", "")), String(expected.get(name, "")), "%s export path is in ignored local exports directory" % name)
 		_assert_true(bool(cfg.get_value(section, "runnable", false)), "%s export is runnable" % name)
+		if name == "Windows Steam":
+			_assert_eq(String(cfg.get_value("%s.options" % section, "application/file_version", "")), project_version, "Windows export file version matches project version")
+			_assert_eq(String(cfg.get_value("%s.options" % section, "application/product_version", "")), project_version, "Windows export product version matches project version")
+		if name == "macOS Steam":
+			_assert_eq(String(cfg.get_value("%s.options" % section, "application/short_version", "")), project_version, "macOS export short version matches project version")
+			_assert_eq(String(cfg.get_value("%s.options" % section, "application/version", "")), project_version, "macOS export build version matches project version")
 
 func _action_has_joy_motion(action: StringName, axis: JoyAxis, axis_value: float) -> bool:
 	for event in InputMap.action_get_events(action):

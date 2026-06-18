@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.7 - Phase 5 Stats and Export Sync
+
+- Synced Steam export preset versions with the project version.
+- Added local Steam stat mapping for save totals and best-run records.
+- Recorded run play time into the save schema's `stats.playMs` field.
+- Ensured final run recap/save data is committed before run-ended listeners react.
+
 ## 0.5.6 - Phase 5 Rich Presence Lifecycle
 
 - Added run-started and wave-started EventBus signals for Steam-facing state updates.

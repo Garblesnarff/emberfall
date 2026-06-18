@@ -77,6 +77,7 @@ var combo_ticks := 0
 var hitstop_ticks := 0
 var shake := 0.0
 var tick := 0
+var run_play_ticks := 0
 var scripted_input_enabled := false
 var scripted_move := Vector2.ZERO
 var scripted_aim := Vector2.ZERO
@@ -184,6 +185,7 @@ func _reset_run_state() -> void:
 	hitstop_ticks = 0
 	shake = 0.0
 	tick = 0
+	run_play_ticks = 0
 	scripted_input_enabled = false
 	scripted_move = Vector2.ZERO
 	scripted_aim = Vector2.ZERO
@@ -225,6 +227,8 @@ func _reset_run_state() -> void:
 
 func _physics_process(_delta: float) -> void:
 	tick += 1
+	if GameState.state == GameState.RunState.PLAY:
+		run_play_ticks += 1
 	if hitstop_ticks > 0:
 		hitstop_ticks -= 1
 		_update_camera_shake_only()
@@ -988,14 +992,14 @@ func _finalize_run(victory: bool) -> void:
 		"kills": GameState.kills,
 		"best_combo": GameState.best_combo,
 		"embers_banked": ember_count,
+		"play_ms": int(round(float(run_play_ticks) * 1000.0 / float(Engine.physics_ticks_per_second))),
 		"weapon": current_weapon.display_name,
 		"evolutions": active_evolutions.keys(),
 		"synergies": active_synergies.keys(),
 	}
 	debug_stats.recap = recap
-	GameState.end_run(victory)
-	GameState.last_recap = recap
-	SaveManager.record_run(victory, GameState.wave, GameState.score, GameState.best_combo, GameState.kills, ember_count)
+	SaveManager.record_run(victory, GameState.wave, GameState.score, GameState.best_combo, GameState.kills, ember_count, int(recap.play_ms))
+	GameState.end_run(victory, recap)
 
 func enter_endless() -> void:
 	if GameState.state != GameState.RunState.VICTORY:

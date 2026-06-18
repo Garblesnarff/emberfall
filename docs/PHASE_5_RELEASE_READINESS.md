@@ -29,6 +29,7 @@ Actual binary exports also require Godot export templates installed locally. Ste
 - Steam app ID and `steam_appid.txt` for local Steam testing.
 - GodotSteam GDExtension binaries for Godot 4.6.3 and each target platform.
 - Steamworks achievements matching `SteamManager.ACHIEVEMENTS`.
+- Steamworks stats matching `SteamManager.STATS`.
 - Steam Cloud mapping for `user://emberfall.save`.
 - Steam Input configuration and glyph verification.
 - Steam Deck hardware pass for stable performance and no keyboard-required flows.

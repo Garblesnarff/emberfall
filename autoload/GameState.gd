@@ -31,13 +31,15 @@ func add_score(base_points: int) -> void:
 	score += base_points * mult
 	EventBus.score_changed.emit(score)
 
-func end_run(victory: bool) -> void:
+func end_run(victory: bool, recap := {}) -> void:
 	state = RunState.VICTORY if victory else RunState.OVER
-	last_recap = {
+	last_recap = recap.duplicate() if not recap.is_empty() else {
 		"wave": wave,
 		"score": score,
 		"kills": kills,
 		"best_combo": best_combo,
 		"seed": Config.run_seed,
 	}
+	if not last_recap.has("seed"):
+		last_recap.seed = Config.run_seed
 	EventBus.run_ended.emit(victory, last_recap)

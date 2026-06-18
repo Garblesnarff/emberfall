@@ -13,11 +13,24 @@ const ACHIEVEMENTS := {
 	&"old_hand": "ACH_OLD_HAND",
 }
 
+const STATS := {
+	&"runs": "STAT_RUNS",
+	&"kills": "STAT_KILLS",
+	&"deaths": "STAT_DEATHS",
+	&"play_ms": "STAT_PLAY_MS",
+	&"victories": "STAT_VICTORIES",
+	&"best_wave": "STAT_BEST_WAVE",
+	&"best_score": "STAT_BEST_SCORE",
+	&"best_combo": "STAT_BEST_COMBO",
+	&"embers": "STAT_EMBERS",
+}
+
 var available := false
 var initialized := false
 var steam: Object
 var unlocked_achievements: Dictionary = {}
 var rich_presence: Dictionary = {}
+var stats: Dictionary = {}
 var cloud_enabled := false
 var stats_store_requests := 0
 var event_bus_connected := false
@@ -52,6 +65,37 @@ func unlock_achievement(id: StringName) -> void:
 func achievement_api_name(id: StringName) -> String:
 	return String(ACHIEVEMENTS.get(id, ""))
 
+func stat_api_name(id: StringName) -> String:
+	return String(STATS.get(id, ""))
+
+func set_stat(id: StringName, value: Variant, flush := true) -> void:
+	var api_name := stat_api_name(id)
+	if api_name == "":
+		return
+	stats[id] = value
+	if available and steam:
+		if typeof(value) == TYPE_FLOAT and steam.has_method("setStatFloat"):
+			steam.call("setStatFloat", api_name, float(value))
+		elif steam.has_method("setStatInt"):
+			steam.call("setStatInt", api_name, int(value))
+	if flush:
+		store_stats()
+
+func sync_save_stats(save_data: Dictionary) -> void:
+	var best: Dictionary = save_data.get("best", {})
+	var bank: Dictionary = save_data.get("bank", {})
+	var save_stats: Dictionary = save_data.get("stats", {})
+	set_stat(&"runs", int(save_stats.get("runs", 0)), false)
+	set_stat(&"kills", int(save_stats.get("kills", 0)), false)
+	set_stat(&"deaths", int(save_stats.get("deaths", 0)), false)
+	set_stat(&"play_ms", int(save_stats.get("playMs", 0)), false)
+	set_stat(&"victories", int(save_stats.get("victories", 0)), false)
+	set_stat(&"best_wave", int(best.get("wave", 0)), false)
+	set_stat(&"best_score", int(best.get("score", 0)), false)
+	set_stat(&"best_combo", int(best.get("combo", 0)), false)
+	set_stat(&"embers", int(bank.get("embers", 0)), false)
+	store_stats()
+
 func set_rich_presence(key: String, value := "") -> void:
 	rich_presence[key] = value
 	if available and steam and steam.has_method("setRichPresence"):
@@ -70,6 +114,7 @@ func set_cloud_enabled(enabled: bool) -> void:
 func reset_for_tests() -> void:
 	unlocked_achievements.clear()
 	rich_presence.clear()
+	stats.clear()
 	stats_store_requests = 0
 	set_rich_presence("status", "In the Forge")
 

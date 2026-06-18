@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.10 - Phase 5 Export Hygiene
+
+- Excluded local Steam/test/export artifacts from all Steam export presets.
+- Expanded the Phase 5 readiness checker to enforce export preset exclude filters.
+- Documented that `steam_appid.txt` is local-only and excluded from Steam exports.
+
 ## 0.5.9 - Phase 5 Steam Input Contract
 
 - Added stable Steam Input action names and local controller glyph fallback text.

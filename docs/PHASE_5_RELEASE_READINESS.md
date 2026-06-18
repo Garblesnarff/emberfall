@@ -10,7 +10,7 @@ This project is set up to keep Steam integration optional until a Steamworks app
 - `Linux Steam` -> `exports/linux/EMBERFALL.x86_64`
 - `macOS Steam` -> `exports/macos/EMBERFALL.zip`
 
-The `exports/` directory is ignored so local binaries do not enter source control. The presets use the `steam` custom feature tag so future Steam-only code paths can be feature-gated cleanly while normal editor/headless runs remain DRM-free.
+The `exports/` directory is ignored so local binaries do not enter source control. The presets use the `steam` custom feature tag so future Steam-only code paths can be feature-gated cleanly while normal editor/headless runs remain DRM-free. They also exclude local dev-only files such as `steam_appid.txt`, `exports/**`, and `reports/**`.
 
 ## Local Validation
 
@@ -27,7 +27,7 @@ Actual binary exports also require Godot export templates installed locally. Ste
 
 ## Still Requires Steam Setup
 
-- Steam app ID and `steam_appid.txt` for local Steam testing.
+- Steam app ID and `steam_appid.txt` for local Steam testing. Keep `steam_appid.txt` local only; the Steam export presets explicitly exclude it.
 - GodotSteam GDExtension binaries for Godot 4.6.3 and each target platform.
 - Steamworks achievements matching `SteamManager.ACHIEVEMENTS`.
 - Steamworks stats matching `SteamManager.STATS`.

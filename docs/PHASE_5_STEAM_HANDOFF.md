@@ -53,7 +53,7 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 
 ## Local Files
 
-Use `steam_appid.txt` only for local Steam testing. It is intentionally gitignored.
+Use `steam_appid.txt` only for local Steam testing. It is intentionally gitignored and excluded from the Steam export presets.
 
 ## Local Readiness Check
 

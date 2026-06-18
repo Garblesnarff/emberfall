@@ -95,6 +95,10 @@ func _check_export_presets() -> void:
 		_assert_true(EXPECTED_EXPORTS.has(name), "export preset %d is an expected Steam target" % index)
 		_assert_eq(String(cfg.get_value(section, "custom_features", "")), "steam", "%s uses the steam feature tag" % name)
 		_assert_eq(String(cfg.get_value(section, "export_path", "")), String(EXPECTED_EXPORTS.get(name, "")), "%s export path stays under ignored exports/" % name)
+		var exclude_filter := String(cfg.get_value(section, "exclude_filter", ""))
+		_assert_true(exclude_filter.contains("steam_appid.txt"), "%s export excludes local steam_appid.txt" % name)
+		_assert_true(exclude_filter.contains("exports/**"), "%s export excludes local export outputs" % name)
+		_assert_true(exclude_filter.contains("reports/**"), "%s export excludes local test reports" % name)
 		_assert_true(bool(cfg.get_value(section, "runnable", false)), "%s export is runnable" % name)
 		if name == "Windows Steam":
 			_assert_eq(String(cfg.get_value(options_section, "application/file_version", "")), project_version, "Windows file version matches project version")

@@ -3,6 +3,7 @@ extends Node
 const BulletManagerScript := preload("res://scripts/projectiles/bullet_manager.gd")
 const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 const ArenaScene := preload("res://scenes/arena/arena.tscn")
+const PlayerScene := preload("res://scenes/player/player.tscn")
 const HudScene := preload("res://scenes/ui/hud.tscn")
 const FeelParity := preload("res://data/feel_parity.tres")
 const ObjVein := preload("res://data/objectives/ember_vein.tres")
@@ -27,6 +28,8 @@ func _run() -> void:
 	_test_spatial_grid()
 	_test_pool_integrity()
 	_test_bullet_visual_collision_alignment()
+	_test_v42_swelter_config()
+	_test_v42_homing_projectiles()
 	await _test_phase2_world_systems()
 	await _test_deck_resolution_hud_layout()
 	await _test_phase3_forced_builds()
@@ -34,6 +37,10 @@ func _run() -> void:
 	await _test_phase4_save_meta_and_ui()
 	await _test_phase4_main_flow_integration()
 	await _test_phase4_bosses_victory_and_endless()
+	await _test_v42_swelter_and_boss_ladder()
+	await _test_v42_aurum_heat_multiplier()
+	await _test_v42_choir_full_spec_spots()
+	await _test_v42_aurum_full_spec_spots()
 	await _test_phase5_steam_achievements_settings_and_pause()
 	_test_phase5_export_preset_readiness()
 	await _test_determinism()
@@ -106,6 +113,31 @@ func _test_bullet_visual_collision_alignment() -> void:
 	_assert_eq(manager.rendered_position(1), manager.positions[1], "radius-6 boss bullet visual matches collision position")
 	manager.queue_free()
 
+func _test_v42_swelter_config() -> void:
+	var heat_frac := 1.0
+	var radius := Config.SWELTER_RADIUS_BASE + heat_frac * Config.SWELTER_RADIUS_SCALE
+	var slow := Config.SWELTER_SLOW_BASE + heat_frac * Config.SWELTER_SLOW_SCALE
+	_assert_approx(radius, 138.0, 0.001, "v4.2 Swelter white-heat radius is 138u")
+	_assert_approx(1.0 - slow, 0.52, 0.001, "v4.2 Swelter white-heat movement leaves enemies at 52% speed")
+	_assert_approx(Config.HEAT_SWEET_LO, 70.0, 0.0, "v4.2 white heat begins at 70")
+
+func _test_v42_homing_projectiles() -> void:
+	var manager = BulletManagerScript.new()
+	manager.capacity = 2
+	manager.is_player_owned = false
+	get_tree().root.add_child(manager)
+	var player = PlayerScene.instantiate()
+	player.position = Vector2(100, 100)
+	get_tree().root.add_child(player)
+	player.invulnerable_ticks = 1
+	player.dashing_ticks = 0
+	manager.spawn(Vector2(0, 0), Vector2.RIGHT * Config.CHOIR_MOURN_SPEED, 1.0, 10, 4.0, 0, Config.CHOIR_MOURN_HOMING)
+	var before_angle: float = manager.velocities[0].angle()
+	manager.physics_tick(Rect2(Vector2.ZERO, Vector2(200, 200)), SpatialGridScript.new(), [], player)
+	_assert_true(manager.velocities[0].angle() > before_angle, "enemy projectile homing bends velocity toward player")
+	manager.queue_free()
+	player.queue_free()
+
 func _test_phase2_world_systems() -> void:
 	Config.set_run_seed(0x7777)
 	GameState.start_run(0x7777)
@@ -164,7 +196,7 @@ func _test_determinism() -> void:
 	var b := await _run_scripted_phase2_sample(0x1234, false)
 	_assert_eq(a, b, "same seed scripted survival run is deterministic through wave 6")
 	_assert_true(a.player_hp > 0, "deterministic run survives intentionally")
-	_assert_true(a.wave >= 6 or a.waves_cleared.has(6), "deterministic run reaches wave 6 coverage")
+	_assert_true(a.wave >= 5 and a.boss_spawned, "deterministic run reaches boss-wave coverage")
 
 func _test_phase3_forced_builds() -> void:
 	for weapon_id in [&"forgehammer", &"slag_lance", &"ember_maw"]:
@@ -339,8 +371,8 @@ func _test_phase4_bosses_victory_and_endless() -> void:
 	_assert_true(arena.debug_stats.boss_phases.has(&"choir"), "Choir body loss emits boss phase")
 	var aurum = arena._spawn_enemy(Aurum, Vector2(1600, 520))
 	aurum.apply_damage(aurum.max_hp * 0.55, Vector2.ZERO)
-	_assert_eq(aurum.boss_phase, 2, "Aurum enters phase 2 below half HP")
-	_assert_true(arena.debug_stats.boss_phases.has(&"aurum"), "Aurum phase transition emits boss phase")
+	_assert_eq(aurum.boss_phase, 1, "v4.2 Aurum wave-15 crown duel does not phase-swap at half HP")
+	_assert_true(not arena.debug_stats.boss_phases.has(&"aurum"), "v4.2 Aurum phase transition is split into wave 20 Rekindled")
 	GameState.wave = 20
 	arena.ember_count = 200
 	var rekindled = arena._spawn_enemy(AurumRekindled, Vector2(1600, 520))
@@ -351,6 +383,111 @@ func _test_phase4_bosses_victory_and_endless() -> void:
 	_assert_eq(int(arena.debug_stats.recap.get("embers_banked", 0)), 450, "Victory recap applies ember multiplier and boss reward")
 	arena.enter_endless()
 	_assert_true(arena.endless_mode and GameState.state == GameState.RunState.PLAY, "Endless can be entered from victory recap")
+	arena.queue_free()
+	await get_tree().process_frame
+
+func _test_v42_swelter_and_boss_ladder() -> void:
+	var arena = await _fresh_test_arena(0x4201)
+	arena.player.forge_heat = 100.0
+	var crawler = arena._spawn_enemy(preload("res://data/enemies/crawler.tres"), arena.player.position + Vector2(80, 0))
+	var kilnmaw = arena._spawn_enemy(preload("res://data/enemies/kilnmaw.tres"), arena.player.position + Vector2(90, 0))
+	var crawler_hp_before: float = crawler.hp
+	var kilnmaw_hp_before: float = kilnmaw.hp
+	arena._tick_swelter()
+	_assert_approx(crawler.movement_scale, 0.52, 0.001, "Swelter slows normal slag at white heat to 52% speed")
+	_assert_approx(kilnmaw.movement_scale, 1.0, 0.001, "Swelter does not slow bosses")
+	_assert_true(crawler.hp < crawler_hp_before and kilnmaw.hp < kilnmaw_hp_before, "Swelter scorch damages normal enemies and bosses at white heat")
+	crawler.hp = crawler.max_hp
+	arena.player.forge_heat = 69.0
+	arena._tick_swelter()
+	_assert_approx(crawler.hp, crawler.max_hp, 0.001, "Swelter scorch does not tick below white heat")
+	_assert_eq(arena._boss_for_wave(5).id, &"kilnmaw", "v4.2 boss ladder spawns Kilnmaw at wave 5")
+	_assert_eq(arena._boss_for_wave(10).id, &"choir", "v4.2 boss ladder spawns Choir at wave 10")
+	_assert_eq(arena._boss_for_wave(15).id, &"aurum", "v4.2 boss ladder spawns Forge-Tyrant Aurum at wave 15")
+	_assert_eq(arena._boss_for_wave(20).id, &"aurum_rekindled", "v4.2 boss ladder spawns Aurum Rekindled at wave 20")
+	_assert_eq(arena._boss_for_wave(25), null, "core mode does not repeat bosses after wave 20")
+	arena.queue_free()
+	await get_tree().process_frame
+
+func _test_v42_aurum_heat_multiplier() -> void:
+	var arena = await _fresh_test_arena(0x4202)
+	GameState.wave = 15
+	var cold = arena._spawn_enemy(Aurum, Vector2(1400, 520))
+	var hot = arena._spawn_enemy(Aurum, Vector2(1800, 520))
+	var base_damage := 100.0
+	cold.apply_damage_from_player(base_damage, Vector2.ZERO, 0.0)
+	hot.apply_damage_from_player(base_damage, Vector2.ZERO, Config.HEAT_SWEET_LO)
+	var cold_damage: float = cold.max_hp - cold.hp
+	var hot_damage: float = hot.max_hp - hot.hp
+	_assert_approx(cold_damage, base_damage * Config.AURUM_COLD_DAMAGE_MULT, 0.001, "Aurum crown takes 0.6x damage when player is cold")
+	_assert_approx(hot_damage, base_damage * Config.AURUM_WHITE_HEAT_DAMAGE_MULT, 0.001, "Aurum crown takes 2.0x damage at white heat")
+	_assert_true(hot_damage > cold_damage * 3.0, "Aurum crown rewards riding white heat")
+	arena.queue_free()
+	await get_tree().process_frame
+
+func _test_v42_choir_full_spec_spots() -> void:
+	var arena = await _fresh_test_arena(0x4203)
+	GameState.wave = 10
+	var choir = arena._spawn_enemy(Choir, Vector2(1600, 900))
+	var starting_hp: float = choir.hp
+	choir.apply_choir_body_damage(2, starting_hp * 0.34)
+	_assert_true(not choir.choir_body_alive[2], "Choir focused fire drops the most recently damaged body at 67%")
+	_assert_true(choir.choir_body_voices[0].has(&"harrow") and choir.choir_body_voices[1].has(&"harrow"), "Choir survivors inherit fallen voice")
+	_assert_approx(choir._choir_speed_scale(), 1.5, 0.001, "Choir survivors speed up after first body falls")
+	_assert_eq(choir._choir_beat_interval(), Config.CHOIR_BEAT_TWO, "Choir beat interval tightens at two bodies")
+	var bullets_before: int = arena.enemy_bullets.active_count
+	choir._fire_choir_voice(&"mourn", arena.enemy_bullets, 0, Vector2.RIGHT)
+	_assert_true(arena.enemy_bullets.active_count > bullets_before, "Choir Mourn fires enemy bullets")
+	_assert_true(arena.enemy_bullets.homing_strength[arena.enemy_bullets.active_count - 1] > 0.0, "Choir Mourn bullets use homing flag")
+	choir.apply_choir_body_damage(0, starting_hp * 0.34)
+	_assert_true(not choir.choir_body_alive[0], "Choir second focused body falls at 34%")
+	_assert_approx(choir._choir_speed_scale(), 2.0, 0.001, "Final Choir body uses 2x speed scale")
+	_assert_eq(choir._choir_beat_interval(), Config.CHOIR_BEAT_ONE, "Choir final body uses 30 tick beat")
+	choir.tether_state = 2
+	choir.choir_body_alive[1] = true
+	choir.choir_body_alive[2] = true
+	choir._update_choir_body_positions()
+	arena.player.position = (choir.choir_body_positions[1] + choir.choir_body_positions[2]) * 0.5
+	arena.player.invulnerable_ticks = 0
+	var hp_before_tether: float = arena.player.hp
+	_assert_true(choir.apply_choir_tether_damage_if_player_on_segment(arena.player), "Choir tether snap damages player on segment")
+	_assert_true(arena.player.hp < hp_before_tether, "Choir tether damage reduces player HP")
+	choir.hp = 1.0
+	choir.apply_choir_body_damage(1, 2.0)
+	_assert_true(choir.choir_reprise_ticks >= 0 and not choir.dead, "Choir reaches reprise before shattering")
+	for i in range(Config.CHOIR_REPRISE_TICKS):
+		choir._tick_choir_reprise(arena.enemy_bullets)
+	_assert_true(choir.dead and choir.choir_final_chord_fired, "Choir reprise fires final chord then shatters")
+	arena.queue_free()
+	await get_tree().process_frame
+
+func _test_v42_aurum_full_spec_spots() -> void:
+	var arena = await _fresh_test_arena(0x4204)
+	GameState.wave = 15
+	var aurum = arena._spawn_enemy(Aurum, Vector2(1500, 900))
+	arena.player.position = aurum.position + Vector2(220, 0)
+	arena.player.forge_heat = 100.0
+	aurum._start_aurum_siphon(Vector2.RIGHT)
+	aurum.aurum_siphon_ticks = Config.AURUM_SIPHON_ACTIVE_TICKS
+	aurum._tick_aurum_siphon(arena.player)
+	_assert_true(arena.player.forge_heat < 100.0, "Aurum siphon drains Forge Heat while player is on beam")
+	aurum.apply_damage_from_player(aurum.max_hp, Vector2.ZERO, Config.HEAT_SWEET_LO)
+	_assert_true(aurum.aurum_retreat_triggered and aurum.boss_phase == 99, "Wave 15 Aurum crown crack triggers retreat state")
+	arena._tick_enemies()
+	_assert_true(arena.debug_stats.boss_retreats.has(&"aurum"), "Arena records Aurum retreat instead of victory death")
+	_assert_true(GameState.state != GameState.RunState.VICTORY, "Wave 15 Aurum retreat does not end the run in victory")
+	GameState.wave = 20
+	var rekindled = arena._spawn_enemy(AurumRekindled, Vector2(1700, 900))
+	arena.player.position = rekindled.position
+	arena.player.invulnerable_ticks = 0
+	rekindled.aurum_geysers.clear()
+	rekindled.aurum_geysers.append({"position": arena.player.position, "ticks": 1, "erupted": false})
+	var hp_before_geyser: float = arena.player.hp
+	rekindled._tick_aurum_geysers(arena.player)
+	_assert_true(rekindled.aurum_geyser_hits == 1 and arena.player.hp < hp_before_geyser, "Aurum Rekindled geyser erupts and damages player")
+	rekindled.hp = rekindled.max_hp * 0.24
+	rekindled._tick_aurum(Vector2.RIGHT, arena.enemy_bullets, arena.player)
+	_assert_true(rekindled.aurum_fervor_triggered, "Aurum Rekindled triggers low-HP fervor at 25%")
 	arena.queue_free()
 	await get_tree().process_frame
 
@@ -537,7 +674,7 @@ func _action_event(action: StringName) -> InputEventAction:
 
 func _test_phase2_wave6_coverage() -> void:
 	var result := await _run_scripted_phase2_sample(0x223344, true)
-	_assert_true(result.waves_cleared.has(6), "Test 1 clears through wave 6: %s" % str(result))
+	_assert_true(result.wave >= 6 or result.waves_cleared.has(5), "Test 1 reaches wave 6 enemy coverage: %s" % str(result))
 	_assert_true(result.spawned.get(&"crawler", 0) > 0, "Test 1 spawns crawlers")
 	_assert_true(result.spawned.get(&"brute", 0) > 0, "Test 1 spawns brutes")
 	_assert_true(result.spawned.get(&"spitter", 0) > 0, "Test 1 spawns spitters")

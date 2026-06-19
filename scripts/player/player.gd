@@ -31,6 +31,7 @@ var orb_angle := 0.0
 var thorns := 0.0
 var magnet_mult := 1.0
 var second_wind_ready := false
+var forge_heat := 0.0
 
 func _ready() -> void:
 	if feel == null:
@@ -60,6 +61,7 @@ func reset(pos: Vector2) -> void:
 	thorns = 0.0
 	magnet_mult = 1.0
 	second_wind_ready = false
+	forge_heat = 0.0
 	fire_ticks = 0
 	dash_cooldown_ticks = 0
 	dashing_ticks = 0
@@ -87,6 +89,7 @@ func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node,
 		dash_cooldown_ticks = feel.dash_cooldown_ticks
 	if invulnerable_ticks > 0:
 		invulnerable_ticks -= 1
+	forge_heat = max(0.0, forge_heat - Config.HEAT_DECAY_PER_TICK)
 	fire_ticks -= 1
 	if fire_ticks <= 0 and not suppress_auto_fire:
 		fire_ticks = feel.fire_rate_ticks
@@ -94,8 +97,29 @@ func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node,
 		if dir.length_squared() <= 0.001:
 			dir = Vector2.RIGHT
 		bullet_manager.spawn(position + dir * 14.0, dir * feel.projectile_speed, damage, feel.projectile_life_ticks)
+		add_forge_heat(Config.HEAT_SHOT_GAIN)
 		EventBus.shake_requested.emit(Config.SHAKE_SHOT)
 	queue_redraw()
+
+func add_forge_heat(amount: float) -> void:
+	forge_heat = clampf(forge_heat + amount, 0.0, Config.HEAT_MAX)
+
+func heat_fraction() -> float:
+	return clampf(forge_heat / Config.HEAT_MAX, 0.0, 1.0)
+
+func swelter_radius() -> float:
+	var heat_frac := heat_fraction()
+	if heat_frac <= 0.0:
+		return 0.0
+	return Config.SWELTER_RADIUS_BASE + heat_frac * Config.SWELTER_RADIUS_SCALE
+
+func swelter_slow() -> float:
+	return Config.SWELTER_SLOW_BASE + heat_fraction() * Config.SWELTER_SLOW_SCALE
+
+func swelter_scorch_damage(shot_damage: float) -> float:
+	if forge_heat < Config.HEAT_SWEET_LO:
+		return 0.0
+	return shot_damage * Config.SWELTER_SCORCH_DAMAGE_FACTOR
 
 func apply_damage(amount: float, source: Variant, iframe_ticks := Config.PLAYER_HURT_IFRAME_TICKS) -> void:
 	if invulnerable_ticks > 0 or dashing_ticks > 0:
@@ -118,8 +142,21 @@ func _draw() -> void:
 	var blink := invulnerable_ticks > 0 and int(Engine.get_physics_frames() / 4) % 2 == 0
 	if blink:
 		return
+	var heat_frac := heat_fraction()
+	var aura_radius := swelter_radius()
+	if aura_radius > 0.0:
+		draw_circle(Vector2.ZERO, aura_radius, Color(1.0, 0.30 + heat_frac * 0.42, 0.08, 0.035 + heat_frac * 0.055))
+		draw_arc(Vector2.ZERO, aura_radius, 0.0, TAU, 80, Color(1.0, 0.70 + heat_frac * 0.21, 0.25, 0.16 + heat_frac * 0.20), 2.0)
 	draw_circle(Vector2.ZERO, radius + (8.0 if dashing_ticks > 0 else 3.0), Color(1.0, 0.682, 0.259, 0.22))
 	draw_circle(Vector2.ZERO, radius, Color(1.0, 0.91, 0.77))
+	var crown_height := 10.0 + heat_frac * 18.0
+	var crown_color := Color(1.0, 0.84 + heat_frac * 0.16, 0.34 + heat_frac * 0.36, 0.58 + heat_frac * 0.35)
+	draw_polygon([
+		Vector2(-radius * 0.55, -radius * 0.8),
+		Vector2(0.0, -radius - crown_height),
+		Vector2(radius * 0.55, -radius * 0.8),
+		Vector2(0.0, -radius * 0.35),
+	], [crown_color])
 	var dir := (aim_world - position).normalized()
 	if dir.length_squared() > 0.0:
 		draw_line(Vector2.ZERO, dir * (radius + 11.0), Color(0.08, 0.067, 0.047), 3.0)

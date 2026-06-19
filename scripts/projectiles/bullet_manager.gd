@@ -12,6 +12,7 @@ var damage := PackedFloat32Array()
 var radius := PackedFloat32Array()
 var pierce := PackedInt32Array()
 var rendered_origins := PackedVector2Array()
+var homing_strength := PackedFloat32Array()
 var active_count := 0
 
 var _multimesh_instance: MultiMeshInstance2D
@@ -28,11 +29,12 @@ func reset() -> void:
 	radius.clear()
 	pierce.clear()
 	rendered_origins.clear()
+	homing_strength.clear()
 	active_count = 0
 	if _multimesh:
 		_multimesh.visible_instance_count = 0
 
-func spawn(pos: Vector2, vel: Vector2, dmg: float, life: int, p_radius := 4.0, p_pierce := 0) -> bool:
+func spawn(pos: Vector2, vel: Vector2, dmg: float, life: int, p_radius := 4.0, p_pierce := 0, p_homing_strength := 0.0) -> bool:
 	if active_count >= capacity:
 		return false
 	positions.append(pos)
@@ -42,6 +44,7 @@ func spawn(pos: Vector2, vel: Vector2, dmg: float, life: int, p_radius := 4.0, p
 	radius.append(p_radius)
 	pierce.append(p_pierce)
 	rendered_origins.append(pos)
+	homing_strength.append(p_homing_strength)
 	active_count += 1
 	return true
 
@@ -50,6 +53,12 @@ func physics_tick(bounds: Rect2, grid: RefCounted, enemies: Array, player: Node 
 	var player_hits := 0
 	var i := active_count - 1
 	while i >= 0:
+		if not is_player_owned and is_instance_valid(player) and homing_strength[i] > 0.0:
+			var to_player: Vector2 = player.position - positions[i]
+			if to_player.length_squared() > 0.001:
+				var speed := velocities[i].length()
+				var steered := velocities[i].normalized().lerp(to_player.normalized(), homing_strength[i]).normalized()
+				velocities[i] = steered * speed
 		positions[i] += velocities[i]
 		life_ticks[i] -= 1
 		var dead := life_ticks[i] <= 0 or not bounds.grow(32.0).has_point(positions[i])
@@ -91,6 +100,7 @@ func _remove_at(index: int) -> void:
 		radius[index] = radius[last]
 		pierce[index] = pierce[last]
 		rendered_origins[index] = rendered_origins[last]
+		homing_strength[index] = homing_strength[last]
 	positions.resize(last)
 	velocities.resize(last)
 	life_ticks.resize(last)
@@ -98,6 +108,7 @@ func _remove_at(index: int) -> void:
 	radius.resize(last)
 	pierce.resize(last)
 	rendered_origins.resize(last)
+	homing_strength.resize(last)
 	active_count -= 1
 
 func _build_multimesh() -> void:

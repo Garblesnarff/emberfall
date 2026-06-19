@@ -124,6 +124,7 @@ var debug_stats := {
 	"embers": 0,
 	"hearts_collected": 0,
 	"boss_phases": {},
+	"boss_retreats": {},
 	"victory": false,
 	"recap": {},
 	"endless_entered": false,
@@ -220,6 +221,7 @@ func _reset_run_state() -> void:
 		"embers": 0,
 		"hearts_collected": 0,
 		"boss_phases": {},
+		"boss_retreats": {},
 		"victory": false,
 		"recap": {},
 		"endless_entered": false,
@@ -256,6 +258,7 @@ func _physics_process(_delta: float) -> void:
 	_tick_spawning()
 	_tick_boss_telegraph()
 	_tick_bullets()
+	_tick_swelter()
 	_tick_enemies()
 	_tick_lava()
 	_tick_orbits()
@@ -362,6 +365,8 @@ func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2) -> void:
 		_fire_beam_weapon(dir)
 	elif current_weapon.pattern == "meteor":
 		_fire_meteor_weapon(aim_world)
+	if player.has_method("add_forge_heat"):
+		player.add_forge_heat(Config.HEAT_SHOT_GAIN)
 	EventBus.shake_requested.emit(Config.SHAKE_SHOT)
 
 func _effective_weapon_rate() -> int:
@@ -471,7 +476,10 @@ func _tick_bullets() -> void:
 			var hit_damage: float = hit.damage
 			if Config.rng.randf() < player.crit:
 				hit_damage *= 2.5
-			enemy.apply_damage(hit_damage, hit.velocity)
+			if enemy.has_method("apply_damage_from_player"):
+				enemy.apply_damage_from_player(hit_damage, hit.velocity, player.forge_heat)
+			else:
+				enemy.apply_damage(hit_damage, hit.velocity)
 			if player.burn:
 				enemy.apply_burn(120, hit_damage * Config.BURN_DAMAGE_FACTOR)
 			if player.ricochet_bonus > 0 or active_synergies.has(&"arc_steel"):
@@ -481,6 +489,24 @@ func _tick_bullets() -> void:
 		_eat_enemy_projectiles()
 	debug_stats.projectiles_blocked += max(0, before_player - player_bullets.active_count - result.enemy_hits.size())
 	debug_stats.projectiles_blocked += max(0, before_enemy - enemy_bullets.active_count)
+
+func _tick_swelter() -> void:
+	if not player.has_method("swelter_radius"):
+		return
+	var aura_radius: float = player.swelter_radius()
+	var scorch_damage: float = player.swelter_scorch_damage(_weapon_damage())
+	for enemy in enemies:
+		if not is_instance_valid(enemy) or enemy.dead:
+			continue
+		enemy.movement_scale = 1.0
+		if aura_radius <= 0.0:
+			continue
+		if enemy.position.distance_to(player.position) > aura_radius + enemy.radius:
+			continue
+		if not enemy.data.boss:
+			enemy.movement_scale = max(0.0, 1.0 - player.swelter_slow())
+		if scorch_damage > 0.0:
+			enemy.apply_damage(scorch_damage, Vector2.ZERO)
 
 func _arc_to_nearby_enemy(source: Node, amount: float) -> void:
 	var best: Node = null
@@ -549,6 +575,8 @@ func _tick_player_touch_damage() -> void:
 	for enemy in enemies:
 		if player.invulnerable_ticks > 0 or player.dashing_ticks > 0:
 			return
+		if enemy.has_method("apply_choir_tether_damage_if_player_on_segment") and enemy.apply_choir_tether_damage_if_player_on_segment(player):
+			return
 		var rr: float = enemy.radius + player.radius
 		if enemy.position.distance_squared_to(player.position) < rr * rr:
 			player.apply_damage(enemy.damage, enemy, Config.PLAYER_HURT_IFRAME_TICKS)
@@ -577,6 +605,13 @@ func _tick_lava() -> void:
 
 func _kill_enemy(index: int) -> void:
 	var enemy: Node = enemies[index]
+	if enemy.data and enemy.data.id == &"aurum" and enemy.aurum_retreat_triggered:
+		var retreats: Dictionary = debug_stats.boss_retreats
+		retreats[enemy.data.id] = retreats.get(enemy.data.id, 0) + 1
+		EventBus.hitstop_requested.emit(Config.HITSTOP_BOSS_KILL_TICKS)
+		enemies.remove_at(index)
+		enemy.queue_free()
+		return
 	GameState.kills += 1
 	GameState.set_combo(GameState.combo + 1)
 	combo_ticks = Config.COMBO_DECAY_TICKS

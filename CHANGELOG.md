@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.14 - v4.2 Amendment Catch-Up
+
+- Added the Swelter heat aura with heat-scaled slow, white-heat scorch, and placeholder heat/crown visuals.
+- Added generic homing enemy projectile support and wired Choir Mourn tears through it.
+- Updated the bounded boss ladder resources and behavior for Choir, Aurum, and Aurum Rekindled v4.2 specs.
+- Added Shattered Choir shared-pool body fall, inheritance, tether, and reprise behavior checks.
+- Added Aurum crown heat multiplier, siphon drain, wave-15 retreat, Rekindled geyser, and low-HP fervor checks.
+
 ## 0.5.13 - Phase 5 Local Completion Audit
 
 - Added `docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md` to record the local Phase 5 completion boundary.

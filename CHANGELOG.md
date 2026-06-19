@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.15 - v4.2 Boss Spec Closure
+
+- Made Shattered Choir bodies orbit the player at the v4.2 radius.
+- Added Harrow Drossling placeholder summons under the non-boss enemy cap.
+- Added Aurum Tax placeholder summons for the wave-15 duel.
+- Expanded headless tests for Choir orbit/adds and Aurum Tax behavior.
+
 ## 0.5.14 - v4.2 Amendment Catch-Up
 
 - Added the Swelter heat aura with heat-scaled slow, white-heat scorch, and placeholder heat/crown visuals.

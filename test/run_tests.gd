@@ -429,6 +429,9 @@ func _test_v42_choir_full_spec_spots() -> void:
 	var arena = await _fresh_test_arena(0x4203)
 	GameState.wave = 10
 	var choir = arena._spawn_enemy(Choir, Vector2(1600, 900))
+	arena.player.position = Vector2(1500, 1000)
+	choir.physics_tick(arena.player, arena.enemy_bullets)
+	_assert_approx(choir.choir_body_positions[0].distance_to(arena.player.position), Config.CHOIR_ORBIT_RADIUS, 0.001, "Choir bodies orbit the player at 250u")
 	var starting_hp: float = choir.hp
 	choir.apply_choir_body_damage(2, starting_hp * 0.34)
 	_assert_true(not choir.choir_body_alive[2], "Choir focused fire drops the most recently damaged body at 67%")
@@ -439,6 +442,9 @@ func _test_v42_choir_full_spec_spots() -> void:
 	choir._fire_choir_voice(&"mourn", arena.enemy_bullets, 0, Vector2.RIGHT)
 	_assert_true(arena.enemy_bullets.active_count > bullets_before, "Choir Mourn fires enemy bullets")
 	_assert_true(arena.enemy_bullets.homing_strength[arena.enemy_bullets.active_count - 1] > 0.0, "Choir Mourn bullets use homing flag")
+	var crawler_count_before: int = int(arena.debug_stats.spawned.get(&"crawler", 0))
+	arena._handle_v42_boss_spawn_pattern(choir, &"harrow")
+	_assert_true(int(arena.debug_stats.spawned.get(&"crawler", 0)) > crawler_count_before, "Choir Harrow summons a Drossling placeholder under cap")
 	choir.apply_choir_body_damage(0, starting_hp * 0.34)
 	_assert_true(not choir.choir_body_alive[0], "Choir second focused body falls at 34%")
 	_assert_approx(choir._choir_speed_scale(), 2.0, 0.001, "Final Choir body uses 2x speed scale")
@@ -476,6 +482,9 @@ func _test_v42_aurum_full_spec_spots() -> void:
 	arena._tick_enemies()
 	_assert_true(arena.debug_stats.boss_retreats.has(&"aurum"), "Arena records Aurum retreat instead of victory death")
 	_assert_true(GameState.state != GameState.RunState.VICTORY, "Wave 15 Aurum retreat does not end the run in victory")
+	var hound_count_before: int = int(arena.debug_stats.spawned.get(&"hound", 0))
+	arena._handle_v42_boss_spawn_pattern(aurum, &"tax")
+	_assert_eq(int(arena.debug_stats.spawned.get(&"hound", 0)) - hound_count_before, 2, "Aurum Tax summons two Taxed Flame placeholders")
 	GameState.wave = 20
 	var rekindled = arena._spawn_enemy(AurumRekindled, Vector2(1700, 900))
 	arena.player.position = rekindled.position

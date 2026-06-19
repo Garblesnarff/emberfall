@@ -35,6 +35,7 @@ var choir_body_alive: Array[bool] = []
 var choir_body_voices: Array[Array] = []
 var choir_recent_damage: Array[float] = []
 var choir_body_positions: Array[Vector2] = []
+var choir_orbit_center := Vector2.ZERO
 var choir_fallen_voices: Array[StringName] = []
 var choir_reprise_ticks := -1
 var choir_final_chord_fired := false
@@ -121,7 +122,7 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 	elif data.ai_profile == &"boss_kilnmaw":
 		_tick_kilnmaw(dir, enemy_bullets)
 	elif data.ai_profile == &"boss_choir":
-		_tick_choir(dir, enemy_bullets)
+		_tick_choir(player, dir, enemy_bullets)
 	elif data.ai_profile == &"boss_aurum":
 		_tick_aurum(dir, enemy_bullets, player)
 	else:
@@ -278,11 +279,12 @@ func _tick_kilnmaw(dir: Vector2, enemy_bullets: Node) -> void:
 				hound_ticks = Config.BOSS_CHARGE_WINDUP_TICKS
 				charge_angle = dir.angle()
 
-func _tick_choir(dir: Vector2, enemy_bullets: Node) -> void:
+func _tick_choir(player: Node2D, dir: Vector2, enemy_bullets: Node) -> void:
 	if choir_reprise_ticks >= 0:
 		_tick_choir_reprise(enemy_bullets)
 		return
-	position += dir * speed * 0.18 * _choir_speed_scale()
+	choir_orbit_center = player.position
+	position = position.move_toward(choir_orbit_center, speed * 0.18 * _choir_speed_scale())
 	_update_choir_body_positions()
 	_tick_choir_tether()
 	fire_ticks -= 1
@@ -394,6 +396,7 @@ func _setup_v42_boss_state() -> void:
 	choir_body_voices.clear()
 	choir_recent_damage.clear()
 	choir_body_positions.clear()
+	choir_orbit_center = position
 	choir_fallen_voices.clear()
 	choir_reprise_ticks = -1
 	choir_final_chord_fired = false
@@ -409,6 +412,7 @@ func _setup_v42_boss_state() -> void:
 	aurum_geysers.clear()
 	aurum_geyser_hits = 0
 	if data and data.id == &"choir":
+		choir_orbit_center = position
 		var voices: Array[StringName] = [&"mourn", &"vesper", &"harrow"]
 		for i in range(data.boss_body_count):
 			choir_body_alive.append(true)
@@ -498,7 +502,7 @@ func _update_choir_body_positions() -> void:
 	var base := float(Engine.get_physics_frames()) * 0.018
 	for i in range(choir_body_positions.size()):
 		var angle := base + TAU * float(i) / float(max(1, data.boss_body_count))
-		choir_body_positions[i] = position + Vector2(cos(angle), sin(angle)) * Config.CHOIR_ORBIT_RADIUS
+		choir_body_positions[i] = choir_orbit_center + Vector2(cos(angle), sin(angle)) * Config.CHOIR_ORBIT_RADIUS
 
 func _choir_speed_scale() -> float:
 	return 1.0 + float(data.boss_body_count - boss_bodies_alive) * 0.5

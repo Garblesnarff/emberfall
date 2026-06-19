@@ -547,6 +547,7 @@ func _tick_enemies() -> void:
 			var pattern_index: int = (enemy.boss_pattern_index - 1) % enemy.data.boss_patterns.size()
 			var pattern: StringName = enemy.data.boss_patterns[pattern_index]
 			patterns[pattern] = patterns.get(pattern, 0) + 1
+			_handle_v42_boss_spawn_pattern(enemy, pattern)
 		_resolve_enemy_terrain(enemy)
 	grid.rebuild(enemies)
 	var view_radius: float = max(get_viewport_rect().size.x, get_viewport_rect().size.y) * Config.LOD_SEPARATION_VIEWPORT_MULT
@@ -570,6 +571,20 @@ func _tick_enemies() -> void:
 		if enemy.dead:
 			_kill_enemy(i)
 		i -= 1
+
+func _handle_v42_boss_spawn_pattern(enemy: Node, pattern: StringName) -> void:
+	if enemy.data.id == &"choir" and pattern == &"harrow" and _non_boss_enemy_count() < 40:
+		_spawn_enemy(CRAWLER, enemy.position + Vector2(Config.randf_range(-80.0, 80.0), Config.randf_range(-80.0, 80.0)), true)
+	elif enemy.data.id == &"aurum" and pattern == &"tax":
+		for i in range(2):
+			_spawn_enemy(HOUND, enemy.position + Vector2(cos(TAU * float(i) / 2.0), sin(TAU * float(i) / 2.0)) * 90.0, true)
+
+func _non_boss_enemy_count() -> int:
+	var count := 0
+	for enemy in enemies:
+		if is_instance_valid(enemy) and enemy.data and not enemy.data.boss and not enemy.dead:
+			count += 1
+	return count
 
 func _tick_player_touch_damage() -> void:
 	for enemy in enemies:

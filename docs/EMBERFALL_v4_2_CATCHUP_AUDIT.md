@@ -1,6 +1,6 @@
 # EMBERFALL v4.2 Catch-Up Audit
 
-Version: `0.5.14`
+Version: `0.5.15`
 
 This audit records the Godot-side catch-up to the EMBERFALL v4.2 amendment before Phase 6 art integration.
 

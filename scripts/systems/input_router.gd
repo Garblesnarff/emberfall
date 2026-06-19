@@ -11,6 +11,12 @@ func movement_vector() -> Vector2:
 	var v := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	return v.normalized() if v.length_squared() > 1.0 else v
 
+func fire_pressed() -> bool:
+	if Input.is_action_pressed("fire"):
+		return true
+	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	return stick.length() >= STICK_DEADZONE
+
 func aim_world_position(owner_node: CanvasItem, player_pos: Vector2, tick: int) -> Vector2:
 	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
 	if stick.length() >= STICK_DEADZONE:

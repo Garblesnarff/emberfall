@@ -160,12 +160,13 @@ const OVERCLOCK_FIRE_RATE_MULT := 0.60
 const METEOR_RADIUS := 115.0
 const RAILSPIKE_WIDTH := 34.0
 const VICTORY_EMBER_MULT := 1.5
-const REBINDABLE_ACTIONS := [&"move_up", &"move_down", &"move_left", &"move_right", &"dash", &"pause"]
+const REBINDABLE_ACTIONS := [&"move_up", &"move_down", &"move_left", &"move_right", &"fire", &"dash", &"pause"]
 const ACTION_LABELS := {
 	&"move_up": "Move Up",
 	&"move_down": "Move Down",
 	&"move_left": "Move Left",
 	&"move_right": "Move Right",
+	&"fire": "Fire",
 	&"dash": "Dash",
 	&"pause": "Pause",
 }
@@ -174,6 +175,7 @@ const DEFAULT_KEY_BINDINGS := {
 	&"move_down": KEY_S,
 	&"move_left": KEY_A,
 	&"move_right": KEY_D,
+	&"fire": KEY_F,
 	&"dash": KEY_SPACE,
 	&"pause": KEY_P,
 }
@@ -227,6 +229,7 @@ func _ensure_controller_defaults() -> void:
 	_add_axis_event("aim_right", JOY_AXIS_RIGHT_X, 1.0)
 	_add_axis_event("aim_up", JOY_AXIS_RIGHT_Y, -1.0)
 	_add_axis_event("aim_down", JOY_AXIS_RIGHT_Y, 1.0)
+	_add_mouse_button_event("fire", MOUSE_BUTTON_LEFT)
 	_add_button_event("dash", JOY_BUTTON_A)
 	_add_button_event("dash", JOY_BUTTON_RIGHT_SHOULDER)
 	_add_button_event("pause", JOY_BUTTON_START)
@@ -292,3 +295,13 @@ func _add_button_event(action: StringName, button: JoyButton) -> void:
 	var joy_event := InputEventJoypadButton.new()
 	joy_event.button_index = button
 	InputMap.action_add_event(action, joy_event)
+
+func _add_mouse_button_event(action: StringName, button: MouseButton) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	for event in InputMap.action_get_events(action):
+		if event is InputEventMouseButton and event.button_index == button:
+			return
+	var mouse_event := InputEventMouseButton.new()
+	mouse_event.button_index = button
+	InputMap.action_add_event(action, mouse_event)

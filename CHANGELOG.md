@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.16 - Manual Fire Gate
+
+- Added a dedicated `fire` input action for left mouse / keyboard fire.
+- Changed player weapons from always-on auto-fire to fire-only-while-held behavior.
+- Preserved controller continuous fire while the right stick is deflected.
+- Added a headless regression test for manual fire gating and heat gain.
+
 ## 0.5.15 - v4.2 Boss Spec Closure
 
 - Made Shattered Choir bodies orbit the player at the v4.2 radius.

@@ -33,6 +33,7 @@ func _run() -> void:
 	await _test_phase2_world_systems()
 	await _test_deck_resolution_hud_layout()
 	await _test_phase3_forced_builds()
+	await _test_manual_fire_gate()
 	await _test_phase3_objectives_and_rewards()
 	await _test_phase4_save_meta_and_ui()
 	await _test_phase4_main_flow_integration()
@@ -208,6 +209,20 @@ func _test_phase3_forced_builds() -> void:
 	for evo_id in [&"meteor_volley", &"railspike", &"crucible_breath"]:
 		var evo_result := await _run_forced_evolution_sample(evo_id)
 		_assert_true(evo_result.evolved, "forced-build evolution %s activates from chest" % evo_id)
+
+func _test_manual_fire_gate() -> void:
+	var arena = await _fresh_test_arena(0x3344)
+	arena.select_weapon(&"forgehammer")
+	arena.player.forge_heat = 0.0
+	arena.weapon_fire_ticks = 0
+	arena._tick_player_weapon(Vector2.ZERO, arena.player.position + Vector2.RIGHT * 200.0, false)
+	_assert_eq(arena.player_bullets.active_count, 0, "manual fire gate prevents shots while fire is not held")
+	_assert_approx(arena.player.forge_heat, 0.0, 0.001, "manual fire gate prevents heat gain while fire is not held")
+	arena._tick_player_weapon(Vector2.ZERO, arena.player.position + Vector2.RIGHT * 200.0, true)
+	_assert_true(arena.player_bullets.active_count > 0, "manual fire gate allows shots while fire is held")
+	_assert_true(arena.player.forge_heat > 0.0, "manual fire gate allows shot heat gain")
+	arena.queue_free()
+	await get_tree().process_frame
 
 func _test_phase3_objectives_and_rewards() -> void:
 	var arena = await _fresh_test_arena(0x3303)

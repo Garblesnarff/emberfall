@@ -82,6 +82,7 @@ var scripted_input_enabled := false
 var scripted_move := Vector2.ZERO
 var scripted_aim := Vector2.ZERO
 var scripted_dash := false
+var scripted_fire := true
 var objective_markers: Array[Vector2] = []
 var current_weapon: Resource = FORGEHAMMER
 var weapon_fire_ticks := 0
@@ -191,6 +192,7 @@ func _reset_run_state() -> void:
 	scripted_move = Vector2.ZERO
 	scripted_aim = Vector2.ZERO
 	scripted_dash = false
+	scripted_fire = true
 	current_weapon = FORGEHAMMER
 	weapon_fire_ticks = 0
 	ember_count = 0
@@ -242,6 +244,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	var input_vector: Vector2 = scripted_move if scripted_input_enabled else input_router.movement_vector()
 	var aim_world: Vector2 = scripted_aim if scripted_input_enabled else input_router.aim_world_position(self, player.global_position, tick)
+	var fire_held: bool = scripted_fire if scripted_input_enabled else input_router.fire_pressed()
 	player.physics_tick(input_vector, aim_world, player_bullets, scripted_dash, true)
 	scripted_dash = false
 	if player.dashing_ticks > 0 and player.nova:
@@ -253,7 +256,7 @@ func _physics_process(_delta: float) -> void:
 			for enemy in enemies:
 				if enemy.position.distance_to(player.position) <= Config.BLAST_FURNACE_RADIUS + enemy.radius:
 					enemy.apply_burn(120, player.damage * Config.BURN_DAMAGE_FACTOR)
-	_tick_player_weapon(input_vector, aim_world)
+	_tick_player_weapon(input_vector, aim_world, fire_held)
 	grid.rebuild(enemies)
 	_tick_spawning()
 	_tick_boss_telegraph()
@@ -342,13 +345,15 @@ func _boss_for_wave(wave: int) -> Resource:
 		return cycle[(wave / 5) % cycle.size()]
 	return null
 
-func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2) -> void:
+func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2, fire_held := true) -> void:
 	if input_vector.length_squared() < 0.01:
 		standing_still_ticks += 1
 	else:
 		standing_still_ticks = 0
 	weapon_fire_ticks -= 1
 	var effective_rate: int = _effective_weapon_rate()
+	if not fire_held:
+		return
 	if weapon_fire_ticks > 0:
 		return
 	weapon_fire_ticks = effective_rate
@@ -1142,16 +1147,18 @@ func _on_boss_phase(boss: Node, phase: int) -> void:
 	list.append(phase)
 	phases[key] = list
 
-func set_scripted_input(move_vector: Vector2, aim_position: Vector2, dash_pressed := false) -> void:
+func set_scripted_input(move_vector: Vector2, aim_position: Vector2, dash_pressed := false, fire_pressed := true) -> void:
 	scripted_input_enabled = true
 	scripted_move = move_vector
 	scripted_aim = aim_position
 	scripted_dash = dash_pressed
+	scripted_fire = fire_pressed
 
 func clear_scripted_input() -> void:
 	scripted_input_enabled = false
 	scripted_move = Vector2.ZERO
 	scripted_dash = false
+	scripted_fire = true
 
 func projectile_blocked(pos: Vector2) -> bool:
 	for pillar in ARENA_LAYOUT.pillars:

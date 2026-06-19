@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.5.15` - Phase 5 Steam & Polish foundations plus v4.2 amendment catch-up.
+Current version: `0.5.16` - Phase 5 Steam & Polish foundations plus v4.2 amendment catch-up.
 
 ## Play Test
 
@@ -15,9 +15,10 @@ Controls:
 - `WASD` or arrow keys: move
 - Right stick: aim on controller
 - Mouse: aim
+- Left mouse or `F`: fire
+- Right stick deflection: aim and fire on controller
 - `Space`: dash
 - `P` or Start: pause
-- Auto-fire is always active
 
 ## Validate
 

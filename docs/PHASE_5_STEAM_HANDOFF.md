@@ -21,6 +21,7 @@ Phase 5 can progress without a paid Steamworks app by keeping every Steam touchp
 - Installed Godot export templates on any machine producing binaries.
 - `data/steamworks_manifest.json` is the machine-readable dashboard setup contract. Use it as the source list for achievements, stats, Steam Input actions, cloud save path, rich presence strings, and export targets.
 - `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` is the human checklist for the future Steamworks dashboard pass.
+- `docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md` records what is locally complete and what remains external-only.
 - Achievement definitions using these API IDs:
   - `ACH_FIRST_LIGHT`
   - `ACH_SLAGBREAKER`

@@ -2,7 +2,7 @@
 
 This project is set up to keep Steam integration optional until a Steamworks app ID and GodotSteam binaries exist.
 
-`data/steamworks_manifest.json` is the local, non-secret manifest for the future Steamworks dashboard setup. The readiness check validates it against the code contracts in `SteamManager`. `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` turns that manifest into the dashboard setup checklist for the future external pass.
+`data/steamworks_manifest.json` is the local, non-secret manifest for the future Steamworks dashboard setup. The readiness check validates it against the code contracts in `SteamManager`. `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` turns that manifest into the dashboard setup checklist for the future external pass. `docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md` records the boundary between completed local work and external Steam setup.
 
 ## Local Export Presets
 

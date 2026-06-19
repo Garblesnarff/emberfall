@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.5.12` - Phase 5 Steam & Polish foundations.
+Current version: `0.5.13` - Phase 5 Steam & Polish foundations.
 
 ## Play Test
 

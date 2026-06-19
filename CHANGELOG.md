@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.13 - Phase 5 Local Completion Audit
+
+- Added `docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md` to record the local Phase 5 completion boundary.
+- Linked the audit from the Steam handoff and release readiness docs.
+- Expanded readiness checks to require the local completion audit and external-only remainder notes.
+
 ## 0.5.12 - Phase 5 Dashboard Checklist
 
 - Added `docs/STEAMWORKS_DASHBOARD_CHECKLIST.md` for the future Steamworks dashboard setup pass.

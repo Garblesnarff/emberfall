@@ -170,6 +170,7 @@ func _check_local_file_hygiene() -> void:
 func _check_handoff_docs() -> void:
 	_assert_true(FileAccess.file_exists("res://docs/PHASE_5_STEAM_HANDOFF.md"), "Steam handoff doc exists")
 	_assert_true(FileAccess.file_exists("res://docs/PHASE_5_RELEASE_READINESS.md"), "release readiness doc exists")
+	_assert_true(FileAccess.file_exists("res://docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md"), "Phase 5 local completion audit exists")
 	_assert_true(FileAccess.file_exists("res://docs/STEAMWORKS_DASHBOARD_CHECKLIST.md"), "Steamworks dashboard checklist exists")
 	var handoff := FileAccess.get_file_as_string("res://docs/PHASE_5_STEAM_HANDOFF.md")
 	_assert_true(handoff.contains("data/steamworks_manifest.json"), "handoff doc points to the Steamworks setup manifest")
@@ -181,3 +182,7 @@ func _check_handoff_docs() -> void:
 	_assert_true(checklist.contains("ACH_FIRST_LIGHT"), "dashboard checklist lists achievement API IDs")
 	_assert_true(checklist.contains("STAT_RUNS"), "dashboard checklist lists stat API IDs")
 	_assert_true(checklist.contains("MenuAccept"), "dashboard checklist lists Steam Input action names")
+	var audit := FileAccess.get_file_as_string("res://docs/PHASE_5_LOCAL_COMPLETION_AUDIT.md")
+	_assert_true(audit.contains("Phase 5 is locally prepared"), "local completion audit states the local Phase 5 boundary")
+	_assert_true(audit.contains("GodotSteam GDExtension binaries"), "local completion audit lists external GodotSteam requirement")
+	_assert_true(audit.contains("Steam Deck hardware"), "local completion audit lists external Deck verification")

@@ -10,6 +10,7 @@ const ObjVein := preload("res://data/objectives/ember_vein.tres")
 const ObjBraziers := preload("res://data/objectives/braziers.tres")
 const ObjBounty := preload("res://data/objectives/elite_bounty.tres")
 const ObjAnvil := preload("res://data/objectives/anvil_defense.tres")
+const Crawler := preload("res://data/enemies/crawler.tres")
 const Choir := preload("res://data/enemies/choir.tres")
 const Aurum := preload("res://data/enemies/aurum.tres")
 const AurumRekindled := preload("res://data/enemies/aurum_rekindled.tres")
@@ -17,6 +18,20 @@ const ForgeMenuScene := preload("res://scenes/ui/forge_menu.tscn")
 const RecapScene := preload("res://scenes/ui/recap.tscn")
 const MainScene := preload("res://scenes/main.tscn")
 const SettingsMenuScene := preload("res://scenes/ui/settings_menu.tscn")
+
+const PHASE6_STATIC_ART := [
+	"res://assets/sprites/ui/menu_background.png",
+	"res://assets/sprites/ui/word_mark.png",
+	"res://assets/sprites/ui/victory_screen.png",
+	"res://assets/sprites/ui/defeat_screen.png",
+	"res://assets/sprites/ui/hero_banner.png",
+	"res://assets/portraits/kilnmaw.png",
+	"res://assets/portraits/the_shattered_choir.png",
+	"res://assets/portraits/aurum.png",
+	"res://assets/portraits/aurum_rekindled.png",
+	"res://assets/capsules/main_capsule.png",
+	"res://assets/capsules/library_capsule.png",
+]
 
 var failures := 0
 
@@ -44,12 +59,14 @@ func _run() -> void:
 	await _test_v42_aurum_full_spec_spots()
 	await _test_phase5_steam_achievements_settings_and_pause()
 	_test_phase5_export_preset_readiness()
+	_test_phase6_static_art_assets()
+	_test_phase6b_crawler_sprite_pipeline()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1/2/3/4/5 tests: PASS")
+		print("EMBERFALL Phase 1/2/3/4/5/6A/6B tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1/2/3/4/5 tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2/3/4/5/6A/6B tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -224,6 +241,28 @@ func _test_manual_fire_gate() -> void:
 	arena.queue_free()
 	await get_tree().process_frame
 
+func _test_phase6_static_art_assets() -> void:
+	for path in PHASE6_STATIC_ART:
+		_assert_true(ResourceLoader.exists(path), "Phase 6A static art exists: %s" % path)
+		var texture := load(path)
+		_assert_true(texture is Texture2D and texture.get_width() > 0 and texture.get_height() > 0, "Phase 6A static art loads as texture: %s" % path)
+	var forge_scene := FileAccess.get_file_as_string("res://scenes/ui/forge_menu.tscn")
+	var recap_script := FileAccess.get_file_as_string("res://scripts/ui/recap.gd")
+	_assert_true(forge_scene.contains("res://assets/sprites/ui/menu_background.png"), "Forge menu uses production background art")
+	_assert_true(forge_scene.contains("res://assets/sprites/ui/word_mark.png"), "Forge menu uses production wordmark art")
+	_assert_true(not forge_scene.contains("res://assets/concepts"), "Forge menu no longer references concept art")
+	_assert_true(recap_script.contains("res://assets/sprites/ui/victory_screen.png"), "Recap uses production victory art")
+	_assert_true(recap_script.contains("res://assets/sprites/ui/defeat_screen.png"), "Recap uses production defeat art")
+	_assert_true(not recap_script.contains("res://assets/concepts"), "Recap no longer references concept art")
+
+func _test_phase6b_crawler_sprite_pipeline() -> void:
+	_assert_true(FileAccess.file_exists("res://data/art/phase6b_sprite_manifest.json"), "Phase 6B sprite manifest exists")
+	_assert_true(Crawler.sprite_frames != null, "Crawler uses generated SpriteFrames")
+	_assert_true(Crawler.sprite_frames.has_animation(&"walk_00"), "Crawler SpriteFrames include directional walk animation")
+	_assert_eq(Crawler.sprite_frames.get_frame_count(&"walk_00"), 8, "Crawler walk direction has 8 frames")
+	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame00.png"), "Crawler rendered source frame exists")
+	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/crawler_spriteframes.tres"), "Crawler SpriteFrames resource exists")
+
 func _test_phase3_objectives_and_rewards() -> void:
 	var arena = await _fresh_test_arena(0x3303)
 	arena._start_objective(ObjVein)
@@ -355,8 +394,8 @@ func _test_phase4_save_meta_and_ui() -> void:
 	get_tree().root.add_child(forge)
 	await get_tree().process_frame
 	_assert_true(forge.bank_label.text.contains("EMBERS"), "Forge menu exposes ember bank")
-	_assert_true(forge.background.texture != null and forge.background.texture.resource_path.ends_with("menu_background.png"), "Forge menu uses concept background art")
-	_assert_true(forge.word_mark.texture != null and forge.word_mark.texture.resource_path.ends_with("word_mark_cropped.png"), "Forge menu uses cropped concept word mark")
+	_assert_true(forge.background.texture != null and forge.background.texture.resource_path == "res://assets/sprites/ui/menu_background.png", "Forge menu uses production background art")
+	_assert_true(forge.word_mark.texture != null and forge.word_mark.texture.resource_path == "res://assets/sprites/ui/word_mark.png", "Forge menu uses production word mark")
 	var panel: Control = forge.get_node("Panel")
 	_assert_true(forge.word_mark.global_position.y + forge.word_mark.size.y < panel.global_position.y, "Forge word mark stays above menu controls")
 	forge.queue_free()
@@ -365,9 +404,9 @@ func _test_phase4_save_meta_and_ui() -> void:
 	recap.set_recap({"victory": true, "wave": 20, "score": 5000, "kills": 300, "best_combo": 42, "embers_banked": 450, "weapon": "Meteor Volley"})
 	await get_tree().process_frame
 	_assert_true(recap.title_label.text == "FORGE SECURED", "Victory recap shows FORGE SECURED")
-	_assert_true(recap.background.texture != null and recap.background.texture.resource_path.ends_with("victory_screen.png"), "Victory recap uses concept victory art")
+	_assert_true(recap.background.texture != null and recap.background.texture.resource_path == "res://assets/sprites/ui/victory_screen.png", "Victory recap uses production victory art")
 	recap.set_recap({"victory": false, "wave": 12, "score": 3000, "kills": 180, "best_combo": 20, "embers_banked": 120, "weapon": "Forgehammer"})
-	_assert_true(recap.background.texture != null and recap.background.texture.resource_path.ends_with("defeat_screen.png"), "Death recap uses concept defeat art")
+	_assert_true(recap.background.texture != null and recap.background.texture.resource_path == "res://assets/sprites/ui/defeat_screen.png", "Death recap uses production defeat art")
 	recap.queue_free()
 	var file := FileAccess.open(SaveManager.SAVE_PATH, FileAccess.WRITE)
 	file.store_string("{bad json")

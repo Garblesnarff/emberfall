@@ -1,0 +1,27 @@
+{
+  "phase": "6A",
+  "look_status": "static-art-integrated",
+  "runtime_ui": {
+    "menu_background": "res://assets/sprites/ui/menu_background.png",
+    "word_mark": "res://assets/sprites/ui/word_mark.png",
+    "victory_screen": "res://assets/sprites/ui/victory_screen.png",
+    "defeat_screen": "res://assets/sprites/ui/defeat_screen.png",
+    "hero_banner": "res://assets/sprites/ui/hero_banner.png"
+  },
+  "boss_portraits": {
+    "kilnmaw": "res://assets/portraits/kilnmaw.png",
+    "choir": "res://assets/portraits/the_shattered_choir.png",
+    "aurum": "res://assets/portraits/aurum.png",
+    "aurum_rekindled": "res://assets/portraits/aurum_rekindled.png"
+  },
+  "capsules": {
+    "main": "res://assets/capsules/main_capsule.png",
+    "library": "res://assets/capsules/library_capsule.png"
+  },
+  "source_reference": "res://assets/concepts",
+  "notes": [
+    "Concept images remain as source/reference material.",
+    "Runtime screens should reference production paths, not assets/concepts.",
+    "Animated entity sprite sheets remain Phase 6B+ work."
+  ]
+}

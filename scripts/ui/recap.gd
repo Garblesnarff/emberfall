@@ -1,7 +1,7 @@
 extends Control
 
-const VICTORY_BACKGROUND := preload("res://assets/concepts/victory_screen.png")
-const DEFEAT_BACKGROUND := preload("res://assets/concepts/defeat_screen.png")
+const VICTORY_BACKGROUND := preload("res://assets/sprites/ui/victory_screen.png")
+const DEFEAT_BACKGROUND := preload("res://assets/sprites/ui/defeat_screen.png")
 
 signal restart_requested
 signal forge_requested

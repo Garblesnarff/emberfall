@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.1 - Phase 6B Crawler Sprite Pipeline
+
+- Added a local Meshy-to-Blender-to-Godot sprite pipeline for directional rendered sprites.
+- Rendered the first crawler 8-direction walk sequence from the Meshy GLB export.
+- Generated and wired `crawler_spriteframes.tres` into `crawler.tres`.
+- Added directional enemy animation selection for generated `walk_00` through `walk_07` animations.
+- Documented local Meshy key handling without storing secrets in source.
+
+## 0.6.0 - Phase 6A Static Art Integration
+
+- Promoted menu, wordmark, victory, defeat, boss portrait, and capsule art into production asset folders.
+- Updated Forge and recap screens to load production UI art instead of concept-source paths.
+- Added a static art manifest and Phase 6A readiness checker for canonical asset paths.
+- Added headless tests for static art loading and production UI references.
+
 ## 0.5.16 - Manual Fire Gate
 
 - Added a dedicated `fire` input action for left mouse / keyboard fire.

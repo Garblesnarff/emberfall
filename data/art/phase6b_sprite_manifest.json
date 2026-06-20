@@ -1,0 +1,44 @@
+{
+  "source_root": "/Volumes/T7/ember_forge/raw_art/meshy",
+  "output_root": "res://assets/sprites",
+  "targets": [
+    {
+      "id": "crawler",
+      "enabled": true,
+      "kind": "enemy",
+      "source": "/private/tmp/emberfall_phase6b/crawler/Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb",
+      "archive": "/Volumes/T7/ember_forge/raw_art/meshy/crawler_rigged.zip",
+      "archive_member": "Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb",
+      "animations": [
+        {
+          "name": "walk",
+          "frames": 8,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 10.0
+        }
+      ],
+      "runtime_resource": "res://assets/sprites/enemies/crawler/crawler_spriteframes.tres",
+      "render_dir": "res://assets/sprites/enemies/crawler/generated"
+    },
+    {
+      "id": "cinder_warden",
+      "enabled": false,
+      "kind": "player",
+      "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Walking_withSkin.glb",
+      "archive": "/Volumes/T7/ember_forge/raw_art/meshy/cinder_warden_rigged.zip",
+      "archive_member": "Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Walking_withSkin.glb",
+      "animations": [
+        {
+          "name": "walk",
+          "frames": 8,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 10.0
+        }
+      ],
+      "runtime_resource": "res://assets/sprites/player/cinder_warden/cinder_warden_spriteframes.tres",
+      "render_dir": "res://assets/sprites/player/cinder_warden/generated"
+    }
+  ]
+}

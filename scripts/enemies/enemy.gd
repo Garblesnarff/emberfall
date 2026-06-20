@@ -50,6 +50,7 @@ var aurum_retreat_triggered := false
 var aurum_fervor_triggered := false
 var aurum_geysers: Array[Dictionary] = []
 var aurum_geyser_hits := 0
+var last_facing_direction := Vector2.DOWN
 
 func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false, child_enemy := false) -> void:
 	data = enemy_data
@@ -103,6 +104,7 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 	var to_player: Vector2 = player.position - position
 	var dist: float = max(0.001, to_player.length())
 	var dir: Vector2 = to_player / dist
+	var animation_dir := dir
 	if telegraph_ticks > 0:
 		telegraph_ticks -= 1
 		return
@@ -127,6 +129,7 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 		_tick_aurum(dir, enemy_bullets, player)
 	else:
 		position += dir * speed * movement_scale
+	_update_directional_animation(animation_dir)
 	position.x = clampf(position.x, 0.0, Config.WORLD_SIZE.x)
 	position.y = clampf(position.y, 0.0, Config.WORLD_SIZE.y)
 
@@ -220,8 +223,23 @@ func _apply_sprite_frames() -> void:
 		animated_sprite.sprite_frames = data.sprite_frames
 	else:
 		animated_sprite.sprite_frames = PlaceholderSpriteFactoryScript.enemy_frames(color, radius, data.placeholder_sides)
-	animated_sprite.animation = &"idle"
+	if animated_sprite.sprite_frames.has_animation(&"walk_00"):
+		animated_sprite.animation = &"walk_00"
+	else:
+		animated_sprite.animation = &"idle"
 	animated_sprite.play()
+
+func _update_directional_animation(direction: Vector2) -> void:
+	if not animated_sprite.sprite_frames or not animated_sprite.sprite_frames.has_animation(&"walk_00"):
+		return
+	if direction.length_squared() > 0.001:
+		last_facing_direction = direction.normalized()
+	var angle := wrapf(last_facing_direction.angle() + PI * 0.5, 0.0, TAU)
+	var index := int(round(angle / TAU * 8.0)) % 8
+	var animation := StringName("walk_%02d" % index)
+	if animated_sprite.sprite_frames.has_animation(animation) and animated_sprite.animation != animation:
+		animated_sprite.animation = animation
+		animated_sprite.play()
 
 func _wave_speed_bonus(enemy_data: Resource, wave: int) -> float:
 	if enemy_data.id == &"crawler":

@@ -18,5 +18,9 @@ exports/
 user://
 *.log
 
+# Local art/API scratch
+.env.local
+art_sources/
+
 # Steam local dev files
 steam_appid.txt

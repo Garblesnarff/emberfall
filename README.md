@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.5.16` - Phase 5 Steam & Polish foundations plus v4.2 amendment catch-up.
+Current version: `0.6.1` - Phase 6B crawler sprite pipeline.
 
 ## Play Test
 
@@ -25,4 +25,6 @@ Controls:
 ```bash
 godot --headless --path . --quit
 godot --headless --fixed-fps 60 --path . --scene res://test/run_tests.tscn
+godot --headless --path . --script tools/check_phase6_art_readiness.gd
+godot --headless --path . --script tools/art/build_spriteframes.gd
 ```

@@ -54,11 +54,12 @@ func _add_directional_animation(frames: SpriteFrames, entity_id: String, render_
 	var count := int(anim.get("frames", 1))
 	var directions := int(anim.get("directions", 1))
 	var fps := float(anim.get("fps", 10.0))
+	var loops := bool(anim.get("loop", true))
 	for direction in range(directions):
 		var name := StringName("%s_%02d" % [anim_name, direction])
 		frames.add_animation(name)
 		frames.set_animation_speed(name, fps)
-		frames.set_animation_loop(name, true)
+		frames.set_animation_loop(name, loops)
 		for frame_index in range(count):
 			var path := "%s/%s_%s_dir%02d_frame%02d.png" % [render_dir, entity_id, anim_name, direction, frame_index]
 			if not ResourceLoader.exists(path):

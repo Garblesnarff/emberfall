@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://emberfall_player"]
+[gd_scene load_steps=5 format=3 uid="uid://emberfall_player"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Resource" path="res://data/player_feel.tres" id="2"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/player/cinder_warden/cinder_warden_spriteframes.tres" id="3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_player"]
 radius = 11.0
@@ -12,3 +13,9 @@ feel = ExtResource("2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_player")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+sprite_frames = ExtResource("3")
+animation = &"walk_00"

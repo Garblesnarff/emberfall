@@ -6,16 +6,36 @@
       "id": "crawler",
       "enabled": true,
       "kind": "enemy",
-      "source": "/private/tmp/emberfall_phase6b/crawler/Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb",
+      "source": "/Volumes/T7/ember_forge/raw_art/meshy/crawler_animation_library.glb",
       "archive": "/Volumes/T7/ember_forge/raw_art/meshy/crawler_rigged.zip",
       "archive_member": "Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb",
       "animations": [
         {
           "name": "walk",
+          "source_action": "crawl",
           "frames": 8,
           "directions": 8,
           "frame_size": 96,
-          "fps": 10.0
+          "fps": 10.0,
+          "loop": true
+        },
+        {
+          "name": "attack",
+          "source_action": "attack",
+          "frames": 8,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 12.0,
+          "loop": false
+        },
+        {
+          "name": "death",
+          "source_action": "death",
+          "frames": 8,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 10.0,
+          "loop": false
         }
       ],
       "runtime_resource": "res://assets/sprites/enemies/crawler/crawler_spriteframes.tres",
@@ -23,18 +43,40 @@
     },
     {
       "id": "cinder_warden",
-      "enabled": false,
+      "enabled": true,
       "kind": "player",
-      "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Walking_withSkin.glb",
+      "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Running_withSkin.glb",
       "archive": "/Volumes/T7/ember_forge/raw_art/meshy/cinder_warden_rigged.zip",
-      "archive_member": "Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Walking_withSkin.glb",
+      "archive_member": "Meshy_AI_Molten_Obsidian_Knigh_biped/*.glb",
       "animations": [
         {
           "name": "walk",
+          "source_action": "Armature|running|baselayer",
           "frames": 8,
           "directions": 8,
           "frame_size": 96,
-          "fps": 10.0
+          "fps": 10.0,
+          "loop": true
+        },
+        {
+          "name": "attack",
+          "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Weapon_Combo_2_withSkin.glb",
+          "source_action": "Armature|Weapon_Combo_2|baselayer",
+          "frames": 6,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 12.0,
+          "loop": false
+        },
+        {
+          "name": "dash",
+          "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Male_Head_Down_Charge_withSkin.glb",
+          "source_action": "Armature|Male_Head_Down_Charge|baselayer",
+          "frames": 6,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 18.0,
+          "loop": true
         }
       ],
       "runtime_resource": "res://assets/sprites/player/cinder_warden/cinder_warden_spriteframes.tres",

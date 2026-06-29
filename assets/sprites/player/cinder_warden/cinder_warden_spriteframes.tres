@@ -1,0 +1,794 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame00.png" id="1_wqlu1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame01.png" id="2_d2a8e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame02.png" id="3_oppgu"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame03.png" id="4_0jin8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame04.png" id="5_70s30"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir00_frame05.png" id="6_lfdlm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame00.png" id="7_uyi2l"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame01.png" id="8_blcw5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame02.png" id="9_svs3w"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame03.png" id="10_jmgko"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame04.png" id="11_y6lsw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir01_frame05.png" id="12_j67ji"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame00.png" id="13_l6sbe"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame01.png" id="14_idqr6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame02.png" id="15_0kaf2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame03.png" id="16_bhx6f"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame04.png" id="17_htjk5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir02_frame05.png" id="18_iaefp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame00.png" id="19_5iduv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame01.png" id="20_ah53h"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame02.png" id="21_ouhg5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame03.png" id="22_t8kyb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame04.png" id="23_hyopt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir03_frame05.png" id="24_1duop"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame00.png" id="25_cvrsp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame01.png" id="26_dwnov"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame02.png" id="27_oajrd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame03.png" id="28_ryfg0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame04.png" id="29_utahi"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir04_frame05.png" id="30_2weyk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame00.png" id="31_heg50"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame01.png" id="32_a3ts7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame02.png" id="33_lavdi"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame03.png" id="34_aignu"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame04.png" id="35_vajui"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir05_frame05.png" id="36_210n7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame00.png" id="37_lmemn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame01.png" id="38_kbwu5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame02.png" id="39_t84c3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame03.png" id="40_korue"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame04.png" id="41_ifeqk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir06_frame05.png" id="42_nxt85"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame00.png" id="43_h1hxo"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame01.png" id="44_epaav"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame02.png" id="45_dfbdk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame03.png" id="46_f78e3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame04.png" id="47_oln8k"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_attack_dir07_frame05.png" id="48_67l5v"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame00.png" id="49_88eyw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame01.png" id="50_s4sen"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame02.png" id="51_86wfb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame03.png" id="52_6t06n"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame04.png" id="53_2h5yg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir00_frame05.png" id="54_nvqhj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame00.png" id="55_1foq6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame01.png" id="56_iwhxc"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame02.png" id="57_j6j5b"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame03.png" id="58_rppcu"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame04.png" id="59_os354"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir01_frame05.png" id="60_bkiad"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame00.png" id="61_6diwg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame01.png" id="62_lw4jb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame02.png" id="63_7en1e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame03.png" id="64_a1621"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame04.png" id="65_oaojg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir02_frame05.png" id="66_b72he"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame00.png" id="67_biypp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame01.png" id="68_8wgep"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame02.png" id="69_yhhsr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame03.png" id="70_dbn2i"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame04.png" id="71_06htr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir03_frame05.png" id="72_uvw0v"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame00.png" id="73_wvwao"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame01.png" id="74_tmelh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame02.png" id="75_c27t2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame03.png" id="76_2ewpa"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame04.png" id="77_b8enj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir04_frame05.png" id="78_bmf4x"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame00.png" id="79_6gd1w"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame01.png" id="80_xsaun"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame02.png" id="81_t8kcp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame03.png" id="82_q7jmf"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame04.png" id="83_ms13l"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir05_frame05.png" id="84_l5eyu"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame00.png" id="85_h3734"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame01.png" id="86_52rqr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame02.png" id="87_8j2g7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame03.png" id="88_oxqxm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame04.png" id="89_0xcl5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir06_frame05.png" id="90_w8qny"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame00.png" id="91_0va2u"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame01.png" id="92_k5stq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame02.png" id="93_6h15a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame03.png" id="94_b4xxq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame04.png" id="95_1xxrj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_dash_dir07_frame05.png" id="96_6p3ui"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame00.png" id="97_jwkdb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame01.png" id="98_np5jp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame02.png" id="99_pqug6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame03.png" id="100_1i3tj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame04.png" id="101_excek"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame05.png" id="102_pa218"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame06.png" id="103_6cjfw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir00_frame07.png" id="104_ef66t"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame00.png" id="105_mxcvs"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame01.png" id="106_mg143"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame02.png" id="107_poq62"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame03.png" id="108_t7dn8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame04.png" id="109_uijdn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame05.png" id="110_xabko"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame06.png" id="111_uwcn1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir01_frame07.png" id="112_3ak73"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame00.png" id="113_peaka"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame01.png" id="114_njltt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame02.png" id="115_ob1yq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame03.png" id="116_50j1c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame04.png" id="117_jsxhg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame05.png" id="118_210dw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame06.png" id="119_lsyfm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir02_frame07.png" id="120_yp4jy"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame00.png" id="121_t1rb1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame01.png" id="122_0ii61"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame02.png" id="123_10pjg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame03.png" id="124_8fcwd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame04.png" id="125_8ekao"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame05.png" id="126_5ykaq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame06.png" id="127_fdloe"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir03_frame07.png" id="128_tix27"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame00.png" id="129_dw67y"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame01.png" id="130_t58ub"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame02.png" id="131_j5c7h"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame03.png" id="132_k5p5a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame04.png" id="133_65tej"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame05.png" id="134_ml3e1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame06.png" id="135_yghy0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir04_frame07.png" id="136_gf3bc"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame00.png" id="137_67tm7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame01.png" id="138_g3wgx"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame02.png" id="139_xw7om"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame03.png" id="140_ha8te"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame04.png" id="141_2vwr3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame05.png" id="142_27dlm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame06.png" id="143_hiitp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir05_frame07.png" id="144_31hdx"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame00.png" id="145_tkqyb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame01.png" id="146_i7xdb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame02.png" id="147_htt7i"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame03.png" id="148_ogjce"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame04.png" id="149_xv8ix"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame05.png" id="150_jlhvm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame06.png" id="151_1702x"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir06_frame07.png" id="152_2n3b0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame00.png" id="153_hdyko"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame01.png" id="154_levo5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame02.png" id="155_qhvm8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame03.png" id="156_u1vr6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame04.png" id="157_sw01w"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame05.png" id="158_0et1t"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame06.png" id="159_asegr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/cinder_warden/generated/cinder_warden_walk_dir07_frame07.png" id="160_8alkg"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_wqlu1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_d2a8e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_oppgu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_0jin8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_70s30")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_lfdlm")
+}],
+"loop": false,
+"name": &"attack_00",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_uyi2l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_blcw5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_svs3w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_jmgko")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_y6lsw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_j67ji")
+}],
+"loop": false,
+"name": &"attack_01",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_l6sbe")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_idqr6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_0kaf2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_bhx6f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_htjk5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_iaefp")
+}],
+"loop": false,
+"name": &"attack_02",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_5iduv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_ah53h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_ouhg5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_t8kyb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_hyopt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_1duop")
+}],
+"loop": false,
+"name": &"attack_03",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("25_cvrsp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_dwnov")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_oajrd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_ryfg0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_utahi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_2weyk")
+}],
+"loop": false,
+"name": &"attack_04",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("31_heg50")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_a3ts7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_lavdi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_aignu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_vajui")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_210n7")
+}],
+"loop": false,
+"name": &"attack_05",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("37_lmemn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_kbwu5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_t84c3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_korue")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_ifeqk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_nxt85")
+}],
+"loop": false,
+"name": &"attack_06",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("43_h1hxo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_epaav")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_dfbdk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_f78e3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_oln8k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_67l5v")
+}],
+"loop": false,
+"name": &"attack_07",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("49_88eyw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_s4sen")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_86wfb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_6t06n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_2h5yg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_nvqhj")
+}],
+"loop": true,
+"name": &"dash_00",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("55_1foq6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_iwhxc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_j6j5b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("58_rppcu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_os354")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_bkiad")
+}],
+"loop": true,
+"name": &"dash_01",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("61_6diwg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_lw4jb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_7en1e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_a1621")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_oaojg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_b72he")
+}],
+"loop": true,
+"name": &"dash_02",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("67_biypp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_8wgep")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_yhhsr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_dbn2i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_06htr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_uvw0v")
+}],
+"loop": true,
+"name": &"dash_03",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("73_wvwao")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tmelh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_c27t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_2ewpa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_b8enj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_bmf4x")
+}],
+"loop": true,
+"name": &"dash_04",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("79_6gd1w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_xsaun")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_t8kcp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("82_q7jmf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_ms13l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_l5eyu")
+}],
+"loop": true,
+"name": &"dash_05",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("85_h3734")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_52rqr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_8j2g7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_oxqxm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("89_0xcl5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_w8qny")
+}],
+"loop": true,
+"name": &"dash_06",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("91_0va2u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_k5stq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_6h15a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("94_b4xxq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_1xxrj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_6p3ui")
+}],
+"loop": true,
+"name": &"dash_07",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("97_jwkdb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_np5jp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_pqug6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_1i3tj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_excek")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_pa218")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_6cjfw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_ef66t")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("97_jwkdb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_np5jp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_pqug6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_1i3tj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_excek")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_pa218")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_6cjfw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_ef66t")
+}],
+"loop": true,
+"name": &"walk_00",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("105_mxcvs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("106_mg143")
+}, {
+"duration": 1.0,
+"texture": ExtResource("107_poq62")
+}, {
+"duration": 1.0,
+"texture": ExtResource("108_t7dn8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("109_uijdn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("110_xabko")
+}, {
+"duration": 1.0,
+"texture": ExtResource("111_uwcn1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("112_3ak73")
+}],
+"loop": true,
+"name": &"walk_01",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("113_peaka")
+}, {
+"duration": 1.0,
+"texture": ExtResource("114_njltt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("115_ob1yq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("116_50j1c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("117_jsxhg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("118_210dw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("119_lsyfm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("120_yp4jy")
+}],
+"loop": true,
+"name": &"walk_02",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("121_t1rb1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("122_0ii61")
+}, {
+"duration": 1.0,
+"texture": ExtResource("123_10pjg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("124_8fcwd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("125_8ekao")
+}, {
+"duration": 1.0,
+"texture": ExtResource("126_5ykaq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("127_fdloe")
+}, {
+"duration": 1.0,
+"texture": ExtResource("128_tix27")
+}],
+"loop": true,
+"name": &"walk_03",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("129_dw67y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_t58ub")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_j5c7h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_k5p5a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_65tej")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_ml3e1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_yghy0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_gf3bc")
+}],
+"loop": true,
+"name": &"walk_04",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("137_67tm7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_g3wgx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_xw7om")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_ha8te")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_2vwr3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("142_27dlm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("143_hiitp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("144_31hdx")
+}],
+"loop": true,
+"name": &"walk_05",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("145_tkqyb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("146_i7xdb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("147_htt7i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("148_ogjce")
+}, {
+"duration": 1.0,
+"texture": ExtResource("149_xv8ix")
+}, {
+"duration": 1.0,
+"texture": ExtResource("150_jlhvm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("151_1702x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("152_2n3b0")
+}],
+"loop": true,
+"name": &"walk_06",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("153_hdyko")
+}, {
+"duration": 1.0,
+"texture": ExtResource("154_levo5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("155_qhvm8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("156_u1vr6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("157_sw01w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("158_0et1t")
+}, {
+"duration": 1.0,
+"texture": ExtResource("159_asegr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("160_8alkg")
+}],
+"loop": true,
+"name": &"walk_07",
+"speed": 10.0
+}]

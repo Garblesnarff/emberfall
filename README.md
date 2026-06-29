@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.6.1` - Phase 6B crawler sprite pipeline.
+Current version: `0.6.2` - Phase 6B crawler and Cinder-Warden animation integration.
 
 ## Play Test
 

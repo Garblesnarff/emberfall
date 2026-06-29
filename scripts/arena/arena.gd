@@ -360,6 +360,8 @@ func _tick_player_weapon(input_vector: Vector2, aim_world: Vector2, fire_held :=
 	var dir: Vector2 = (aim_world - player.position).normalized()
 	if dir.length_squared() <= 0.001:
 		dir = Vector2.RIGHT
+	if player.has_method("play_attack_animation"):
+		player.play_attack_animation(dir)
 	var weapon_id: StringName = current_weapon.id
 	debug_stats.weapons_tested[weapon_id] = debug_stats.weapons_tested.get(weapon_id, 0) + 1
 	if current_weapon.pattern == "projectile":
@@ -501,7 +503,7 @@ func _tick_swelter() -> void:
 	var aura_radius: float = player.swelter_radius()
 	var scorch_damage: float = player.swelter_scorch_damage(_weapon_damage())
 	for enemy in enemies:
-		if not is_instance_valid(enemy) or enemy.dead:
+		if not is_instance_valid(enemy) or enemy.dead or enemy.dying:
 			continue
 		enemy.movement_scale = 1.0
 		if aura_radius <= 0.0:
@@ -517,7 +519,7 @@ func _arc_to_nearby_enemy(source: Node, amount: float) -> void:
 	var best: Node = null
 	var best_dist := 300.0 * 300.0
 	for enemy in enemies:
-		if enemy == source or enemy.dead:
+		if enemy == source or enemy.dead or enemy.dying:
 			continue
 		var dist: float = source.position.distance_squared_to(enemy.position)
 		if dist < best_dist:
@@ -557,6 +559,8 @@ func _tick_enemies() -> void:
 	grid.rebuild(enemies)
 	var view_radius: float = max(get_viewport_rect().size.x, get_viewport_rect().size.y) * Config.LOD_SEPARATION_VIEWPORT_MULT
 	for enemy in enemies:
+		if enemy.dead or enemy.dying:
+			continue
 		if enemy.position.distance_to(camera.global_position) > view_radius:
 			enemy.skipped_separation = true
 			debug_stats.separation_skips += 1
@@ -564,7 +568,7 @@ func _tick_enemies() -> void:
 		enemy.skipped_separation = false
 		var near: Array = grid.nearby(enemy.position, enemy.radius + 24.0)
 		for other in near:
-			if other == enemy:
+			if other == enemy or other.dead or other.dying:
 				continue
 			var rr: float = (enemy.radius + other.radius) * 0.8
 			if enemy.position.distance_squared_to(other.position) < rr * rr:
@@ -593,12 +597,16 @@ func _non_boss_enemy_count() -> int:
 
 func _tick_player_touch_damage() -> void:
 	for enemy in enemies:
+		if enemy.dead or enemy.dying:
+			continue
 		if player.invulnerable_ticks > 0 or player.dashing_ticks > 0:
 			return
 		if enemy.has_method("apply_choir_tether_damage_if_player_on_segment") and enemy.apply_choir_tether_damage_if_player_on_segment(player):
 			return
 		var rr: float = enemy.radius + player.radius
 		if enemy.position.distance_squared_to(player.position) < rr * rr:
+			if enemy.has_method("begin_contact_attack"):
+				enemy.begin_contact_attack(player.position - enemy.position)
 			player.apply_damage(enemy.damage, enemy, Config.PLAYER_HURT_IFRAME_TICKS)
 			if player.thorns > 0.0:
 				enemy.apply_damage(enemy.damage * player.thorns, Vector2.ZERO)
@@ -617,6 +625,8 @@ func _tick_lava() -> void:
 			player.apply_damage(Config.LAVA_DAMAGE, "lava", Config.LAVA_DAMAGE_INTERVAL_TICKS)
 			debug_stats.lava_ticks += 1
 	for enemy in enemies:
+		if enemy.dead or enemy.dying:
+			continue
 		for lava in ARENA_LAYOUT.lava_strips:
 			if lava.has_point(enemy.position):
 				enemy.apply_lava_damage()

@@ -68,7 +68,7 @@ func physics_tick(bounds: Rect2, grid: RefCounted, enemies: Array, player: Node 
 			if is_player_owned:
 				var near: Array = grid.nearby(positions[i], 46.0)
 				for enemy in near:
-					if not is_instance_valid(enemy) or enemy.dead:
+					if not is_instance_valid(enemy) or enemy.dead or enemy.dying:
 						continue
 					var rr: float = enemy.radius + radius[i]
 					if positions[i].distance_squared_to(enemy.position) < rr * rr:

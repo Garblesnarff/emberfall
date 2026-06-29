@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.2 - Phase 6B Runtime Animation Expansion
+
+- Added complete 8-direction crawler walk, attack, and death sequences.
+- Added 8-direction Cinder-Warden locomotion, manual-fire attack, and dash sequences.
+- Added explicit Blender action selection, root-motion recentering, exposure, and emission render controls.
+- Kept crawler death playback non-interactive and synchronized attack feedback with actual contact damage.
+- Added headless contracts for animation directions, frame budgets, loop modes, and runtime state transitions.
+
 ## 0.6.1 - Phase 6B Crawler Sprite Pipeline
 
 - Added a local Meshy-to-Blender-to-Godot sprite pipeline for directional rendered sprites.

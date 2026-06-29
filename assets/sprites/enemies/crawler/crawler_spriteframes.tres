@@ -1,96 +1,688 @@
 [gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame00.png" id="1_whw6t"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame01.png" id="2_rmlyj"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame02.png" id="3_yr4yr"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame03.png" id="4_5ei74"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame04.png" id="5_lg54y"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame05.png" id="6_k0at5"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame06.png" id="7_6xpot"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame07.png" id="8_p2ps6"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame00.png" id="9_7n8kg"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame01.png" id="10_yrv24"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame02.png" id="11_jjwip"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame03.png" id="12_xulfi"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame04.png" id="13_kbe5p"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame05.png" id="14_uvfua"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame06.png" id="15_36jjp"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame07.png" id="16_bx461"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame00.png" id="17_v2owy"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame01.png" id="18_0vr7g"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame02.png" id="19_n6d8g"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame03.png" id="20_0neem"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame04.png" id="21_h7k72"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame05.png" id="22_sryc1"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame06.png" id="23_bltaq"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame07.png" id="24_c8swv"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame00.png" id="25_0vpts"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame01.png" id="26_mu1s6"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame02.png" id="27_q74ex"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame03.png" id="28_vc2yu"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame04.png" id="29_s3npb"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame05.png" id="30_40h20"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame06.png" id="31_8jnpi"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame07.png" id="32_nnoth"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame00.png" id="33_ye7m1"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame01.png" id="34_1fqhe"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame02.png" id="35_882kk"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame03.png" id="36_entkx"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame04.png" id="37_o4w80"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame05.png" id="38_dp7oi"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame06.png" id="39_8p0j6"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame07.png" id="40_umv6o"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame00.png" id="41_x6fbd"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame01.png" id="42_brn4o"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame02.png" id="43_723ks"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame03.png" id="44_tis4u"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame04.png" id="45_uqw3v"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame05.png" id="46_w2aib"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame06.png" id="47_2bgfr"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame07.png" id="48_gc42t"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame00.png" id="49_mdipa"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame01.png" id="50_u61lq"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame02.png" id="51_ix6ak"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame03.png" id="52_ys0hw"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame04.png" id="53_1eloe"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame05.png" id="54_bhuhk"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame06.png" id="55_nb7r8"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame07.png" id="56_07kc4"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame00.png" id="57_22jdy"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame01.png" id="58_ytl1u"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame02.png" id="59_jtsgm"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame03.png" id="60_ctbxe"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame04.png" id="61_cswqt"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame05.png" id="62_lxmbe"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame06.png" id="63_t5ge0"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame07.png" id="64_5f35r"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame00.png" id="1_t30vr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame01.png" id="2_8u28e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame02.png" id="3_mn387"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame03.png" id="4_lcsnp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame04.png" id="5_6ds1r"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame05.png" id="6_tx5r0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame06.png" id="7_onepn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir00_frame07.png" id="8_bpxol"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame00.png" id="9_h03o8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame01.png" id="10_mgn2c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame02.png" id="11_shrkr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame03.png" id="12_b85kj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame04.png" id="13_vuwqr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame05.png" id="14_uossb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame06.png" id="15_pf8oa"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir01_frame07.png" id="16_x0hqh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame00.png" id="17_s7ptp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame01.png" id="18_7hh7l"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame02.png" id="19_0otyn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame03.png" id="20_tp2hi"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame04.png" id="21_tj0aw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame05.png" id="22_klt4y"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame06.png" id="23_8dg3p"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir02_frame07.png" id="24_60ism"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame00.png" id="25_ex5b6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame01.png" id="26_ofdpx"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame02.png" id="27_xdj7x"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame03.png" id="28_e04t2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame04.png" id="29_37mwh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame05.png" id="30_tm8w5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame06.png" id="31_ryqqk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir03_frame07.png" id="32_ankkp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame00.png" id="33_a5lsd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame01.png" id="34_pq68d"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame02.png" id="35_vsn5s"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame03.png" id="36_jts6s"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame04.png" id="37_65pem"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame05.png" id="38_62ksv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame06.png" id="39_f11u1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir04_frame07.png" id="40_cfdne"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame00.png" id="41_qg6ec"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame01.png" id="42_cnpgt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame02.png" id="43_whhym"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame03.png" id="44_1dfui"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame04.png" id="45_apdcx"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame05.png" id="46_g60ow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame06.png" id="47_b4olt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir05_frame07.png" id="48_n5f5t"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame00.png" id="49_408ml"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame01.png" id="50_txbg3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame02.png" id="51_mbfc7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame03.png" id="52_k71f1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame04.png" id="53_nvkop"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame05.png" id="54_3ggae"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame06.png" id="55_h8vla"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir06_frame07.png" id="56_l2g4m"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame00.png" id="57_i63jn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame01.png" id="58_gujoh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame02.png" id="59_73820"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame03.png" id="60_g2pji"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame04.png" id="61_gatbp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame05.png" id="62_jaxal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame06.png" id="63_sa155"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_attack_dir07_frame07.png" id="64_4gr42"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame00.png" id="65_jf8nh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame01.png" id="66_p5lky"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame02.png" id="67_48vij"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame03.png" id="68_ovtfr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame04.png" id="69_imiqm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame05.png" id="70_ueg2m"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame06.png" id="71_5llfv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir00_frame07.png" id="72_4cjhh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame00.png" id="73_o2jmq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame01.png" id="74_vgum2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame02.png" id="75_4w0p7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame03.png" id="76_7j7dx"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame04.png" id="77_0553k"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame05.png" id="78_nyjw1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame06.png" id="79_lympm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir01_frame07.png" id="80_xra8g"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame00.png" id="81_2yebm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame01.png" id="82_s5eei"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame02.png" id="83_mf7e7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame03.png" id="84_24eq6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame04.png" id="85_rbg06"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame05.png" id="86_r1t6s"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame06.png" id="87_ya4nf"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir02_frame07.png" id="88_mntcq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame00.png" id="89_4owvb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame01.png" id="90_tx8f7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame02.png" id="91_l8t73"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame03.png" id="92_8btnv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame04.png" id="93_sf6ok"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame05.png" id="94_p20oh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame06.png" id="95_8rew8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir03_frame07.png" id="96_2moiq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame00.png" id="97_ulpli"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame01.png" id="98_d22ch"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame02.png" id="99_c6d8e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame03.png" id="100_rkhq1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame04.png" id="101_66n4c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame05.png" id="102_ysi0x"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame06.png" id="103_klrnk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir04_frame07.png" id="104_qli66"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame00.png" id="105_rcagf"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame01.png" id="106_xg26f"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame02.png" id="107_vcugb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame03.png" id="108_jocen"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame04.png" id="109_aeagd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame05.png" id="110_lulfj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame06.png" id="111_p8ane"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir05_frame07.png" id="112_5a3fi"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame00.png" id="113_o8kcc"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame01.png" id="114_bxdfg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame02.png" id="115_vi8cy"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame03.png" id="116_t2ixq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame04.png" id="117_a5khj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame05.png" id="118_63do2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame06.png" id="119_rgkmt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir06_frame07.png" id="120_emxx0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame00.png" id="121_ubmro"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame01.png" id="122_w2kx2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame02.png" id="123_7tdwh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame03.png" id="124_oey2c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame04.png" id="125_7dluj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame05.png" id="126_s6iq3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame06.png" id="127_qhjn2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_death_dir07_frame07.png" id="128_3a0uo"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame00.png" id="129_mccyc"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame01.png" id="130_tksgj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame02.png" id="131_8u8bk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame03.png" id="132_347mn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame04.png" id="133_j5kh5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame05.png" id="134_s3gac"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame06.png" id="135_6rdwl"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame07.png" id="136_6yyqg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame00.png" id="137_7mdtr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame01.png" id="138_j4ynh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame02.png" id="139_s4m44"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame03.png" id="140_gtieb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame04.png" id="141_34mty"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame05.png" id="142_a1erb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame06.png" id="143_2ry31"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir01_frame07.png" id="144_6wnfd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame00.png" id="145_nswdy"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame01.png" id="146_irqtq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame02.png" id="147_wjs12"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame03.png" id="148_x5lhj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame04.png" id="149_o465l"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame05.png" id="150_6tcc6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame06.png" id="151_ub0k5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir02_frame07.png" id="152_05lfv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame00.png" id="153_xxb3m"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame01.png" id="154_mp0ds"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame02.png" id="155_hwb06"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame03.png" id="156_7ktyp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame04.png" id="157_6v17e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame05.png" id="158_odxfr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame06.png" id="159_lcj1l"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir03_frame07.png" id="160_faigq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame00.png" id="161_224me"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame01.png" id="162_unyhc"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame02.png" id="163_cfbt8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame03.png" id="164_pbovd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame04.png" id="165_urq6s"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame05.png" id="166_678wm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame06.png" id="167_fu1te"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir04_frame07.png" id="168_jg5dl"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame00.png" id="169_ukm82"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame01.png" id="170_fmond"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame02.png" id="171_d08u6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame03.png" id="172_qjps1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame04.png" id="173_r2hi8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame05.png" id="174_u34rn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame06.png" id="175_8ru6v"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir05_frame07.png" id="176_akkpa"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame00.png" id="177_7a14a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame01.png" id="178_n7yjt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame02.png" id="179_cqptp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame03.png" id="180_kqpmh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame04.png" id="181_w6yst"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame05.png" id="182_l17ae"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame06.png" id="183_7xigd"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir06_frame07.png" id="184_a0vlv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame00.png" id="185_7xhyw"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame01.png" id="186_wmi6p"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame02.png" id="187_2qw80"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame03.png" id="188_rt6ws"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame04.png" id="189_acfx6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame05.png" id="190_seovj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame06.png" id="191_i2tn0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/crawler/generated/crawler_walk_dir07_frame07.png" id="192_x8w4i"]
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_whw6t")
+"texture": ExtResource("1_t30vr")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_rmlyj")
+"texture": ExtResource("2_8u28e")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_yr4yr")
+"texture": ExtResource("3_mn387")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_5ei74")
+"texture": ExtResource("4_lcsnp")
 }, {
 "duration": 1.0,
-"texture": ExtResource("5_lg54y")
+"texture": ExtResource("5_6ds1r")
 }, {
 "duration": 1.0,
-"texture": ExtResource("6_k0at5")
+"texture": ExtResource("6_tx5r0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("7_6xpot")
+"texture": ExtResource("7_onepn")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_p2ps6")
+"texture": ExtResource("8_bpxol")
+}],
+"loop": false,
+"name": &"attack_00",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_h03o8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_mgn2c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_shrkr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_b85kj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_vuwqr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_uossb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_pf8oa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_x0hqh")
+}],
+"loop": false,
+"name": &"attack_01",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("17_s7ptp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_7hh7l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_0otyn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tp2hi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tj0aw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_klt4y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_8dg3p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_60ism")
+}],
+"loop": false,
+"name": &"attack_02",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("25_ex5b6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_ofdpx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_xdj7x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_e04t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_37mwh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tm8w5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_ryqqk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_ankkp")
+}],
+"loop": false,
+"name": &"attack_03",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("33_a5lsd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_pq68d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_vsn5s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_jts6s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_65pem")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_62ksv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_f11u1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_cfdne")
+}],
+"loop": false,
+"name": &"attack_04",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("41_qg6ec")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_cnpgt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_whhym")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_1dfui")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_apdcx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_g60ow")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_b4olt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_n5f5t")
+}],
+"loop": false,
+"name": &"attack_05",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("49_408ml")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_txbg3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_mbfc7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_k71f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_nvkop")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_3ggae")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_h8vla")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_l2g4m")
+}],
+"loop": false,
+"name": &"attack_06",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("57_i63jn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("58_gujoh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_73820")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_g2pji")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_gatbp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_jaxal")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_sa155")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_4gr42")
+}],
+"loop": false,
+"name": &"attack_07",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("65_jf8nh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_p5lky")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_48vij")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_ovtfr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_imiqm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_ueg2m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_5llfv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_4cjhh")
+}],
+"loop": false,
+"name": &"death_00",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("73_o2jmq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_vgum2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_4w0p7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_7j7dx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_0553k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_nyjw1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_lympm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_xra8g")
+}],
+"loop": false,
+"name": &"death_01",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("81_2yebm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("82_s5eei")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_mf7e7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_24eq6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_rbg06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_r1t6s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_ya4nf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_mntcq")
+}],
+"loop": false,
+"name": &"death_02",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("89_4owvb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_tx8f7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("91_l8t73")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_8btnv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_sf6ok")
+}, {
+"duration": 1.0,
+"texture": ExtResource("94_p20oh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_8rew8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_2moiq")
+}],
+"loop": false,
+"name": &"death_03",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("97_ulpli")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_d22ch")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_c6d8e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_rkhq1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_66n4c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_ysi0x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_klrnk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_qli66")
+}],
+"loop": false,
+"name": &"death_04",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("105_rcagf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("106_xg26f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("107_vcugb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("108_jocen")
+}, {
+"duration": 1.0,
+"texture": ExtResource("109_aeagd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("110_lulfj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("111_p8ane")
+}, {
+"duration": 1.0,
+"texture": ExtResource("112_5a3fi")
+}],
+"loop": false,
+"name": &"death_05",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("113_o8kcc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("114_bxdfg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("115_vi8cy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("116_t2ixq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("117_a5khj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("118_63do2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("119_rgkmt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("120_emxx0")
+}],
+"loop": false,
+"name": &"death_06",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("121_ubmro")
+}, {
+"duration": 1.0,
+"texture": ExtResource("122_w2kx2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("123_7tdwh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("124_oey2c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("125_7dluj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("126_s6iq3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("127_qhjn2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("128_3a0uo")
+}],
+"loop": false,
+"name": &"death_07",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("129_mccyc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_tksgj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_8u8bk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_347mn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_j5kh5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_s3gac")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_6rdwl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_6yyqg")
 }],
 "loop": true,
 "name": &"idle",
@@ -98,28 +690,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_whw6t")
+"texture": ExtResource("129_mccyc")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_rmlyj")
+"texture": ExtResource("130_tksgj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_yr4yr")
+"texture": ExtResource("131_8u8bk")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_5ei74")
+"texture": ExtResource("132_347mn")
 }, {
 "duration": 1.0,
-"texture": ExtResource("5_lg54y")
+"texture": ExtResource("133_j5kh5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("6_k0at5")
+"texture": ExtResource("134_s3gac")
 }, {
 "duration": 1.0,
-"texture": ExtResource("7_6xpot")
+"texture": ExtResource("135_6rdwl")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_p2ps6")
+"texture": ExtResource("136_6yyqg")
 }],
 "loop": true,
 "name": &"walk_00",
@@ -127,28 +719,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("9_7n8kg")
+"texture": ExtResource("137_7mdtr")
 }, {
 "duration": 1.0,
-"texture": ExtResource("10_yrv24")
+"texture": ExtResource("138_j4ynh")
 }, {
 "duration": 1.0,
-"texture": ExtResource("11_jjwip")
+"texture": ExtResource("139_s4m44")
 }, {
 "duration": 1.0,
-"texture": ExtResource("12_xulfi")
+"texture": ExtResource("140_gtieb")
 }, {
 "duration": 1.0,
-"texture": ExtResource("13_kbe5p")
+"texture": ExtResource("141_34mty")
 }, {
 "duration": 1.0,
-"texture": ExtResource("14_uvfua")
+"texture": ExtResource("142_a1erb")
 }, {
 "duration": 1.0,
-"texture": ExtResource("15_36jjp")
+"texture": ExtResource("143_2ry31")
 }, {
 "duration": 1.0,
-"texture": ExtResource("16_bx461")
+"texture": ExtResource("144_6wnfd")
 }],
 "loop": true,
 "name": &"walk_01",
@@ -156,28 +748,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("17_v2owy")
+"texture": ExtResource("145_nswdy")
 }, {
 "duration": 1.0,
-"texture": ExtResource("18_0vr7g")
+"texture": ExtResource("146_irqtq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("19_n6d8g")
+"texture": ExtResource("147_wjs12")
 }, {
 "duration": 1.0,
-"texture": ExtResource("20_0neem")
+"texture": ExtResource("148_x5lhj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("21_h7k72")
+"texture": ExtResource("149_o465l")
 }, {
 "duration": 1.0,
-"texture": ExtResource("22_sryc1")
+"texture": ExtResource("150_6tcc6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("23_bltaq")
+"texture": ExtResource("151_ub0k5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("24_c8swv")
+"texture": ExtResource("152_05lfv")
 }],
 "loop": true,
 "name": &"walk_02",
@@ -185,28 +777,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("25_0vpts")
+"texture": ExtResource("153_xxb3m")
 }, {
 "duration": 1.0,
-"texture": ExtResource("26_mu1s6")
+"texture": ExtResource("154_mp0ds")
 }, {
 "duration": 1.0,
-"texture": ExtResource("27_q74ex")
+"texture": ExtResource("155_hwb06")
 }, {
 "duration": 1.0,
-"texture": ExtResource("28_vc2yu")
+"texture": ExtResource("156_7ktyp")
 }, {
 "duration": 1.0,
-"texture": ExtResource("29_s3npb")
+"texture": ExtResource("157_6v17e")
 }, {
 "duration": 1.0,
-"texture": ExtResource("30_40h20")
+"texture": ExtResource("158_odxfr")
 }, {
 "duration": 1.0,
-"texture": ExtResource("31_8jnpi")
+"texture": ExtResource("159_lcj1l")
 }, {
 "duration": 1.0,
-"texture": ExtResource("32_nnoth")
+"texture": ExtResource("160_faigq")
 }],
 "loop": true,
 "name": &"walk_03",
@@ -214,28 +806,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("33_ye7m1")
+"texture": ExtResource("161_224me")
 }, {
 "duration": 1.0,
-"texture": ExtResource("34_1fqhe")
+"texture": ExtResource("162_unyhc")
 }, {
 "duration": 1.0,
-"texture": ExtResource("35_882kk")
+"texture": ExtResource("163_cfbt8")
 }, {
 "duration": 1.0,
-"texture": ExtResource("36_entkx")
+"texture": ExtResource("164_pbovd")
 }, {
 "duration": 1.0,
-"texture": ExtResource("37_o4w80")
+"texture": ExtResource("165_urq6s")
 }, {
 "duration": 1.0,
-"texture": ExtResource("38_dp7oi")
+"texture": ExtResource("166_678wm")
 }, {
 "duration": 1.0,
-"texture": ExtResource("39_8p0j6")
+"texture": ExtResource("167_fu1te")
 }, {
 "duration": 1.0,
-"texture": ExtResource("40_umv6o")
+"texture": ExtResource("168_jg5dl")
 }],
 "loop": true,
 "name": &"walk_04",
@@ -243,28 +835,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("41_x6fbd")
+"texture": ExtResource("169_ukm82")
 }, {
 "duration": 1.0,
-"texture": ExtResource("42_brn4o")
+"texture": ExtResource("170_fmond")
 }, {
 "duration": 1.0,
-"texture": ExtResource("43_723ks")
+"texture": ExtResource("171_d08u6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("44_tis4u")
+"texture": ExtResource("172_qjps1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("45_uqw3v")
+"texture": ExtResource("173_r2hi8")
 }, {
 "duration": 1.0,
-"texture": ExtResource("46_w2aib")
+"texture": ExtResource("174_u34rn")
 }, {
 "duration": 1.0,
-"texture": ExtResource("47_2bgfr")
+"texture": ExtResource("175_8ru6v")
 }, {
 "duration": 1.0,
-"texture": ExtResource("48_gc42t")
+"texture": ExtResource("176_akkpa")
 }],
 "loop": true,
 "name": &"walk_05",
@@ -272,28 +864,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("49_mdipa")
+"texture": ExtResource("177_7a14a")
 }, {
 "duration": 1.0,
-"texture": ExtResource("50_u61lq")
+"texture": ExtResource("178_n7yjt")
 }, {
 "duration": 1.0,
-"texture": ExtResource("51_ix6ak")
+"texture": ExtResource("179_cqptp")
 }, {
 "duration": 1.0,
-"texture": ExtResource("52_ys0hw")
+"texture": ExtResource("180_kqpmh")
 }, {
 "duration": 1.0,
-"texture": ExtResource("53_1eloe")
+"texture": ExtResource("181_w6yst")
 }, {
 "duration": 1.0,
-"texture": ExtResource("54_bhuhk")
+"texture": ExtResource("182_l17ae")
 }, {
 "duration": 1.0,
-"texture": ExtResource("55_nb7r8")
+"texture": ExtResource("183_7xigd")
 }, {
 "duration": 1.0,
-"texture": ExtResource("56_07kc4")
+"texture": ExtResource("184_a0vlv")
 }],
 "loop": true,
 "name": &"walk_06",
@@ -301,28 +893,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("57_22jdy")
+"texture": ExtResource("185_7xhyw")
 }, {
 "duration": 1.0,
-"texture": ExtResource("58_ytl1u")
+"texture": ExtResource("186_wmi6p")
 }, {
 "duration": 1.0,
-"texture": ExtResource("59_jtsgm")
+"texture": ExtResource("187_2qw80")
 }, {
 "duration": 1.0,
-"texture": ExtResource("60_ctbxe")
+"texture": ExtResource("188_rt6ws")
 }, {
 "duration": 1.0,
-"texture": ExtResource("61_cswqt")
+"texture": ExtResource("189_acfx6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("62_lxmbe")
+"texture": ExtResource("190_seovj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("63_t5ge0")
+"texture": ExtResource("191_i2tn0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("64_5f35r")
+"texture": ExtResource("192_x8w4i")
 }],
 "loop": true,
 "name": &"walk_07",

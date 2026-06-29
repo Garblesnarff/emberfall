@@ -21,6 +21,8 @@ user://
 # Local art/API scratch
 .env.local
 art_sources/
+assets/models/
+*.tres.bak
 
 # Steam local dev files
 steam_appid.txt

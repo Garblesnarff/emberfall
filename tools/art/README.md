@@ -18,7 +18,7 @@ Blender is expected at:
 
 ## First Target
 
-The first runtime target is the crawler walk sheet. Source Meshy exports live outside the repo at:
+The first runtime target is the crawler directional animation set. Source Meshy exports live outside the repo at:
 
 ```sh
 /Volumes/T7/ember_forge/raw_art/meshy
@@ -34,9 +34,10 @@ Render crawler frames:
 
 ```sh
 /Applications/Blender.app/Contents/MacOS/Blender --background --python tools/art/render_directional_sprites.py -- \
-  --model /private/tmp/emberfall_phase6b/crawler/Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb \
+  --model /Volumes/T7/ember_forge/raw_art/meshy/crawler_animation_library.glb \
   --entity crawler \
   --animation walk \
+  --source-action crawl \
   --output assets/sprites/enemies/crawler/generated \
   --frame-size 96 \
   --frames 8 \
@@ -53,6 +54,9 @@ godot --headless --path . --script tools/art/build_spriteframes.gd -- res://data
 ## Notes
 
 - `data/art/phase6b_sprite_manifest.json` is the source of truth for local render targets.
+- Animation entries can specify `source_action` and whether the generated Godot animation should `loop`.
+- `--recenter-motion` removes source root motion from fixed-frame sprite renders.
+- `--emission-strength` and `--exposure` provide reproducible player-readability treatment.
 - Runtime sprite resources should land under `assets/sprites/**`.
 - Meshy source archives remain outside the repo until we decide which source assets should be versioned.
 - Animated entity art should preserve the readability rule: the Cinder-Warden must remain the brightest white-hot silhouette.

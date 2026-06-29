@@ -11,7 +11,7 @@ unzip -o "$ROOT/crawler_rigged.zip" \
   -d "$OUT/crawler" >/dev/null
 
 unzip -o "$ROOT/cinder_warden_rigged.zip" \
-  "Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Walking_withSkin.glb" \
+  "Meshy_AI_Molten_Obsidian_Knigh_biped/*.glb" \
   -d "$OUT/cinder_warden" >/dev/null
 
 printf "Prepared Meshy GLB sources in %s\n" "$OUT"

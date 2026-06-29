@@ -52,6 +52,11 @@ var aurum_geysers: Array[Dictionary] = []
 var aurum_geyser_hits := 0
 var last_facing_direction := Vector2.DOWN
 
+var attacking := false
+var attack_ticks := 0
+var dying := false
+var death_ticks := 0
+
 func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite := false, child_enemy := false) -> void:
 	data = enemy_data
 	position = spawn_position
@@ -95,6 +100,15 @@ func setup(enemy_data: Resource, wave: int, spawn_position: Vector2, make_elite 
 func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 	if dead:
 		return
+	if dying:
+		death_ticks -= 1
+		if death_ticks <= 0:
+			dead = true
+		return
+	if attacking:
+		attack_ticks -= 1
+		if attack_ticks <= 0:
+			attacking = false
 	if hit_flash_ticks > 0:
 		hit_flash_ticks -= 1
 	if burn_ticks > 0:
@@ -134,6 +148,8 @@ func physics_tick(player: Node2D, enemy_bullets: Node) -> void:
 	position.y = clampf(position.y, 0.0, Config.WORLD_SIZE.y)
 
 func apply_damage(amount: float, impulse: Vector2) -> void:
+	if dying or dead:
+		return
 	if data and data.id == &"choir" and boss_bodies_alive > 0:
 		_apply_choir_damage(_focused_choir_body_index(), amount)
 		return
@@ -143,7 +159,7 @@ func apply_damage(amount: float, impulse: Vector2) -> void:
 		var kb := 0.35
 		position += impulse.normalized() * impulse.length() * kb
 	if hp <= 0.0:
-		dead = true
+		_begin_death()
 	_update_boss_phase_state()
 	queue_redraw()
 
@@ -229,17 +245,52 @@ func _apply_sprite_frames() -> void:
 		animated_sprite.animation = &"idle"
 	animated_sprite.play()
 
+func begin_contact_attack(direction: Vector2) -> void:
+	if dying or dead or attacking or data == null or data.boss:
+		return
+	if animated_sprite.sprite_frames == null or not animated_sprite.sprite_frames.has_animation(&"attack_00"):
+		return
+	attacking = true
+	attack_ticks = _animation_duration_ticks(&"attack_00")
+	_update_directional_animation(direction)
+
+func _begin_death() -> void:
+	if dying or dead:
+		return
+	if not (data and data.boss) and animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(&"death_00"):
+		dying = true
+		death_ticks = _animation_duration_ticks(&"death_00")
+		damage = 0.0
+		attacking = false
+		_update_directional_animation(last_facing_direction)
+	else:
+		dead = true
+
 func _update_directional_animation(direction: Vector2) -> void:
-	if not animated_sprite.sprite_frames or not animated_sprite.sprite_frames.has_animation(&"walk_00"):
+	if not animated_sprite.sprite_frames:
 		return
 	if direction.length_squared() > 0.001:
 		last_facing_direction = direction.normalized()
 	var angle := wrapf(last_facing_direction.angle() + PI * 0.5, 0.0, TAU)
 	var index := int(round(angle / TAU * 8.0)) % 8
-	var animation := StringName("walk_%02d" % index)
-	if animated_sprite.sprite_frames.has_animation(animation) and animated_sprite.animation != animation:
+	var prefix := "walk"
+	if dying:
+		prefix = "death"
+	elif attacking:
+		prefix = "attack"
+	var animation := StringName("%s_%02d" % [prefix, index])
+	if not animated_sprite.sprite_frames.has_animation(animation):
+		animation = StringName("walk_%02d" % index)
+	if not animated_sprite.sprite_frames.has_animation(animation):
+		return
+	if animated_sprite.animation != animation:
 		animated_sprite.animation = animation
 		animated_sprite.play()
+
+func _animation_duration_ticks(animation: StringName) -> int:
+	var frame_count := animated_sprite.sprite_frames.get_frame_count(animation)
+	var fps := animated_sprite.sprite_frames.get_animation_speed(animation)
+	return max(1, ceili(float(frame_count * Config.PHYSICS_TICKS_PER_SECOND) / maxf(fps, 0.001)))
 
 func _wave_speed_bonus(enemy_data: Resource, wave: int) -> float:
 	if enemy_data.id == &"crawler":

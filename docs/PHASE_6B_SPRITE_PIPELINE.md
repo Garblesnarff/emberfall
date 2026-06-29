@@ -1,6 +1,6 @@
 # Phase 6B Sprite Pipeline
 
-Version: `0.6.1`
+Version: `0.6.2`
 
 Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports into Godot `SpriteFrames` resources.
 
@@ -13,7 +13,14 @@ Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports i
 - `tools/art/build_spriteframes.gd` builds Godot `SpriteFrames` resources from generated PNG sequences.
 - `data/art/phase6b_sprite_manifest.json` defines enabled render/build targets.
 - `crawler.tres` now uses `res://assets/sprites/enemies/crawler/crawler_spriteframes.tres`.
-- `Enemy.gd` supports generated `walk_00` through `walk_07` directional animations while preserving placeholder fallback behavior.
+- The crawler has 8-direction walk, attack, and death sequences with 8 frames per direction.
+- `Enemy.gd` selects directional walk/attack/death animations while preserving placeholder fallback behavior.
+- Contact attacks trigger the crawler attack sequence without changing chase movement or damage timing.
+- Lethal damage makes the crawler non-interactive while its deterministic death sequence finishes.
+- The Blender renderer selects named actions explicitly from a multi-action GLB.
+- The Cinder-Warden has 8-direction walk, manual-fire attack, and dash sequences.
+- Player renders use emission/exposure controls to remain the brightest white-hot combat silhouette.
+- Root-motion recentering keeps charge and combo frames inside the fixed 96 px frame.
 
 ## Secret Handling
 
@@ -27,24 +34,34 @@ The current pipeline does not need to call Meshy because the GLB exports already
 
 ## Regenerate Crawler
 
+The local crawler animation library remains outside the runtime project at `/Volumes/T7/ember_forge/raw_art/meshy/crawler_animation_library.glb`. It contains the `crawl`, `attack`, and `death` actions.
+
 ```sh
-bash tools/art/prepare_meshy_sources.sh
 /Applications/Blender.app/Contents/MacOS/Blender --background --python tools/art/render_directional_sprites.py -- \
-  --model /private/tmp/emberfall_phase6b/crawler/Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb \
+  --model /Volumes/T7/ember_forge/raw_art/meshy/crawler_animation_library.glb \
   --entity crawler \
   --animation walk \
+  --source-action crawl \
   --output assets/sprites/enemies/crawler/generated \
   --frame-size 96 \
   --frames 8 \
   --directions 8 \
   --samples 24
+```
+
+Repeat the render for `--animation attack --source-action attack` and `--animation death --source-action death`, then rebuild the resource:
+
+```sh
 godot --headless --editor --path . --quit
 godot --headless --path . --script tools/art/build_spriteframes.gd
 ```
 
+## Cinder-Warden Render Controls
+
+Prepare all player GLBs with `bash tools/art/prepare_meshy_sources.sh`. Player renders use `--emission-strength 5.0 --exposure 1.5 --recenter-motion --ortho-padding 1.15`. The manifest records the source GLB, action, frame count, FPS, and loop contract for locomotion, attack, and dash.
+
 ## Deferred
 
-- Cinder-Warden/player render target is staged in the manifest but disabled until we review scale/readability.
-- Death/attack/idle variants are not rendered yet.
+- Remaining enemy and boss animation sets are not rendered yet.
 - Sprite atlas packing remains future work; current output uses individual imported PNG frames for inspectability.
 - Full max-chaos readability review remains open until more entities receive generated sprites.

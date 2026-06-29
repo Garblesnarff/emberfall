@@ -3,6 +3,7 @@ extends Node
 const BulletManagerScript := preload("res://scripts/projectiles/bullet_manager.gd")
 const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 const ArenaScene := preload("res://scenes/arena/arena.tscn")
+const EnemyScene := preload("res://scenes/enemies/enemy.tscn")
 const PlayerScene := preload("res://scenes/player/player.tscn")
 const HudScene := preload("res://scenes/ui/hud.tscn")
 const FeelParity := preload("res://data/feel_parity.tres")
@@ -60,7 +61,7 @@ func _run() -> void:
 	await _test_phase5_steam_achievements_settings_and_pause()
 	_test_phase5_export_preset_readiness()
 	_test_phase6_static_art_assets()
-	_test_phase6b_crawler_sprite_pipeline()
+	await _test_phase6b_crawler_sprite_pipeline()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
@@ -258,10 +259,51 @@ func _test_phase6_static_art_assets() -> void:
 func _test_phase6b_crawler_sprite_pipeline() -> void:
 	_assert_true(FileAccess.file_exists("res://data/art/phase6b_sprite_manifest.json"), "Phase 6B sprite manifest exists")
 	_assert_true(Crawler.sprite_frames != null, "Crawler uses generated SpriteFrames")
-	_assert_true(Crawler.sprite_frames.has_animation(&"walk_00"), "Crawler SpriteFrames include directional walk animation")
-	_assert_eq(Crawler.sprite_frames.get_frame_count(&"walk_00"), 8, "Crawler walk direction has 8 frames")
+	for animation_prefix in [&"walk", &"attack", &"death"]:
+		for direction in range(8):
+			var animation := StringName("%s_%02d" % [animation_prefix, direction])
+			_assert_true(Crawler.sprite_frames.has_animation(animation), "Crawler SpriteFrames include %s" % animation)
+			_assert_eq(Crawler.sprite_frames.get_frame_count(animation), 8, "Crawler %s has 8 frames" % animation)
+	_assert_true(Crawler.sprite_frames.get_animation_loop(&"walk_00"), "Crawler walk animation loops")
+	_assert_true(not Crawler.sprite_frames.get_animation_loop(&"attack_00"), "Crawler attack animation does not loop")
+	_assert_true(not Crawler.sprite_frames.get_animation_loop(&"death_00"), "Crawler death animation does not loop")
 	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame00.png"), "Crawler rendered source frame exists")
 	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/crawler_spriteframes.tres"), "Crawler SpriteFrames resource exists")
+
+	var enemy := EnemyScene.instantiate()
+	add_child(enemy)
+	enemy.setup(Crawler, 1, Vector2(200.0, 200.0))
+	enemy.begin_contact_attack(Vector2.RIGHT)
+	_assert_true(enemy.attacking and String(enemy.animated_sprite.animation).begins_with("attack_"), "Crawler contact starts directional attack animation")
+	enemy.apply_damage(enemy.hp, Vector2.ZERO)
+	_assert_true(enemy.dying and not enemy.dead, "Crawler death animation defers removal")
+	_assert_true(String(enemy.animated_sprite.animation).begins_with("death_"), "Crawler lethal damage starts directional death animation")
+	var death_duration: int = enemy.death_ticks
+	var dummy_player := Node2D.new()
+	add_child(dummy_player)
+	for tick_index in range(death_duration):
+		enemy.physics_tick(dummy_player, null)
+	_assert_true(enemy.dead, "Crawler becomes removable after death animation duration")
+	dummy_player.queue_free()
+	enemy.queue_free()
+	await get_tree().process_frame
+
+	var player := PlayerScene.instantiate()
+	add_child(player)
+	for animation_prefix in [&"walk", &"attack", &"dash"]:
+		for direction in range(8):
+			var animation := StringName("%s_%02d" % [animation_prefix, direction])
+			_assert_true(player.animated_sprite.sprite_frames.has_animation(animation), "Cinder-Warden SpriteFrames include %s" % animation)
+	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"walk_00"), 8, "Cinder-Warden walk has 8 frames")
+	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"attack_00"), 6, "Cinder-Warden attack has 6 frames")
+	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"dash_00"), 6, "Cinder-Warden dash has 6 frames")
+	player.play_attack_animation(Vector2.RIGHT)
+	_assert_true(String(player.animated_sprite.animation).begins_with("attack_"), "Manual weapon feedback starts Cinder-Warden attack animation")
+	player.dashing_ticks = player.feel.dash_duration_ticks
+	player._update_directional_animation(Vector2.UP)
+	_assert_true(String(player.animated_sprite.animation).begins_with("dash_"), "Dash state overrides Cinder-Warden attack animation")
+	player.queue_free()
+	await get_tree().process_frame
 
 func _test_phase3_objectives_and_rewards() -> void:
 	var arena = await _fresh_test_arena(0x3303)

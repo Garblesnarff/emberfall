@@ -1,6 +1,6 @@
 # Phase 6B Sprite Pipeline
 
-Version: `0.6.2`
+Version: `0.6.3`
 
 Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports into Godot `SpriteFrames` resources.
 
@@ -18,7 +18,7 @@ Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports i
 - Contact attacks trigger the crawler attack sequence without changing chase movement or damage timing.
 - Lethal damage makes the crawler non-interactive while its deterministic death sequence finishes.
 - The Blender renderer selects named actions explicitly from a multi-action GLB.
-- The Cinder-Warden has 8-direction walk, manual-fire attack, and dash sequences.
+- The Cinder-Warden has 8-direction idle, walk, manual-fire attack, and dash sequences.
 - Player renders use emission/exposure controls to remain the brightest white-hot combat silhouette.
 - Root-motion recentering keeps charge and combo frames inside the fixed 96 px frame.
 
@@ -58,7 +58,7 @@ godot --headless --path . --script tools/art/build_spriteframes.gd
 
 ## Cinder-Warden Render Controls
 
-Prepare all player GLBs with `bash tools/art/prepare_meshy_sources.sh`. Player renders use `--emission-strength 5.0 --exposure 1.5 --recenter-motion --ortho-padding 1.15`. The manifest records the source GLB, action, frame count, FPS, and loop contract for locomotion, attack, and dash.
+Prepare all player GLBs with `bash tools/art/prepare_meshy_sources.sh`. Player renders use `--emission-strength 3.0 --exposure 1.2 --recenter-motion --ortho-padding 0.9`. The manifest records the source GLB, action, frame count, FPS, loop contract, and reproducible render settings for idle, locomotion, attack, and dash.
 
 ## Deferred
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.3 - Phase 6B Directional Art Polish
+
+- Added aim-facing directional idle art for the Cinder-Warden.
+- Expanded dash playback to eight frames while retaining the PRD's six-frame attack budget.
+- Locked per-target render scale, emission, exposure, sampling, and root-motion settings in the sprite manifest.
+- Changed locomotion facing from movement direction to aim direction for twin-stick readability.
+- Refined crawler and Cinder-Warden render framing at gameplay scale.
+
 ## 0.6.2 - Phase 6B Runtime Animation Expansion
 
 - Added complete 8-direction crawler walk, attack, and death sequences.

@@ -290,13 +290,17 @@ func _test_phase6b_crawler_sprite_pipeline() -> void:
 
 	var player := PlayerScene.instantiate()
 	add_child(player)
-	for animation_prefix in [&"walk", &"attack", &"dash"]:
+	for animation_prefix in [&"idle", &"walk", &"attack", &"dash"]:
 		for direction in range(8):
 			var animation := StringName("%s_%02d" % [animation_prefix, direction])
 			_assert_true(player.animated_sprite.sprite_frames.has_animation(animation), "Cinder-Warden SpriteFrames include %s" % animation)
 	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"walk_00"), 8, "Cinder-Warden walk has 8 frames")
 	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"attack_00"), 6, "Cinder-Warden attack has 6 frames")
-	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"dash_00"), 6, "Cinder-Warden dash has 6 frames")
+	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"dash_00"), 8, "Cinder-Warden dash has 8 frames")
+	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"idle_00"), 1, "Cinder-Warden directional idle has 1 frame")
+	player.move_input = Vector2.ZERO
+	player._update_directional_animation(Vector2.LEFT)
+	_assert_true(String(player.animated_sprite.animation).begins_with("idle_"), "Stationary Cinder-Warden uses aim-facing idle animation")
 	player.play_attack_animation(Vector2.RIGHT)
 	_assert_true(String(player.animated_sprite.animation).begins_with("attack_"), "Manual weapon feedback starts Cinder-Warden attack animation")
 	player.dashing_ticks = player.feel.dash_duration_ticks

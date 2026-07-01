@@ -9,6 +9,13 @@
       "source": "/Volumes/T7/ember_forge/raw_art/meshy/crawler_animation_library.glb",
       "archive": "/Volumes/T7/ember_forge/raw_art/meshy/crawler_rigged.zip",
       "archive_member": "Meshy_AI_Emberclad_Golem_quadruped/Meshy_AI_Emberclad_Golem_quadruped_model_Animation_Walking_withSkin.glb",
+      "render_settings": {
+        "samples": 24,
+        "ortho_padding": 0.9,
+        "emission_strength": 0.0,
+        "exposure": 0.0,
+        "recenter_motion": true
+      },
       "animations": [
         {
           "name": "walk",
@@ -48,7 +55,23 @@
       "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Running_withSkin.glb",
       "archive": "/Volumes/T7/ember_forge/raw_art/meshy/cinder_warden_rigged.zip",
       "archive_member": "Meshy_AI_Molten_Obsidian_Knigh_biped/*.glb",
+      "render_settings": {
+        "samples": 24,
+        "ortho_padding": 0.9,
+        "emission_strength": 3.0,
+        "exposure": 1.2,
+        "recenter_motion": true
+      },
       "animations": [
+        {
+          "name": "idle",
+          "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Character_output.glb",
+          "frames": 1,
+          "directions": 8,
+          "frame_size": 96,
+          "fps": 6.0,
+          "loop": true
+        },
         {
           "name": "walk",
           "source_action": "Armature|running|baselayer",
@@ -72,10 +95,10 @@
           "name": "dash",
           "source": "/private/tmp/emberfall_phase6b/cinder_warden/Meshy_AI_Molten_Obsidian_Knigh_biped/Meshy_AI_Molten_Obsidian_Knigh_biped_Animation_Male_Head_Down_Charge_withSkin.glb",
           "source_action": "Armature|Male_Head_Down_Charge|baselayer",
-          "frames": 6,
+          "frames": 8,
           "directions": 8,
           "frame_size": 96,
-          "fps": 18.0,
+          "fps": 14.0,
           "loop": true
         }
       ],

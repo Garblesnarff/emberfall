@@ -70,7 +70,7 @@ func _add_directional_animation(frames: SpriteFrames, entity_id: String, render_
 				frames.add_frame(name, texture)
 			else:
 				_fail("rendered frame is not a Texture2D: %s" % path)
-	if frames.has_animation(&"walk_00") and not frames.has_animation(&"idle"):
+	if frames.has_animation(&"walk_00") and not frames.has_animation(&"idle") and not frames.has_animation(&"idle_00"):
 		frames.add_animation(&"idle")
 		frames.set_animation_speed(&"idle", fps)
 		frames.set_animation_loop(&"idle", true)

@@ -108,7 +108,7 @@ func physics_tick(input_vector: Vector2, aim_pos: Vector2, bullet_manager: Node,
 		bullet_manager.spawn(position + dir * 14.0, dir * feel.projectile_speed, damage, feel.projectile_life_ticks)
 		add_forge_heat(Config.HEAT_SHOT_GAIN)
 		EventBus.shake_requested.emit(Config.SHAKE_SHOT)
-	_update_directional_animation(input_vector)
+	_update_directional_animation(aim_world - position)
 	queue_redraw()
 
 func play_attack_animation(direction: Vector2) -> void:
@@ -129,6 +129,8 @@ func _update_directional_animation(direction: Vector2) -> void:
 		prefix = "dash"
 	elif attack_animation_ticks > 0:
 		prefix = "attack"
+	elif move_input.length_squared() <= 0.001:
+		prefix = "idle"
 	var animation := StringName("%s_%02d" % [prefix, index])
 	if not animated_sprite.sprite_frames.has_animation(animation):
 		animation = StringName("walk_%02d" % index)
@@ -137,7 +139,7 @@ func _update_directional_animation(direction: Vector2) -> void:
 	if animated_sprite.animation != animation:
 		animated_sprite.animation = animation
 		animated_sprite.play()
-	if prefix == "walk" and move_input.length_squared() <= 0.001:
+	if prefix == "idle" and String(animation).begins_with("walk_"):
 		animated_sprite.pause()
 		animated_sprite.frame = 0
 	elif not animated_sprite.is_playing():

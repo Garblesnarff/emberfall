@@ -55,21 +55,25 @@ func _add_directional_animation(frames: SpriteFrames, entity_id: String, render_
 	var directions := int(anim.get("directions", 1))
 	var fps := float(anim.get("fps", 10.0))
 	var loops := bool(anim.get("loop", true))
+	var frame_size := int(anim.get("frame_size", 96))
+	var atlas_path := "%s/%s_%s_atlas.png" % [render_dir, entity_id, anim_name]
+	if not ResourceLoader.exists(atlas_path):
+		_fail("missing rendered atlas: %s" % atlas_path)
+		return
+	var atlas_texture := load(atlas_path)
+	if not atlas_texture is Texture2D:
+		_fail("rendered atlas is not a Texture2D: %s" % atlas_path)
+		return
 	for direction in range(directions):
 		var name := StringName("%s_%02d" % [anim_name, direction])
 		frames.add_animation(name)
 		frames.set_animation_speed(name, fps)
 		frames.set_animation_loop(name, loops)
 		for frame_index in range(count):
-			var path := "%s/%s_%s_dir%02d_frame%02d.png" % [render_dir, entity_id, anim_name, direction, frame_index]
-			if not ResourceLoader.exists(path):
-				_fail("missing rendered frame: %s" % path)
-				continue
-			var texture := load(path)
-			if texture is Texture2D:
-				frames.add_frame(name, texture)
-			else:
-				_fail("rendered frame is not a Texture2D: %s" % path)
+			var texture := AtlasTexture.new()
+			texture.atlas = atlas_texture
+			texture.region = Rect2(frame_index * frame_size, direction * frame_size, frame_size, frame_size)
+			frames.add_frame(name, texture)
 	if frames.has_animation(&"walk_00") and not frames.has_animation(&"idle") and not frames.has_animation(&"idle_00"):
 		frames.add_animation(&"idle")
 		frames.set_animation_speed(&"idle", fps)

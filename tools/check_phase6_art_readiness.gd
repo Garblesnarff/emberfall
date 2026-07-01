@@ -1,19 +1,22 @@
 extends SceneTree
 
 const MANIFEST_PATH := "res://data/static_art_manifest.json"
+const SPRITE_MANIFEST_PATH := "res://data/art/phase6b_sprite_manifest.json"
 const REQUIRED_GROUPS := [&"runtime_ui", &"boss_portraits", &"capsules"]
 
 var failures := 0
 
 func _initialize() -> void:
-	print("EMBERFALL Phase 6A static art readiness check")
+	print("EMBERFALL Phase 6 art readiness check")
 	_check_manifest()
+	_check_sprite_atlases()
 	_check_ui_references()
+	_check_export_filters()
 	_check_version()
 	if failures == 0:
-		print("PASS: Phase 6A static art readiness checks passed.")
+		print("PASS: Phase 6 art readiness checks passed.")
 	else:
-		push_error("FAIL: Phase 6A static art readiness checks found %d failure(s)." % failures)
+		push_error("FAIL: Phase 6 art readiness checks found %d failure(s)." % failures)
 	quit(failures)
 
 func _pass(message: String) -> void:
@@ -66,6 +69,36 @@ func _check_ui_references() -> void:
 	_assert_true(recap_script.contains("res://assets/sprites/ui/defeat_screen.png"), "Recap references production defeat screen")
 	_assert_true(not recap_script.contains("res://assets/concepts/"), "Recap has no concept art references")
 
+func _check_sprite_atlases() -> void:
+	_assert_true(FileAccess.file_exists(SPRITE_MANIFEST_PATH), "sprite manifest exists")
+	var json := JSON.new()
+	_assert_eq(json.parse(FileAccess.get_file_as_string(SPRITE_MANIFEST_PATH)), OK, "sprite manifest parses")
+	if not json.get_data() is Dictionary:
+		_fail("sprite manifest root is a dictionary")
+		return
+	for target in json.get_data().get("targets", []):
+		if not target is Dictionary or not bool(target.get("enabled", true)):
+			continue
+		var entity_id := String(target.get("id", ""))
+		var render_dir := String(target.get("render_dir", ""))
+		var runtime_resource := String(target.get("runtime_resource", ""))
+		_assert_true(ResourceLoader.exists(runtime_resource), "%s SpriteFrames resource exists" % entity_id)
+		for animation in target.get("animations", []):
+			var animation_name := String(animation.get("name", ""))
+			var atlas_path := "%s/%s_%s_atlas.png" % [render_dir, entity_id, animation_name]
+			_assert_true(ResourceLoader.exists(atlas_path), "%s/%s atlas exists" % [entity_id, animation_name])
+			var atlas := load(atlas_path)
+			_assert_true(atlas is Texture2D, "%s/%s atlas loads as Texture2D" % [entity_id, animation_name])
+			if atlas is Texture2D:
+				var frame_size := int(animation.get("frame_size", 0))
+				_assert_eq(atlas.get_width(), int(animation.get("frames", 0)) * frame_size, "%s/%s atlas width matches manifest" % [entity_id, animation_name])
+				_assert_eq(atlas.get_height(), int(animation.get("directions", 0)) * frame_size, "%s/%s atlas height matches manifest" % [entity_id, animation_name])
+
 func _check_version() -> void:
 	var version := String(ProjectSettings.get_setting("application/config/version"))
 	_assert_true(version.begins_with("0.6."), "project version is in the Phase 6 range")
+
+func _check_export_filters() -> void:
+	var presets := FileAccess.get_file_as_string("res://export_presets.cfg")
+	var source_filter := "assets/sprites/**/generated/*_dir*_frame*.png"
+	_assert_eq(presets.count(source_filter), 3, "all release presets exclude inspectable frame sequences")

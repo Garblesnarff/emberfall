@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.6.3` - Phase 6B directional art polish.
+Current version: `0.6.4` - Phase 6B packed sprite atlases.
 
 ## Play Test
 

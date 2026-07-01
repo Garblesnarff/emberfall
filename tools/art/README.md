@@ -44,9 +44,10 @@ Render crawler frames:
   --directions 8
 ```
 
-Import the rendered PNGs and build Godot SpriteFrames:
+Pack the rendered PNG sequences, import the atlases, and build Godot SpriteFrames:
 
 ```sh
+godot --headless --path . --script tools/art/pack_sprite_atlases.gd
 godot --headless --editor --path . --quit
 godot --headless --path . --script tools/art/build_spriteframes.gd -- res://data/art/phase6b_sprite_manifest.json
 ```
@@ -58,5 +59,6 @@ godot --headless --path . --script tools/art/build_spriteframes.gd -- res://data
 - `--recenter-motion` removes source root motion from fixed-frame sprite renders.
 - `--emission-strength` and `--exposure` provide reproducible player-readability treatment.
 - Runtime sprite resources should land under `assets/sprites/**`.
+- Runtime `SpriteFrames` reference packed atlases; individual frames remain inspectable pipeline sources and are excluded from release exports.
 - Meshy source archives remain outside the repo until we decide which source assets should be versioned.
 - Animated entity art should preserve the readability rule: the Cinder-Warden must remain the brightest white-hot silhouette.

@@ -1,6 +1,6 @@
 # Phase 6B Sprite Pipeline
 
-Version: `0.6.3`
+Version: `0.6.4`
 
 Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports into Godot `SpriteFrames` resources.
 
@@ -21,6 +21,9 @@ Phase 6B starts the runtime sprite-sheet pipeline by turning Meshy GLB exports i
 - The Cinder-Warden has 8-direction idle, walk, manual-fire attack, and dash sequences.
 - Player renders use emission/exposure controls to remain the brightest white-hot combat silhouette.
 - Root-motion recentering keeps charge and combo frames inside the fixed 96 px frame.
+- `pack_sprite_atlases.gd` packs each animation with frames in columns and directions in rows.
+- Runtime `SpriteFrames` use `AtlasTexture` regions backed by three crawler and four Cinder-Warden sheets.
+- Release exports omit inspectable per-frame PNG sources after atlas packing.
 
 ## Secret Handling
 
@@ -52,6 +55,7 @@ The local crawler animation library remains outside the runtime project at `/Vol
 Repeat the render for `--animation attack --source-action attack` and `--animation death --source-action death`, then rebuild the resource:
 
 ```sh
+godot --headless --path . --script tools/art/pack_sprite_atlases.gd
 godot --headless --editor --path . --quit
 godot --headless --path . --script tools/art/build_spriteframes.gd
 ```
@@ -63,5 +67,4 @@ Prepare all player GLBs with `bash tools/art/prepare_meshy_sources.sh`. Player r
 ## Deferred
 
 - Remaining enemy and boss animation sets are not rendered yet.
-- Sprite atlas packing remains future work; current output uses individual imported PNG frames for inspectability.
 - Full max-chaos readability review remains open until more entities receive generated sprites.

@@ -268,7 +268,9 @@ func _test_phase6b_crawler_sprite_pipeline() -> void:
 	_assert_true(not Crawler.sprite_frames.get_animation_loop(&"attack_00"), "Crawler attack animation does not loop")
 	_assert_true(not Crawler.sprite_frames.get_animation_loop(&"death_00"), "Crawler death animation does not loop")
 	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/generated/crawler_walk_dir00_frame00.png"), "Crawler rendered source frame exists")
+	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/generated/crawler_walk_atlas.png"), "Crawler walk atlas exists")
 	_assert_true(ResourceLoader.exists("res://assets/sprites/enemies/crawler/crawler_spriteframes.tres"), "Crawler SpriteFrames resource exists")
+	_assert_true(Crawler.sprite_frames.get_frame_texture(&"walk_00", 0) is AtlasTexture, "Crawler runtime frames use atlas regions")
 
 	var enemy := EnemyScene.instantiate()
 	add_child(enemy)
@@ -298,6 +300,8 @@ func _test_phase6b_crawler_sprite_pipeline() -> void:
 	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"attack_00"), 6, "Cinder-Warden attack has 6 frames")
 	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"dash_00"), 8, "Cinder-Warden dash has 8 frames")
 	_assert_eq(player.animated_sprite.sprite_frames.get_frame_count(&"idle_00"), 1, "Cinder-Warden directional idle has 1 frame")
+	_assert_true(ResourceLoader.exists("res://assets/sprites/player/cinder_warden/generated/cinder_warden_idle_atlas.png"), "Cinder-Warden idle atlas exists")
+	_assert_true(player.animated_sprite.sprite_frames.get_frame_texture(&"walk_00", 0) is AtlasTexture, "Cinder-Warden runtime frames use atlas regions")
 	player.move_input = Vector2.ZERO
 	player._update_directional_animation(Vector2.LEFT)
 	_assert_true(String(player.animated_sprite.animation).begins_with("idle_"), "Stationary Cinder-Warden uses aim-facing idle animation")

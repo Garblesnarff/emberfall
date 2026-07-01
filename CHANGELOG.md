@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.4 - Phase 6B Packed Sprite Atlases
+
+- Added a manifest-driven atlas packer for directional render sequences.
+- Rebuilt crawler and Cinder-Warden `SpriteFrames` with `AtlasTexture` regions backed by seven sheets.
+- Excluded inspectable per-frame render sources from release exports while retaining them for art review and regeneration.
+- Added atlas runtime, existence, type, and dimension contracts to headless validation.
+
 ## 0.6.3 - Phase 6B Directional Art Polish
 
 - Added aim-facing directional idle art for the Cinder-Warden.

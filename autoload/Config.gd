@@ -160,6 +160,8 @@ const OVERCLOCK_FIRE_RATE_MULT := 0.60
 const METEOR_RADIUS := 115.0
 const RAILSPIKE_WIDTH := 34.0
 const VICTORY_EMBER_MULT := 1.5
+const DEMO_FINAL_WAVE := 7
+const DEMO_WEAPON_ID: StringName = &"forgehammer"
 const REBINDABLE_ACTIONS := [&"move_up", &"move_down", &"move_left", &"move_right", &"fire", &"dash", &"pause"]
 const ACTION_LABELS := {
 	&"move_up": "Move Up",

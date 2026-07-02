@@ -60,14 +60,15 @@ func _run() -> void:
 	await _test_v42_aurum_full_spec_spots()
 	await _test_phase5_steam_achievements_settings_and_pause()
 	_test_phase5_export_preset_readiness()
+	await _test_phase7_demo_contract()
 	_test_phase6_static_art_assets()
 	await _test_phase6b_crawler_sprite_pipeline()
 	await _test_determinism()
 	await _test_phase2_wave6_coverage()
 	if failures == 0:
-		print("EMBERFALL Phase 1/2/3/4/5/6A/6B tests: PASS")
+		print("EMBERFALL Phase 1/2/3/4/5/6A/6B/7 tests: PASS")
 	else:
-		push_error("EMBERFALL Phase 1/2/3/4/5/6A/6B tests: %d failure(s)" % failures)
+		push_error("EMBERFALL Phase 1/2/3/4/5/6A/6B/7 tests: %d failure(s)" % failures)
 	get_tree().quit(failures)
 
 func _assert_true(value: bool, message: String) -> void:
@@ -760,6 +761,71 @@ func _test_phase5_export_preset_readiness() -> void:
 		if name == "macOS Steam":
 			_assert_eq(String(cfg.get_value("%s.options" % section, "application/short_version", "")), project_version, "macOS export short version matches project version")
 			_assert_eq(String(cfg.get_value("%s.options" % section, "application/version", "")), project_version, "macOS export build version matches project version")
+
+func _test_phase7_demo_contract() -> void:
+	_assert_eq(Config.DEMO_FINAL_WAVE, 7, "Phase 7 demo ends after wave 7")
+	_assert_eq(Config.DEMO_WEAPON_ID, &"forgehammer", "Phase 7 demo is Forgehammer-only")
+	_assert_true(bool(ProjectSettings.get_setting("rendering/textures/vram_compression/import_etc2_astc", false)), "Phase 7 enables ETC2/ASTC for macOS exports")
+	var cfg := ConfigFile.new()
+	_assert_eq(cfg.load("res://export_presets.cfg"), OK, "Phase 7 demo export presets load")
+	var expected := {
+		"Windows Demo": "exports/demo/windows/EMBERFALL_DEMO.exe",
+		"Linux Demo": "exports/demo/linux/EMBERFALL_DEMO.x86_64",
+		"macOS Demo": "exports/demo/macos/EMBERFALL_DEMO.zip",
+	}
+	for index in range(3, 6):
+		var section := "preset.%d" % index
+		var name := String(cfg.get_value(section, "name", ""))
+		_assert_true(expected.has(name), "demo preset %d has a supported desktop target" % index)
+		_assert_eq(String(cfg.get_value(section, "custom_features", "")), "demo", "%s uses only the demo feature tag" % name)
+		_assert_eq(String(cfg.get_value(section, "export_path", "")), String(expected.get(name, "")), "%s has the canonical demo export path" % name)
+
+	var original_save: Dictionary = SaveManager.data.duplicate(true)
+	var original_deaths := int(SaveManager.data.stats.deaths)
+	var original_victories := int(SaveManager.data.stats.victories)
+	var arena = ArenaScene.instantiate()
+	arena.auto_start_run = false
+	arena.demo_mode_override = true
+	add_child(arena)
+	await get_tree().process_frame
+	arena.begin_run(0x70000007, &"ember_maw")
+	_assert_eq(arena.current_weapon.id, Config.DEMO_WEAPON_ID, "demo rejects alternate weapon selection")
+	arena.spawn_queue.clear()
+	for enemy in arena.enemies:
+		if is_instance_valid(enemy):
+			enemy.queue_free()
+	arena.enemies.clear()
+	GameState.wave = Config.DEMO_FINAL_WAVE
+	arena.wave_active = true
+	arena._check_wave_clear_or_death()
+	_assert_true(arena.run_finalized, "wave 7 clear finalizes the demo")
+	_assert_true(bool(GameState.last_recap.get("demo_complete", false)), "wave 7 produces a demo-complete recap")
+	_assert_true(not bool(GameState.last_recap.get("victory", true)), "demo completion is not a retail victory")
+	_assert_true(not arena.pending_next_wave and not arena.upgrade_panel_visible, "demo completion cannot advance to wave 8")
+	_assert_eq(int(SaveManager.data.stats.deaths), original_deaths, "demo completion does not record a death")
+	_assert_eq(int(SaveManager.data.stats.victories), original_victories, "demo completion does not record a retail victory")
+	arena.queue_free()
+	await get_tree().process_frame
+	SaveManager.data = original_save
+	SaveManager.save()
+
+	var recap = RecapScene.instantiate()
+	add_child(recap)
+	await get_tree().process_frame
+	recap.set_recap({"demo_complete": true, "victory": false, "wave": 7})
+	_assert_eq(recap.title_label.text, "DEMO COMPLETE", "demo recap has a dedicated completion title")
+	_assert_true(not recap.endless_button.visible and not recap.end_run_button.visible, "demo recap hides retail victory actions")
+	recap.queue_free()
+	await get_tree().process_frame
+
+	var forge = ForgeMenuScene.instantiate()
+	forge.demo_mode_override = true
+	add_child(forge)
+	await get_tree().process_frame
+	_assert_true(not forge.purchase_button.visible, "demo Forge hides meta-progression purchases")
+	_assert_true(forge.bank_label.text.contains("WAVES 1-7"), "demo Forge communicates its wave boundary")
+	forge.queue_free()
+	await get_tree().process_frame
 
 func _action_has_joy_motion(action: StringName, axis: JoyAxis, axis_value: float) -> bool:
 	for event in InputMap.action_get_events(action):

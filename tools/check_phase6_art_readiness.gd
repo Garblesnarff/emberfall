@@ -96,9 +96,10 @@ func _check_sprite_atlases() -> void:
 
 func _check_version() -> void:
 	var version := String(ProjectSettings.get_setting("application/config/version"))
-	_assert_true(version.begins_with("0.6."), "project version is in the Phase 6 range")
+	var parts := version.split(".")
+	_assert_true(parts.size() == 3 and int(parts[0]) == 0 and int(parts[1]) >= 6, "project version includes Phase 6 or later")
 
 func _check_export_filters() -> void:
 	var presets := FileAccess.get_file_as_string("res://export_presets.cfg")
 	var source_filter := "assets/sprites/**/generated/*_dir*_frame*.png"
-	_assert_eq(presets.count(source_filter), 3, "all release presets exclude inspectable frame sequences")
+	_assert_eq(presets.count(source_filter), 6, "all release and demo presets exclude inspectable frame sequences")

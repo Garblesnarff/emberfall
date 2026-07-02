@@ -63,6 +63,7 @@ const InputRouterScript := preload("res://scripts/systems/input_router.gd")
 const SpatialGridScript := preload("res://scripts/systems/spatial_grid.gd")
 
 @export var auto_start_run := true
+@export var demo_mode_override := false
 
 var input_router: Node
 var grid: RefCounted
@@ -997,6 +998,8 @@ func choose_upgrade(index := 0) -> void:
 		_next_wave()
 
 func select_weapon(id: StringName) -> void:
+	if is_demo_mode():
+		id = Config.DEMO_WEAPON_ID
 	if id == &"slag_lance":
 		current_weapon = SLAG_LANCE
 	elif id == &"ember_maw":
@@ -1004,6 +1007,9 @@ func select_weapon(id: StringName) -> void:
 	else:
 		current_weapon = FORGEHAMMER
 	weapon_fire_ticks = 0
+
+func is_demo_mode() -> bool:
+	return demo_mode_override or OS.has_feature("demo")
 
 func force_open_chest() -> void:
 	_open_chest({"position": player.position, "guaranteed_evolution": true})
@@ -1037,6 +1043,9 @@ func _check_wave_clear_or_death() -> void:
 		GameState.add_score(100 + GameState.wave * 20)
 		EventBus.wave_cleared.emit(GameState.wave)
 		debug_stats.waves_cleared.append(GameState.wave)
+		if is_demo_mode() and GameState.wave >= Config.DEMO_FINAL_WAVE:
+			_finalize_demo_run()
+			return
 		pending_next_wave = true
 		var offer_count := Config.UPGRADE_PICK_COUNT + anvil_bonus_choices
 		if offer_upgrades(offer_count, &"wave").is_empty():
@@ -1065,6 +1074,30 @@ func _finalize_run(victory: bool) -> void:
 	debug_stats.recap = recap
 	SaveManager.record_run(victory, GameState.wave, GameState.score, GameState.best_combo, GameState.kills, ember_count, int(recap.play_ms))
 	GameState.end_run(victory, recap)
+
+func _finalize_demo_run() -> void:
+	if run_finalized:
+		return
+	run_finalized = true
+	debug_stats.embers = ember_count
+	debug_stats.victory = false
+	var play_ms := int(round(float(run_play_ticks) * 1000.0 / float(Engine.physics_ticks_per_second)))
+	var recap := {
+		"victory": false,
+		"demo_complete": true,
+		"wave": GameState.wave,
+		"score": GameState.score,
+		"kills": GameState.kills,
+		"best_combo": GameState.best_combo,
+		"embers_banked": ember_count,
+		"play_ms": play_ms,
+		"weapon": current_weapon.display_name,
+		"evolutions": active_evolutions.keys(),
+		"synergies": active_synergies.keys(),
+	}
+	debug_stats.recap = recap
+	SaveManager.record_demo_run(GameState.wave, GameState.score, GameState.best_combo, GameState.kills, ember_count, play_ms)
+	GameState.end_run(false, recap)
 
 func enter_endless() -> void:
 	if GameState.state != GameState.RunState.VICTORY:

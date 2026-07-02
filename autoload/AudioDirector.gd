@@ -122,9 +122,9 @@ func _on_wave_cleared(_wave: int) -> void:
 func _on_combo_changed(n: int) -> void:
 	set_intensity(max(intensity, clampf(float(n) / 100.0, 0.0, 1.0)))
 
-func _on_run_ended(victory: bool, _stats: Dictionary) -> void:
+func _on_run_ended(victory: bool, stats: Dictionary) -> void:
 	set_intensity(0.0)
-	play_sfx(&"victory" if victory else &"defeat", false)
+	play_sfx(&"victory" if victory or bool(stats.get("demo_complete", false)) else &"defeat", false)
 
 func _sfx_stream(id: StringName) -> AudioStreamWAV:
 	if sfx_stream_cache.has(id):

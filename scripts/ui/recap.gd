@@ -31,8 +31,9 @@ func _fit_to_viewport() -> void:
 
 func set_recap(recap: Dictionary) -> void:
 	var victory: bool = recap.get("victory", false)
-	background.texture = VICTORY_BACKGROUND if victory else DEFEAT_BACKGROUND
-	title_label.text = "FORGE SECURED" if victory else "RUN ENDED"
+	var demo_complete: bool = recap.get("demo_complete", false)
+	background.texture = VICTORY_BACKGROUND if victory or demo_complete else DEFEAT_BACKGROUND
+	title_label.text = "DEMO COMPLETE" if demo_complete else ("FORGE SECURED" if victory else "RUN ENDED")
 	stats_label.text = "WAVE %d\nSCORE %d\nKILLS %d\nBEST COMBO %d\nEMBERS BANKED %d\n%s" % [
 		int(recap.get("wave", 0)),
 		int(recap.get("score", 0)),
@@ -41,5 +42,5 @@ func set_recap(recap: Dictionary) -> void:
 		int(recap.get("embers_banked", 0)),
 		String(recap.get("weapon", "")),
 	]
-	endless_button.visible = victory
-	end_run_button.visible = victory
+	endless_button.visible = victory and not demo_complete
+	end_run_button.visible = victory and not demo_complete

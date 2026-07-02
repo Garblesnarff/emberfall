@@ -2,7 +2,7 @@
 
 Forge-themed arena survivors-like, ported from the playable HTML prototype into Godot 4.
 
-Current version: `0.6.4` - Phase 6B packed sprite atlases.
+Current version: `0.7.0` - Phase 7 desktop demo contract.
 
 ## Play Test
 
@@ -26,5 +26,6 @@ Controls:
 godot --headless --path . --quit
 godot --headless --fixed-fps 60 --path . --scene res://test/run_tests.tscn
 godot --headless --path . --script tools/check_phase6_art_readiness.gd
+godot --headless --path . --script tools/check_phase7_readiness.gd
 godot --headless --path . --script tools/art/build_spriteframes.gd
 ```

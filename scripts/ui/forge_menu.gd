@@ -3,6 +3,8 @@ extends Control
 signal start_run_requested
 signal settings_requested
 
+@export var demo_mode_override := false
+
 @onready var bank_label: Label = %BankLabel
 @onready var unlock_label: Label = %UnlockLabel
 @onready var start_button: Button = %StartButton
@@ -29,12 +31,21 @@ func _fit_to_viewport() -> void:
 
 func refresh() -> void:
 	MetaProgression.sync_from_save()
+	if is_demo_mode():
+		bank_label.text = "DEMO: WAVES 1-%d  |  FORGEHAMMER" % Config.DEMO_FINAL_WAVE
+		purchase_button.visible = false
+		unlock_label.text = "DEFEAT KILNMAW AND SURVIVE THE FINAL ASSAULT"
+		return
+	purchase_button.visible = true
 	bank_label.text = "FORGE BANK: %d EMBERS" % MetaProgression.ember_bank
 	var lines: Array[String] = []
 	for id in MetaProgression.UNLOCK_COSTS.keys():
 		var state := "OWNED" if MetaProgression.is_unlocked(id) else "%d" % int(MetaProgression.UNLOCK_COSTS[id])
 		lines.append("%s  %s" % [String(id).to_upper(), state])
 	unlock_label.text = "\n".join(lines)
+
+func is_demo_mode() -> bool:
+	return demo_mode_override or OS.has_feature("demo")
 
 func purchase_first_available() -> bool:
 	for id in MetaProgression.UNLOCK_COSTS.keys():

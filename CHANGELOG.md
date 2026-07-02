@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 - Phase 7 Desktop Demo Contract
+
+- Added a feature-tagged demo runtime capped at waves 1-7 with Forgehammer as the sole selectable weapon.
+- Added a distinct demo completion outcome that banks progress without recording a death or retail victory.
+- Added dedicated demo Forge and recap presentation with Kilnmaw retained as the wave-5 boss.
+- Added Windows, Linux, and macOS demo export presets plus automated runtime and release-readiness contracts.
+
 ## 0.6.4 - Phase 6B Packed Sprite Atlases
 
 - Added a manifest-driven atlas packer for directional render sequences.

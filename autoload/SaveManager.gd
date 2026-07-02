@@ -97,3 +97,15 @@ func record_run(victory: bool, wave: int, score: int, combo: int, kills: int, em
 	data.stats.victories = int(data.stats.victories) + (1 if victory else 0)
 	save()
 	SteamManager.sync_save_stats(data)
+
+func record_demo_run(wave: int, score: int, combo: int, kills: int, embers: int, play_ms: int = 0) -> void:
+	data = _migrate(data)
+	data.best.wave = max(int(data.best.wave), wave)
+	data.best.score = max(int(data.best.score), score)
+	data.best.combo = max(int(data.best.combo), combo)
+	data.bank.embers = int(data.bank.embers) + embers
+	data.stats.runs = int(data.stats.runs) + 1
+	data.stats.kills = int(data.stats.kills) + kills
+	data.stats.playMs = int(data.stats.playMs) + max(play_ms, 0)
+	save()
+	SteamManager.sync_save_stats(data)

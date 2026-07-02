@@ -177,7 +177,9 @@ func _on_wave_started(wave: int) -> void:
 
 func _on_run_ended(victory: bool, stats: Dictionary) -> void:
 	var wave := int(stats.get("wave", GameState.wave))
-	if victory:
+	if bool(stats.get("demo_complete", false)):
+		set_rich_presence("status", "Demo Complete")
+	elif victory:
 		set_rich_presence("status", "Forge Secured")
 	else:
 		set_rich_presence("status", "Forge Cold at Wave %d" % wave)
